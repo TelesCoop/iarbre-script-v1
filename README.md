@@ -62,7 +62,7 @@ computeIndices (sur toutes les communes)
 
 <i>Si toutes ces étapes se sont bien déroulées, c'est que les données sont désormais prêtes à être exploitée au travers d'un serveur cartographique (GeoServer par exemple).</i>
 
-<i>Pour cela, il faudra configurer une nouvelle couche sur la table `tiles` de la base de donnée. (Cf. Documentation > Modèle conceptuel de la base de données)</i>
+<i>Pour cela, il faudra configurer une nouvelle couche sur la table `tiles` de la base de données. (Cf. Documentation > Modèle logique de données)</i>
 
 ## Configuration avancée
 
@@ -88,16 +88,16 @@ ENABLE_TRUNCATE=False         # Permet de supprimer automatiquement la donnée l
 
 L'architecture logicielle cible pour le fonctionnement du projet utilise les briques technologiques suivante : 
 * Une instance de calcul du calque de plantabilité (Serveur Linux / Python 3.8.X)
-* Une base de données PostgreSQL (l'extension PostGIS est un plus)
+* Une base de données PostgreSQL 11 (l'extension PostGIS est un plus)
 * Un serveur cartographique (GeoServer par exemple)
-* Une plateforme web de visualisation
+* Une plateforme web de visualisation (Angular/Nest dans notre cas)
 
 Dans le cadre de notre expérimentation, nous avons fait le choix de "containeriser" l'instance de calcul du calque, ainsi que le front et back de la plateforme web.
 
 Vous trouverez le détail de ce projet sur les documents suivants :
 * [Notice d'utilisation du calque](https://documents.exo-dev.fr/notice_utilisation_calque_plantabilite_lyon_V1.pdf)
-* [Documentation générale du projet]()
-* [Documentation technique du projet]()
+* [Documentation générale du projet (à venir)]()
+* [Documentation technique du projet (à venir)]()
 * [Modèle logique de données (MLD)](https://documents.exo-dev.fr/MLD_calque_plantabilite_lyon.png)
 
 ## Crédits
