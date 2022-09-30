@@ -1,0 +1,79 @@
+#
+# Gitlab CI/CD : Build archive and Docker images and deploy on Openshift
+#
+
+variables:
+    TRIGRAMME: test #arb @TODO : Change after when the right namespace is available
+    REPLICA_ENV: 1
+    
+################################################################################
+#    Anchors
+################################################################################
+# Build and push anchor
+.build_and_push_docker_image: &build_and_push_docker_image
+  - docker build --pull --tag "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest" .
+  - docker push "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest"
+
+# Docker Authentification anchor
+.docker_login: &docker_login
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+# Deployment preparation anchor
+.prepare_deployment: &prepare_deployment
+  - export NO_PROXY=grandlyon.fr
+  - export KUBECONFIG=$KUBECONFIG_DEV
+  - echo Preparing Deployment on $NAMESPACE 
+  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/job-calqul.yml
+
+# Applying openshift conf anchor
+.apply_confs: &apply_confs
+  - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
+  - oc create -f deployment/job-calqul.yml
+
+################################################################################
+#    CI/CD Stages
+################################################################################
+stages:
+  - Build Calqul
+  - Deploy Calqul
+
+# *********************************************************************************************
+# * BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD *
+# *********************************************************************************************
+
+Build Calqul:
+  stage: Build Calqul
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    NAMESPACE_ENV: "d01"
+    IMAGE_NAME: calqul-$NAMESPACE_ENV
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - changes: # build image only if sources have changed. 
+      - Dockerfile # Image definition has changed 
+  services:
+    - docker:dind
+  script:
+    - *docker_login
+    - *build_and_push_docker_image
+  tags:
+    - build-push-to-registry
+
+# *********************************************************************************************
+# * DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLO *
+# *********************************************************************************************
+
+Deploy Calqul:
+  stage: Deploy Calqul
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  variables:
+    NAMESPACE_ENV: 'd01'
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  tags:
+    #- ns-arb-d01 @TODO : Change after when the right namespace is available  
+    - ns-test-d01
