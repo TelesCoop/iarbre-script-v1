@@ -99,6 +99,7 @@ Vous trouverez le détail de ce projet sur les documents suivants :
 * [Documentation générale du projet (à venir)]()
 * [Documentation technique du projet (à venir)]()
 * [Modèle logique de données (MLD)](https://documents.exo-dev.fr/MLD_calque_plantabilite_lyon.png)
+* [Liste des données utilisées et traitements associés](https://www.figma.com/file/jE0JR0PiNbDU9ShK2V2tnZ/Process-data-calque-de-plantabilit%C3%A9?node-id=0%3A1)
 
 ## Crédits
 
@@ -113,13 +114,21 @@ Vous trouverez le détail de ce projet sur les documents suivants :
 * Email: contact@exo-dev.fr ou info@erasme.org
 * Status: Expérimentation
 
-## TODO : Test and Deploy
+## Intégration continue & Déploiement
 
-Use the built-in continuous integration in GitLab.
+## Build
+Image de base Python : https://hub.docker.com/_/python
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Deploy
 
+### Déploiemet d'un Job Openshift
+Le déploiement s'appuie sur un job OpenShift plutôt qu'un Pod. 
+L'intérêt réside dans le fait qu'un job se lance, fait ce qu'il a à faire et s'arrête lorsqu'il a fini, avec un code de sortie 0 ou 1.
+Il consomme les ressources nécessaires le temps de l'exécution de son script, puis s'arrête, contrairement au pod qui reste en attente une fois déployé et qui est relancé s'il tombe.
+
+Doc : 
+ - https://cloud.redhat.com/blog/openshift-jobs
+ - https://docs.openshift.com/container-platform/4.11/nodes/jobs/nodes-nodes-jobs.html
+
+### Suppression d'un job
+ - https://access.redhat.com/documentation/en-us/openshift_container_platform/3.4/html/developer_guide/dev-guide-scheduled-jobs
