@@ -37,6 +37,12 @@ variables:
 
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
+  # Db
+  # - oc apply -f deployment/configmap.yml
+  - oc apply -f deployment/db-calqul.yml
+  # - oc apply -f deployment/services.yml
+  # - oc apply -f deployment/routes.yml
+  # Job
   - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
   - oc create -f deployment/job-calqul.yml
 
