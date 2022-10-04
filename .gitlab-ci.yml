@@ -77,7 +77,7 @@ Build Calqul Python:
     - docker:dind
   script:
     - *docker_login
-    - cd cd $IMAGE_DIR
+    - cd $IMAGE_DIR
     - cp .env.example .env.$NAMESPACE_ENV
     - sed -i "s/__POSTGRES_DB__/$POSTGRES_DB/g" .env.$NAMESPACE_ENV && \
     - sed -i "s/__POSTGRES_PASSWORD__/$POSTGRES_PASSWORD/g" .env.$NAMESPACE_ENV && \
