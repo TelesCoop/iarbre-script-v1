@@ -62,7 +62,6 @@ Build Calqul Python:
     - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
     - changes: # build image only if sources have changed. 
       - ./Dockerfiles/python/Dockerfile # Image definition has changed 
-      - ./deployment/* # Deployment definition has changed
   services:
     - docker:dind
   script:
@@ -83,7 +82,6 @@ Build Calqul Postgis:
     - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
     - changes: # build image only if sources have changed. 
       - ./Dockerfiles/db/Dockerfile # Image definition has changed 
-      - ./deployment/* # Deployment definition has changed
   services:
     - docker:dind
   script:
@@ -100,6 +98,7 @@ Deploy Calqul:
   stage: Deploy Calqul
   rules:
     - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
+    - ./deployment/* # Deployment definition has changed
   variables:
     NAMESPACE_ENV: 'd01'
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
