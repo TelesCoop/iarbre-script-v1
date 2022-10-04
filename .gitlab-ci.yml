@@ -59,9 +59,10 @@ Build Calqul Python:
     IMAGE_NAME: calqul-python-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/python
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
     - changes: # build image only if sources have changed. 
       - ./Dockerfiles/python/Dockerfile # Image definition has changed 
+      - ./deployment/* # Deployment definition has changed
   services:
     - docker:dind
   script:
@@ -79,9 +80,10 @@ Build Calqul Postgis:
     IMAGE_NAME: calqul-db-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/db
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
     - changes: # build image only if sources have changed. 
       - ./Dockerfiles/db/Dockerfile # Image definition has changed 
+      - ./deployment/* # Deployment definition has changed
   services:
     - docker:dind
   script:
