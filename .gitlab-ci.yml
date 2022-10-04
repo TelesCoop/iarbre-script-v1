@@ -9,9 +9,7 @@ variables:
 ################################################################################
 #    Anchors
 ################################################################################
-# Build and push anchor
-.build_and_push_docker_image: &build_and_push_docker_image
-  - cd $IMAGE_DIR
+.build_and_push_image: &build_and_push_image
   - docker build --pull --tag "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest" .
   - docker push "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest"
 
@@ -85,7 +83,7 @@ Build Calqul Python:
     - sed -i "s/__POSTGRES_SERVER__/$POSTGRES_SERVER/g" .env.$NAMESPACE_ENV && \
     - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" .env.$NAMESPACE_ENV && \
     - sed -i "s/__POSTGRES_SCHEMA__/$POSTGRES_SCHEMA/g" .env.$NAMESPACE_ENV
-    - *build_and_push_docker_image
+    - *build_and_push_image
   tags:
     - build-push-to-registry
 
@@ -105,7 +103,9 @@ Build Calqul Postgis:
     - docker:dind
   script:
     - *docker_login
-    - *build_and_push_docker_image
+    - cd $IMAGE_DIR
+    - *build_and_push_image
+
   tags:
     - build-push-to-registry
 
