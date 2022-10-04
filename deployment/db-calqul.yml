@@ -25,7 +25,7 @@ spec:
       #       claimName: pvc-01-ns-test-__NAMESPACE_ENV__-claim
       containers:
       - name: calqul-db-__NAMESPACE_ENV__
-        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db__NAMESPACE_ENV__
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
         ports:
         - containerPort: 5432
         readinessProbe:

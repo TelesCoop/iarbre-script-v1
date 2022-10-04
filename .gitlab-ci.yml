@@ -24,6 +24,7 @@ variables:
   - export NO_PROXY=grandlyon.fr
   - export KUBECONFIG=$KUBECONFIG_DEV
   - echo Preparing Deployment on $NAMESPACE 
+
   # DB deployment file
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/db-calqul.yml
   - sed -i "s/__POSTGRES_DB__/$POSTGRES_DB/g" deployment/db-calqul.yml 
@@ -32,18 +33,20 @@ variables:
   - sed -i "s/__POSTGRES_SERVER__/$POSTGRES_SERVER/g" deployment/db-calqul.yml 
   - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" deployment/db-calqul.yml 
   - sed -i "s/__POSTGRES_SCHEMA__/$POSTGRES_SCHEMA/g" deployment/db-calqul.yml 
-  - cat deployment/db-calqul.yml
+
   # Job deployment file
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/job-calqul.yml
 
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
-  # Db
-  - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV --grace-period=0 --force
   # - oc apply -f deployment/configmap.yml
-  - oc apply -f deployment/db-calqul.yml
   # - oc apply -f deployment/services.yml
   # - oc apply -f deployment/routes.yml
+
+  # Db
+  - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
+  - oc apply -f deployment/db-calqul.yml
+
   # Job
   - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
   - oc create -f deployment/job-calqul.yml
