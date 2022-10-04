@@ -83,7 +83,6 @@ Build Calqul Python:
     - sed -i "s/__POSTGRES_SERVER__/$POSTGRES_SERVER/g" .env.$NAMESPACE_ENV
     - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" .env.$NAMESPACE_ENV
     - sed -i "s/__POSTGRES_SCHEMA__/$POSTGRES_SCHEMA/g" .env.$NAMESPACE_ENV
-    - cat .env.$NAMESPACE_ENV
     - *build_and_push_image
   tags:
     - build-push-to-registry
