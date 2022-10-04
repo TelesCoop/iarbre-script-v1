@@ -47,17 +47,17 @@ spec:
             cpu: "500mi"
         env:
         - name: POSTGRES_DB
-          value: __POSTGRES_DB__
+          value: "__POSTGRES_DB__"
         - name: POSTGRES_PASSWORD
-          value: __POSTGRES_PASSWORD__
+          value: "__POSTGRES_PASSWORD__"
         - name: POSTGRES_PORT
-          value: __POSTGRES_PORT__
+          value: "__POSTGRES_PORT__"
         - name: POSTGRES_SERVER
-          value: __POSTGRES_SERVER__
+          value: "__POSTGRES_SERVER__"
         - name: POSTGRES_USER
-          value: __POSTGRES_USER__
+          value: "__POSTGRES_USER__"
         - name: POSTGRES_SCHEMA
-          value: __POSTGRES_SCHEMA__
+          value: "__POSTGRES_SCHEMA__"
           # need to define PGDATA env var because not using the default /var/lib/postgresql/data, but a subpath under it.
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
