@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 # ARG NAMESPACE_ENV="" 
 
 # Remplacing values in file
+RUN ls -l ./
 COPY ./env.example ./env.$NAMESPACE_ENV
 
 RUN sed -i "s/__POSTGRES_DB__/$POSTGRES_DB/g" ./env.$NAMESPACE_ENV && \
