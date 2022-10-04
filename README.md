@@ -119,6 +119,15 @@ Vous trouverez le détail de ce projet sur les documents suivants :
 ## Build
 Image de base Python : https://hub.docker.com/_/python
 
+### Configuration de Gitlab
+les variables comportant les données de connexion à la base PostGIS doivent être initiialisées dans Gitlab.
+Sous la rubrique Settings > CI/CD > Variables :
+POSTGRES_DB         calque_planta_temp
+POSTGRES_PASSWORD   xxxxxx
+POSTGRES_PORT       5432
+POSTGRES_SERVER     calqul-postgis-service (Le service OpenShift qui est routé vers la base PostGIS)
+POSTGRES_USER       calqul
+POSTGRES_SCHEMA     calqul
 ## Deploy
 
 ### Déploiemet d'un Job Openshift
