@@ -39,6 +39,7 @@ variables:
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
   # Db
+  - oc delete pods calqul-db-$NAMESPACE_ENV --grac-period=0 --force
   # - oc apply -f deployment/configmap.yml
   - oc apply -f deployment/db-calqul.yml
   # - oc apply -f deployment/services.yml
