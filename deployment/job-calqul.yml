@@ -9,6 +9,6 @@ spec:
       name: calqul-__NAMESPACE_ENV__
     spec:
       containers:
-      - name: calqul-__NAMESPACE_ENV__
-        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-__NAMESPACE_ENV__
+      - name: calqul-python-__NAMESPACE_ENV__
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
       restartPolicy: Never #OnFailure
