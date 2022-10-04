@@ -99,7 +99,7 @@ Build Calqul Postgis:
 Deploy Calqul:
   stage: Deploy Calqul
   rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "postgres-dockerfile"
   variables:
     NAMESPACE_ENV: 'd01'
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
