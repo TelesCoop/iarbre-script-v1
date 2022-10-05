@@ -7,6 +7,7 @@ COPY ./scripts/requirements.txt requirements.txt
 
 # for pyproj dependency
 # RUN export PROJ_DIR=/usr/share/pyproj
+RUN rm -f Pipfile
 RUN export PROJ_DIR=/usr/local
 RUN pip install pyproj
 RUN pip install --no-cache-dir -r requirements.txt
