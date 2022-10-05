@@ -1,8 +1,9 @@
-FROM python:3
+FROM python:slim
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app 
+WORKDIR /app 
 
-COPY ./scripts/requirements.txt ./
+COPY ./scripts/requirements.txt requirements.txt
 
 # for pyproj dependency
 RUN export PROJ_DIR=/usr/local
@@ -14,4 +15,4 @@ COPY ./env.$NAMESPACE_ENV ./
 
 RUN ls -l .
 
-CMD [ "python", "./scripts/hello-world.py" ]
+CMD [ "python3", "./scripts/hello-world.py" ]
