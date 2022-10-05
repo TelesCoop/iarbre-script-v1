@@ -3,8 +3,8 @@ FROM python:latest
 # WORKDIR /usr/src/app 
 WORKDIR /app 
 
+COPY ./scripts/pip_geopandas.txt pip_geopandas.txt
 COPY ./scripts/requirements.txt requirements.txt
-
 # for pyproj dependency
 # RUN export PROJ_DIR=/usr/share/pyproj
 # RUN export PROJ_DIR=/usr/local
