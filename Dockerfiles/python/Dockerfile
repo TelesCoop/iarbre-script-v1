@@ -10,7 +10,7 @@ COPY ./scripts/requirements.txt requirements.txt
 # RUN export PROJ_DIR=/usr/local
 # RUN export PROJ_WHEEL=true
 # RUN pip install pyproj
-RUN  apt-get update && apt-get install proj-bin
+RUN  apt-get update && apt-get install proj-bin -y
 
 RUN chmod +x pip_geopandas.sh && ./pip_geopandas.sh
 RUN pip install --no-cache-dir -r requirements.txt
