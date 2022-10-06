@@ -19,10 +19,11 @@ spec:
         role: primary
         tier: database
     spec:
-      # volumes:
-      #   - name: db-data
-      #     persistentVolumeClaim:
-      #       claimName: pvc-01-ns-test-__NAMESPACE_ENV__-claim
+      volumes:
+        - name: db-data
+          persistentVolumeClaim: 
+            # pvc-01-ns-test-d01-claim
+            claimName: pvc-01-ns-test-__NAMESPACE_ENV__-claim
       containers:
       - name: calqul-db-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
@@ -61,14 +62,14 @@ spec:
           # need to define PGDATA env var because not using the default /var/lib/postgresql/data, but a subpath under it.
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
-        # volumeMounts:
-          # # need a subpath as postgres wants an empty folder (the mounted folder `/var/lib/postgresql/data` has a `lost+found` directory)
-          # # see https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
-          # # this is used together with the env var PGDATA = /var/lib/postgresql/data/pgdata (below)
-          # # the owner:group of this folder is 70:70 (postgres:postgres), done by this step in the docker image:
-          # # https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template#L146
-          # - name: "db-data" 
-          #   mountPath: "/var/lib/postgres/data"
-          #   subpath: "pgdata"
+        volumeMounts:
+          # need a subpath as postgres wants an empty folder (the mounted folder `/var/lib/postgresql/data` has a `lost+found` directory)
+          # see https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
+          # this is used together with the env var PGDATA = /var/lib/postgresql/data/pgdata (below)
+          # the owner:group of this folder is 70:70 (postgres:postgres), done by this step in the docker image:
+          # https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template#L146
+          - name: "db-data" 
+            mountPath: "/var/lib/postgres/data"
+            subpath: "pgdata"
       imagePullSecrets:
         - name: forge-secret
