@@ -4,7 +4,6 @@
 # testing package installation in interactive way : 
 #  - docker run -i -t alpine /bin/sh
 ##################################################################################
-
 FROM debian:buster-slim
 
 # Basic libs and install python3.7
@@ -48,7 +47,6 @@ USER calquluser
 
 COPY ./scripts ./
 COPY ./sql ./
-RUN ls -la ./
-COPY .env.$NAMESPACE_ENV ./
+RUN cat .env.$NAMESPACE_ENV
 # Launch calculation
 CMD [ "python3", "./scripts/hello-world.py" ]
