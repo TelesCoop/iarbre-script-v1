@@ -132,4 +132,4 @@ Deploy Calqul:
    - *apply_confs
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
-    - $NAMESPACE # ns-test-d01
+    - ns-test-d01 # No possibility to put varaibles here :(
