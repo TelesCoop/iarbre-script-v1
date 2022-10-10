@@ -47,5 +47,5 @@ COPY ./sql ./
 
 # Launch calculation
 # CMD [ "python3", "./scripts/hello-world.py" ]
-# CMD [ "/bin/bash", "./launch.sh" ]
-CMD [ "python3", "./main.py 5 69266" ]
+# CMD [ "/bin/bash", "./scripts/launch.sh" ]
+CMD [ "python3", "./scripts/main.py 5 69266" ]
