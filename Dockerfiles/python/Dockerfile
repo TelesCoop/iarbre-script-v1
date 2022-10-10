@@ -47,6 +47,6 @@ USER calquluser
 
 COPY ./scripts ./
 COPY ./sql ./
-RUN cat .env.$NAMESPACE_ENV
+RUN echo "NAMESPACE_ENV=$NAMESPACE_ENV" && cat .env.$NAMESPACE_ENV
 # Launch calculation
 CMD [ "python3", "./scripts/hello-world.py" ]
