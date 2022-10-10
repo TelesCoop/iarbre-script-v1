@@ -48,7 +48,7 @@ variables:
   # Db
   - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
   - oc apply -f deployment/db-calqul.yml
-  - oc apply -f deployment/service-calcul.yml
+  - oc apply -f deployment/service-calqul.yml
 
   # Job
   - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
