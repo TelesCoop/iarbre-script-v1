@@ -6,6 +6,13 @@
 ##################################################################################
 FROM debian:buster-slim
 
+# Getting some Args and Setting some ENV variables
+ARG NAMESPACE_ENV
+ENV CPLUS_INCLUDE_PATH="/usr/include/gdal"
+ENV C_INCLUDE_PATH="/usr/include/gdal"
+ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/pyproj/proj_dir/share/proj"
+ENV GDAL_DATA="/usr/local/lib/python3.7/dist-packages/fiona/gdal_data/"
+
 # Basic libs and install python3.7
 RUN apt-get update && apt-get upgrade -y \
 && apt-get install -y procps wget python3.7 python3-pip gdal-bin libgdal-dev apt-utils \
@@ -15,12 +22,6 @@ apt-get -y install proj proj-dev && \
 # apt-get install -y sox ffmpeg libcairo2 libcairo2-dev texlive-full && \
 apt-get install -y libcairo2 libcairo2-dev && \
 rm -rf /var/lib/apt/lists/*
-
-# Setting some ENV variables
-ENV CPLUS_INCLUDE_PATH="/usr/include/gdal"
-ENV C_INCLUDE_PATH="/usr/include/gdal"
-ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/pyproj/proj_dir/share/proj"
-ENV GDAL_DATA="/usr/local/lib/python3.7/dist-packages/fiona/gdal_data/"
 
 COPY ./scripts/requirements.txt requirements.txt
 
@@ -47,6 +48,8 @@ USER calquluser
 
 COPY ./scripts ./
 COPY ./sql ./
-RUN echo "NAMESPACE_ENV=$NAMESPACE_ENV" && cat .env.$NAMESPACE_ENV
+
+RUN cat .env.$NAMESPACE_ENV
+
 # Launch calculation
 CMD [ "python3", "./scripts/hello-world.py" ]
