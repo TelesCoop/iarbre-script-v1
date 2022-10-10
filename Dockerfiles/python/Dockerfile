@@ -1,8 +1,5 @@
 ##################################################################################
 #  Taken from https://github.com/Toblerity/Fiona/issues/1063
-#
-# testing package installation in interactive way : 
-#  - docker run -i -t alpine /bin/sh
 ##################################################################################
 FROM debian:buster-slim
 
@@ -19,7 +16,6 @@ RUN apt-get update && apt-get upgrade -y \
 && apt-get clean \
 apt-get -y install proj proj-dev && \
 # https://stackoverflow.com/questions/70508775/error-could-not-build-wheels-for-pycairo-which-is-required-to-install-pyprojec
-# apt-get install -y sox ffmpeg libcairo2 libcairo2-dev texlive-full && \
 apt-get install -y libcairo2 libcairo2-dev && \
 rm -rf /var/lib/apt/lists/*
 
@@ -48,8 +44,6 @@ USER calquluser
 
 COPY ./scripts ./
 COPY ./sql ./
-
-RUN cat .env.$NAMESPACE_ENV
 
 # Launch calculation
 CMD [ "python3", "./scripts/hello-world.py" ]
