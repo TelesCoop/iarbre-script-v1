@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calqul-db-__NAMESPACE_ENV__
-  namespace: ns-test-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
   labels:
     apps: calqul-db-__NAMESPACE_ENV__
 spec:
@@ -23,7 +23,7 @@ spec:
         - name: db-data
           persistentVolumeClaim: 
             # pvc-01-ns-test-d01-claim
-            claimName: pvc-01-ns-test-__NAMESPACE_ENV__-claim
+            claimName: pvc-01-__NAMESPACE__-claim
       containers:
       - name: calqul-db-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
