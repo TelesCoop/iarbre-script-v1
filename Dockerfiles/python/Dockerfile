@@ -48,7 +48,7 @@ USER calquluser
 
 COPY ./scripts ./
 COPY ./sql ./
-# COPY ./env.$NAMESPACE_ENV ./
+COPY ./env.$NAMESPACE_ENV ./
 # Launch calculation
 CMD [ "python3", "./scripts/hello-world.py" ]
 
