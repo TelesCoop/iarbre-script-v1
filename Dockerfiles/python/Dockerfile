@@ -42,12 +42,12 @@ COPY --chown=calquluser:calquluser / /app
 
 USER calquluser
 
-COPY ./scripts ./
-COPY ./sql ./
+COPY ./scripts/*.py ./
+COPY ./sql .
 
-RUN ls -la .
+RUN pwd && ls -la .
 
 # Launch calculation
-CMD [ "python3", "./scripts/hello-world.py" ]
+CMD [ "python3", "./hello-world.py" ]
 # CMD [ "/bin/bash", "./scripts/launch.sh" ]
 # CMD [ "python3", "./scripts/main.py 5 69266" ]
