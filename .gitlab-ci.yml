@@ -89,7 +89,7 @@ Build Calqul Python:
     - *build_and_push_image
   rules:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
-    - changes: # build image only if sources have changed. 
+      changes: # build image only if sources have changed. 
       - ./Dockerfiles/python/Dockerfile # Image definition has changed 
   tags:
     - build-push-to-registry
@@ -110,7 +110,7 @@ Build Calqul Postgis:
     - *build_and_push_image
   rules:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
-    - changes: # build image only if sources have changed. 
+      changes: # build image only if sources have changed. 
       - ./Dockerfiles/db/Dockerfile # Image definition has changed 
   tags:
     - build-push-to-registry
@@ -130,7 +130,7 @@ Deploy Calqul:
    - *apply_confs
   rules:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
-    - changes:
+      changes:
       - ./deployment/* # Deployment definition has changed
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
