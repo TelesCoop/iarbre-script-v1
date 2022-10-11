@@ -52,6 +52,6 @@ COPY --chown=calquluser:calquluser ./sql ./
 # CMD [ "/bin/bash", "./scripts/launch.sh" ]
 
 # launch calculation on Villeurbanne only
-# CMD [ "python3", "./main.py", "5", "69266" ]
+CMD [ "python3", "./main.py", "5", "69266" ]
 
-CMD [ "sleep", "300" ]
+# CMD [ "sleep", "300" ]
