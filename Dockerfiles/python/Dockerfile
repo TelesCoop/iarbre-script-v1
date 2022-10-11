@@ -18,6 +18,10 @@ apt-get -y install proj proj-dev && \
 apt-get install -y libcairo2 libcairo2-dev && \
 rm -rf /var/lib/apt/lists/*
 
+################################# Debug and diagnose tools #################################
+RUN apt-get install -qy apt-utils vim iputils-ping net-tools telnet curl postgresql-client
+############################################################################################
+
 COPY ./scripts/requirements.txt requirements.txt
 
 # Pip
