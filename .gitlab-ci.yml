@@ -12,7 +12,6 @@ variables:
 ################################################################################
 .build_and_push_image: &build_and_push_image
   - docker build --pull --tag "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest" .
-  # --build-arg NAMESPACE_ENV=${NAMESPACE_ENV}
   - docker push "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest"
 
 # Docker Authentification anchor
@@ -45,8 +44,6 @@ variables:
 
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
-  # - oc apply -f deployment/configmap.yml
-  # - oc apply -f deployment/routes.yml
   # Db
   - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
   - oc apply -f deployment/db-calqul.yml
@@ -54,7 +51,6 @@ variables:
 
   # Job
   - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
-  # - oc delete pods --selector pod-name=calqul-python-$NAMESPACE_ENV #--grace-period=0 --force
   - oc create -f deployment/job-calqul.yml
 
 ################################################################################
@@ -131,10 +127,6 @@ Deploy Calqul:
    - *apply_confs
   rules:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
-      # changes:
-      # - deployment/* # Deployment definition has changed
-      # - Dockerfiles/python/Dockerfile # Image definition has changed 
-      # - Dockerfiles/db/Dockerfile # Image definition has changed 
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
     - ns-test-d01 # No possibility to put varaibles here :(
