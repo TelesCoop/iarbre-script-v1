@@ -125,7 +125,7 @@ Sous la rubrique Settings > CI/CD > Variables :
 POSTGRES_DB         calque_planta_temp
 POSTGRES_PASSWORD   xxxxxx
 POSTGRES_PORT       5432
-POSTGRES_SERVER     calqul-postgis-service (Le service OpenShift qui est routé vers la base PostGIS)
+POSTGRES_SERVER     calqul-db-service (Le service OpenShift qui est routé vers la base PostGIS)
 POSTGRES_USER       calqul
 POSTGRES_SCHEMA     calqul
 ## Deploy
