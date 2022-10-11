@@ -4,7 +4,6 @@
 FROM debian:buster-slim
 
 # Getting some Args and Setting some ENV variables
-ARG NAMESPACE_ENV
 ENV CPLUS_INCLUDE_PATH="/usr/include/gdal"
 ENV C_INCLUDE_PATH="/usr/include/gdal"
 ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/pyproj/proj_dir/share/proj"
@@ -47,7 +46,7 @@ USER calquluser
 # Add app
 COPY --chown=calquluser:calquluser ./scripts/*.py ./
 COPY --chown=calquluser:calquluser ./sql ./
-COPY --chown=calquluser:calquluser .env.$NAMESPACE_ENV ./
+COPY --chown=calquluser:calquluser .env ./
 
 # Launch calculation
 # CMD [ "/bin/bash", "./scripts/launch.sh" ]

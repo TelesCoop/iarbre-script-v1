@@ -11,7 +11,8 @@ variables:
 #    Anchors
 ################################################################################
 .build_and_push_image: &build_and_push_image
-  - docker build --build-arg NAMESPACE_ENV=${NAMESPACE_ENV} --pull --tag "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest" .
+  - docker build --pull --tag "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest" .
+  # --build-arg NAMESPACE_ENV=${NAMESPACE_ENV}
   - docker push "$CI_REGISTRY_IMAGE/$IMAGE_NAME:latest"
 
 # Docker Authentification anchor
@@ -79,7 +80,7 @@ Build Calqul Python:
   script:
     - *docker_login
     - cd $IMAGE_DIR
-    - cp .env.example .env.$NAMESPACE_ENV
+    - cp .env.example .env
     - sed -i "s/__POSTGRES_DB__/$POSTGRES_DB/g" .env.$NAMESPACE_ENV
     - sed -i "s/__POSTGRES_PASSWORD__/$POSTGRES_PASSWORD/g" .env.$NAMESPACE_ENV
     - sed -i "s/__POSTGRES_PORT__/$POSTGRES_PORT/g" .env.$NAMESPACE_ENV 
