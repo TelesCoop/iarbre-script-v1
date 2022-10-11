@@ -206,7 +206,7 @@ def connectDB(params_DB, jsonEnable = False):
             cur = conn.cursor()
 
         # Log
-        debugLog(style.GREEN, "Database connection successfully opened", logging.INFO, True)
+        debugLog(style.GREEN, "Database connection successfully opened", logging.INFO)
         
         return conn, cur
 
@@ -222,7 +222,7 @@ def closeDB(conn, cur):
         cur.close()
         
         # Log
-        debugLog(style.GREEN, "Database connection successfully closed", logging.INFO, True)
+        debugLog(style.GREEN, "Database connection successfully closed", logging.INFO)
 
     except (Exception, psycopg2.Error) as error :
         debugLog(style.RED, "Error while trying to connect in PostgreSQL database : {}".format(error), logging.ERROR)
