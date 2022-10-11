@@ -53,6 +53,7 @@ variables:
 
   # Job
   - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
+  # - oc delete pods --selector pod-name=calqul-python-$NAMESPACE_ENV #--grace-period=0 --force
   - oc create -f deployment/job-calqul.yml
 
 ################################################################################
