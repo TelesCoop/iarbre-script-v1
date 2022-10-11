@@ -3,3 +3,4 @@ logs/
 tmp/
 Dockerfiles/python/.env
 ! Dockerfiles/python/.env.example
+.env
