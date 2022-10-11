@@ -46,12 +46,10 @@ USER calquluser
 
 COPY --chown=calquluser:calquluser ./scripts/*.py ./
 COPY --chown=calquluser:calquluser ./sql ./
+COPY --chown=calquluser:calquluser .env.$NAMESPACE_ENV ./
 
 # Launch calculation
-# CMD [ "python3", "./hello-world.py" ]
 # CMD [ "/bin/bash", "./scripts/launch.sh" ]
 
 # launch calculation on Villeurbanne only
 CMD [ "python3", "./main.py", "5", "69266" ]
-
-# CMD [ "sleep", "300" ]
