@@ -62,6 +62,7 @@ def showDoc():
         computeAll <gridSize: int, listInseeCode: int>      Generate all the plantability layer (launch all previous steps). 
                                                             List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256) 
                                                             but you can launch treatments for only one commune (e.g. python main.py 5 69266)
+        testDB                                              Test the connexion with DB parameters in .env file
         help                                                Show this documentation
     """
     
@@ -98,6 +99,19 @@ def test(communesArrayInput=None):
     # print(type(communesArrayCasted))
 
     multiProcessFactors(communesArrayInput)
+
+    return retcode
+
+def testDBConnexion():
+    # Init
+    retcode = None
+
+    print(style.BLUE + "Try to connect to database : {} - {} \n".format(DB_params['host'], DB_params['database']), style.RESET)
+
+    # Connect DB
+    conn, cur = connectDB(DB_params)
+    # Close DB
+    closeDB(conn, cur)
 
     return retcode
 
@@ -1008,6 +1022,8 @@ def main():
         elif firstArgv == 'test':
             secArgv = sys.argv[1:][1]
             test(secArgv)
+        elif firstArgv == 'testDB':
+            testDBConnexion()
         elif firstArgv == 'help':
             showDoc()
         else:
