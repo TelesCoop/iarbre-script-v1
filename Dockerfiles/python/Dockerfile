@@ -35,17 +35,16 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
 RUN addgroup calquluser && \ 
 useradd calquluser -g calquluser --home /app && \
 mkdir -p /app && \ 
-chown calquluser:calquluser /app
+mkdir -p /app/logs && \
+mkdir -p /app/tmp && \
+chown -R calquluser:calquluser /app
 
 WORKDIR /app
-# COPY --chown=calquluser:calquluser / /app
 
 USER calquluser
 
 COPY --chown=calquluser:calquluser ./scripts/*.py ./
-COPY ./sql ./
-
-RUN pwd && ls -la .
+COPY --chown=calquluser:calquluser ./sql ./
 
 # Launch calculation
 # CMD [ "python3", "./hello-world.py" ]
