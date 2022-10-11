@@ -45,6 +45,7 @@ USER calquluser
 
 # Add app 
 COPY --chown=calquluser:calquluser ./scripts/*.py ./
+COPY --chown=calquluser:calquluser ./scripts/*.sh ./
 COPY --chown=calquluser:calquluser ./sql ./
 COPY --chown=calquluser:calquluser .env ./
 
