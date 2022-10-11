@@ -5,7 +5,7 @@ metadata:
   namespace: __NAMESPACE__
 spec:
   selector:
-    app: calqul-__NAMESPACE_ENV__
+    app: calqul-db-__NAMESPACE_ENV__
     tier: database
   ports:
     - name: http-5432
