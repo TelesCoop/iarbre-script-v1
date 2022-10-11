@@ -132,6 +132,8 @@ Deploy Calqul:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
       changes:
       - deployment/* # Deployment definition has changed
+      - Dockerfiles/python/Dockerfile # Image definition has changed 
+      - Dockerfiles/db/Dockerfile # Image definition has changed 
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
     - ns-test-d01 # No possibility to put varaibles here :(
