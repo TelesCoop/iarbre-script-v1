@@ -38,16 +38,18 @@ mkdir -p /app && \
 chown calquluser:calquluser /app
 
 WORKDIR /app
-COPY --chown=calquluser:calquluser / /app
+# COPY --chown=calquluser:calquluser / /app
 
 USER calquluser
 
-COPY ./scripts/*.py ./
-COPY ./sql .
+COPY --chown=calquluser:calquluser ./scripts/*.py ./
+COPY ./sql ./
 
 RUN pwd && ls -la .
 
 # Launch calculation
-CMD [ "python3", "./hello-world.py" ]
+# CMD [ "python3", "./hello-world.py" ]
 # CMD [ "/bin/bash", "./scripts/launch.sh" ]
-# CMD [ "python3", "./scripts/main.py 5 69266" ]
+
+# launch calculation on Villeurbanne only
+CMD [ "python3", "./main.py", " 5", "69266" ]
