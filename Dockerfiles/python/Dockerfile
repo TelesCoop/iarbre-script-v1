@@ -37,7 +37,8 @@ useradd calquluser -g calquluser --home /app && \
 mkdir -p /app && \ 
 mkdir -p /app/logs && \
 mkdir -p /app/tmp && \
-chown -R calquluser:calquluser /app
+chown -R calquluser:calquluser /app && \
+chmod 777 ./logss ./tmp
 
 WORKDIR /app
 
