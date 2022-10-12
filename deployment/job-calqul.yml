@@ -11,7 +11,7 @@ spec:
       containers:
       - name: calqul-python-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
-        command:
-          - cd /app; ./test-env.sh
-          # - cd /app; python3 main.py 5 69266
+        # command:
+        #   - cd /app; ./test-env.sh
+        #   # - cd /app; python3 main.py 5 69266
       restartPolicy: Never
