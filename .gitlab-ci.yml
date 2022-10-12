@@ -116,7 +116,7 @@ Build Calqul Postgis:
   rules:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
       changes: # build image only if sources have changed. 
-      - Dockerfiles/db/* # db scripts have changed
+      - Dockerfiles/db/**/* # db scripts have changed
       - .gitlab-ci.yml
   tags:
     - build-push-to-registry

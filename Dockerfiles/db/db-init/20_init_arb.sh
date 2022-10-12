@@ -1,6 +1,6 @@
 #!/bin/bash
 # Boostraping de la base de données ARB
-#
+# 
 
 # Working Directory
 cd /docker-entrypoint-initdb.d
