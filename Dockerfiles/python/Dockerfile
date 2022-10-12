@@ -42,15 +42,18 @@ mkdir -p /app/tmp && \
 chown -R calquluser:calquluser /app && \
 chmod 777 /app/logs /app/tmp
 
+
 WORKDIR /app
 
 USER calquluser
 
 # Add app 
 COPY --chown=calquluser:calquluser ./scripts/*.py ./
-COPY --chown=calquluser:calquluser ./scripts/*.sh ./
+COPY --chown=calquluser:calquluser --chmod= ./scripts/*.sh ./
 COPY --chown=calquluser:calquluser ./sql ./
 COPY --chown=calquluser:calquluser .env ./
+
+RUN chmod 755 ./*.sh
 
 # Launch calculation
 CMD [ "/bin/bash", "./launch.sh" ]
