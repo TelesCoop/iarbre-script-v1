@@ -15,11 +15,11 @@ puis ses résultats sont ensuite exportés, et enfin elle est détruite." \
 # see http://heidloff.net/article/deploying-postgres-on-openshift/
 
 ENV PGDATA=/var/lib/postgresql/data/pgdata
-RUN groupadd non-root-postgres-group
-RUN useradd non-root-postgres-user --group non-root-postgres-group
-RUN chown -R non-root-postgres-user:non-root-postgres-group /var/lib/postgresql/data
-RUN chmod 777 /var/lib/postgresql/data
-RUN chown -R non-root-postgres-user:non-root-postgres-group /docker-entrypoint-initdb.d/
+RUN groupadd non-root-postgres-group && \
+useradd non-root-postgres-user --group non-root-postgres-group && \
+chown -R non-root-postgres-user:non-root-postgres-group /var/lib/postgresql/data && \
+chmod 777 /var/lib/postgresql/data && \
+chown -R non-root-postgres-user:non-root-postgres-group /docker-entrypoint-initdb.d/
 
 # Entry point. 
 # At startup, the Postgis Docker Image automatically runs .sh script and .sal scripts which are in this directory.
