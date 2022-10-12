@@ -64,6 +64,7 @@ variables:
     - sed -i "s/__POSTGRES_SERVER__/$POSTGRES_SERVER-$NAMESPACE_ENV/g" .env
     - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" .env
     - sed -i "s/__POSTGRES_SCHEMA__/$POSTGRES_SCHEMA/g" .env
+
 ################################################################################
 #    CI/CD Stages
 ################################################################################
@@ -116,6 +117,7 @@ Build Calqul Postgis:
     - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
       changes: # build image only if sources have changed. 
       - Dockerfiles/db/* # db scripts have changed
+      - .gitlab-ci.yml
   tags:
     - build-push-to-registry
 
