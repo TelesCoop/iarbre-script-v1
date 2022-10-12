@@ -11,49 +11,7 @@ spec:
       containers:
       - name: calqul-python-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
+        command:
+          - cd /app; ./test-env.sh
+          # - cd /app; python3 main.py 5 69266
       restartPolicy: Never
-
-# A deployment model
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: calqul-python-__NAMESPACE_ENV__
-#   namespace: __NAMESPACE__
-#   labels:
-#     apps: calqul-python-__NAMESPACE_ENV__
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: calqul-python-__NAMESPACE_ENV__
-#       role: primary
-#       tier: python
-#   template:
-#     metadata:
-#       labels:
-#         app: calqul-python-__NAMESPACE_ENV__
-#         role: primary
-#         tier: python
-#     spec:
-#       containers:
-#       - name: calqul-python-__NAMESPACE_ENV__
-#         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
-#         # readinessProbe:
-#         #   tcpSocket:
-#         #     port: 5432
-#         #   initialDelaySeconds: 120
-#         #   periodSeconds: 10
-#         # livenessProbe:
-#         #   tcpSocket:
-#         #     port: 5432
-#         #   initialDelaySeconds: 15
-#         #   periodSeconds: 20
-#         ressources:
-#           requests:
-#             memory: "256M"
-#             cpu: "200mi"
-#           limits:
-#             memory: "512M"
-#             cpu: "500mi"
-#       imagePullSecrets:
-#         - name: forge-secret
