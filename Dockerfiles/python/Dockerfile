@@ -56,7 +56,7 @@ COPY --chown=calquluser:calquluser .env ./
 # CMD [ "/bin/bash", "./launch.sh" ]
 
 # launch calculation on Villeurbanne only
-# CMD [ "python3", "./main.py", "5", "69266" ]
+CMD [ "python3", "./main.py", "5", "69266" ]
 
 # launch testing script
-CMD [  "/bin/bash", "./test-env.sh" ]
+# CMD [  "/bin/bash", "./test-env.sh" ]
