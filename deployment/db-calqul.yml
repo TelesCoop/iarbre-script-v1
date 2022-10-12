@@ -19,16 +19,19 @@ spec:
         role: primary
         tier: database
     spec:
+      imagePullSecrets:
+        - name: forge-secret
       volumes:
         - name: db-data
           persistentVolumeClaim: 
-            # pvc-01-ns-test-d01-claim
             claimName: pvc-01-__NAMESPACE__-claim
       containers:
       - name: calqul-db-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
+        imagePullPolicy: Always
         ports:
         - containerPort: 5432
+          protocol: TCP
         readinessProbe:
           tcpSocket:
             port: 5432
@@ -68,8 +71,7 @@ spec:
           # this is used together with the env var PGDATA = /var/lib/postgresql/data/pgdata (below)
           # the owner:group of this folder is 70:70 (postgres:postgres), done by this step in the docker image:
           # https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template#L146
-          - name: "db-data" 
+          - name: db-data
             mountPath: "/var/lib/postgres/data"
-            subpath: "pgdata"
-      imagePullSecrets:
-        - name: forge-secret
+            subpath: pgdata
+
