@@ -87,7 +87,7 @@ Build Calqul Python:
     - sed -i "s/__POSTGRES_SCHEMA__/$POSTGRES_SCHEMA/g" .env
     - *build_and_push_image
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
       changes: # build image only if sources have changed. 
       - Dockerfiles/python/Dockerfile # Image definition has changed 
       - Dockerfiles/python/scripts/* # Python scripts have changed
@@ -110,7 +110,7 @@ Build Calqul Postgis:
     - cd $IMAGE_DIR
     - *build_and_push_image
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
       changes: # build image only if sources have changed. 
       - Dockerfiles/db/Dockerfile # Image definition has changed 
   tags:
@@ -130,7 +130,7 @@ Deploy Calqul:
   script:
    - *apply_confs
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "postgres-dockerfile"'
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
     - ns-test-d01 # No possibility to put varaibles here :(
