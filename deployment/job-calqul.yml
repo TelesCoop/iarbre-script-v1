@@ -10,28 +10,33 @@ spec:
       name: calqul-__NAMESPACE_ENV__
     spec:
       volumes:
-      - name: data-in
+      - name: arb-data
         persistentVolumeClaim: 
           claimName: pvc-01-__NAMESPACE__-claim
       containers:
       - name: calqul-python-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
         volumeMounts:
-        - name: data-in
-          mountPath: "/data/files"
+        - name: arb-data
+          mountPath: "/arb-data/in"
           subpath: in
+        - name: arb-data
+          mountPath: "/arb-data/out"
+          subpath: out
       restartPolicy: Never
 
-  # Waiting for the Database POD to be ready
-  initContainers:
-  - name: wait-for-database
-    image: busybox:latest
-    imagePullPolicy: IfNotPresent
-    command: ['sh', '-c', 'until nc -vz ${POD_NAME}.${POD_NAMESPACE} __POSTGRES_PORT__; do echo "Waiting for ${POD_NAME} to get ready..."; sleep 3; done;']
-    env:
-      - name: POD_NAME
-        value: calqul-db-__NAMESPACE_ENV__
-      - name: POD_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.namespace
+  # Waiting for the Database POD to be ready. 
+  # ~~ NOT SURE IT IS WORKING ??? ~~
+  #
+  # initContainers:
+  # - name: wait-for-database
+  #   image: busybox:latest
+  #   imagePullPolicy: IfNotPresent
+  #   command: ['sh', '-c', 'until nc -vz ${POD_NAME}.${POD_NAMESPACE} __POSTGRES_PORT__; do echo "Waiting for ${POD_NAME} to get ready..."; sleep 3; done;']
+  #   env:
+  #     - name: POD_NAME
+  #       value: calqul-db-__NAMESPACE_ENV__
+  #     - name: POD_NAMESPACE
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: metadata.namespace
