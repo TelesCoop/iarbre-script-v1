@@ -18,11 +18,11 @@ spec:
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
         volumeMounts:
         - name: arb-data
-          mountPath: "/arb-data/in"
-          subpath: in
+          mountPath: "/arb-data/source-files"
+          # subpath: source-files
         - name: arb-data
-          mountPath: "/arb-data/out"
-          subpath: out
+          mountPath: "/arb-data/generated-files"
+          # subpath: out
       restartPolicy: Never
 
   # Waiting for the Database POD to be ready. 
