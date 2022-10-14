@@ -27,6 +27,6 @@ USER root
 
 RUN chown postgres:0 -R ${PGDATA}
 
-USER postgres
-
 COPY ./db-init/ /docker-entrypoint-initdb.d/
+
+USER postgres
