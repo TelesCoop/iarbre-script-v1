@@ -9,6 +9,7 @@ ENV PGDATA=/arb-data
 # RUN mkdir arb-data
 RUN groupadd non-root-postgres-group && \
 useradd non-root-postgres-user --group non-root-postgres-group && \
+mkdir arb-data && \
 chown -R non-root-postgres-user:non-root-postgres-group /arb-data && \
 chmod 777 /arb-data
 USER non-root-postgres
