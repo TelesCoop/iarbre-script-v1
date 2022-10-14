@@ -4,6 +4,7 @@ FROM postgis/postgis
 
 # Create another dir for pgdata than /var/postgresql/data/
 # see http://heidloff.net/article/deploying-postgres-on-openshift/
+USER root
 
 ENV PGDATA=/var/lib/postgresql/data/pgdata
 # RUN mkdir arb-data
@@ -16,4 +17,6 @@ chmod 777 /$PGDATA
 # Entry point. 
 COPY ./db-init/ /docker-entrypoint-initdb.d/
 
-# USER non-root-postgres
+RUN ls -l /docker-entrypoint-initdb.d/
+
+USER non-root-postgres

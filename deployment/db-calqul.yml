@@ -27,8 +27,7 @@ spec:
             claimName: pvc-01-__NAMESPACE__-claim
       containers:
       - name: calqul-db-__NAMESPACE_ENV__
-        # image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
-        image: postgis:postgis
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
         imagePullPolicy: Always
         ports:
         - containerPort: 5432
