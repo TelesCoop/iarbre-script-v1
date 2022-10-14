@@ -5,13 +5,13 @@ FROM postgis/postgis
 # Create another dir for pgdata than /var/postgresql/data/
 # see http://heidloff.net/article/deploying-postgres-on-openshift/
 
-ENV PGDATA=/arb-data/database
+ENV PGDATA=/var/lib/postgresql/data/pgdata
 # RUN mkdir arb-data
 RUN groupadd non-root-postgres-group && \
 useradd non-root-postgres-user --group non-root-postgres-group && \
-mkdir -p arb-data/database && \
-chown -R non-root-postgres-user:non-root-postgres-group /arb-data/database && \
-chmod 777 /arb-data/database
+mkdir -p $PGDATA && \
+chown -R non-root-postgres-user:non-root-postgres-group /$PGDATA && \
+chmod 777 /$PGDATA
 USER non-root-postgres
 
 # Entry point. 
