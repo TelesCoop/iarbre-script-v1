@@ -73,6 +73,6 @@ spec:
           # the owner:group of this folder is 70:70 (postgres:postgres), done by this step in the docker image:
           # https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template#L146
           - name: db-data
-            mountPath: "/arb-data/pgdata"
+            mountPath: "/arb-data"
             subpath: pgdata
 
