@@ -12,7 +12,6 @@ useradd non-root-postgres-user --group non-root-postgres-group && \
 mkdir -p $PGDATA && \
 chown -R non-root-postgres-user:non-root-postgres-group /$PGDATA && \
 chmod 777 /$PGDATA
-USER non-root-postgres
 
 # Entry point. 
 COPY ./db-init/ /docker-entrypoint-initdb.d/
