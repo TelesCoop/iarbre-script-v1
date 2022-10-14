@@ -71,6 +71,6 @@ spec:
           # this is used together with the env var PGDATA = /var/lib/postgresql/data/pgdata (below)
           # the owner:group of this folder is 70:70 (postgres:postgres), done by this step in the docker image:
           - name: db-data
-            mountPath: "/var/lib/postgres/data/pgdata"
+            mountPath: "/var/lib/postgresql/data/pgdata"
             subpath: database
 
