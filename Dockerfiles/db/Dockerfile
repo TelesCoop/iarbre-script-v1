@@ -17,9 +17,12 @@ puis ses résultats sont ensuite exportés, et enfin elle est détruite." \
 ENV PGDATA=/var/lib/postgresql/data/pgdata
 RUN groupadd non-root-postgres-group && \
 useradd non-root-postgres-user --group non-root-postgres-group && \
-chown -R non-root-postgres-user:non-root-postgres-group /var/lib/postgresql/data && \
-chmod 777 /var/lib/postgresql/data && \
-chown -R non-root-postgres-user:non-root-postgres-group /docker-entrypoint-initdb.d/
+mkdir -p "$PGDATA" && \
+chown -R non-root-postgres-user:non-root-postgres-user "$PGDATA" && \
+chmod 777 "$PGDATA" && \
+chown -R non-root-postgres-user:non-root-postgres-group /docker-entrypoint-initdb.d/ && \
+mkdir -p /var/run/postgresql && chown -R non-root-postgres-user:non-root-postgres-user /var/run/postgresql && \ 
+chmod 2777 /var/run/postgresql
 
 # Entry point. 
 # At startup, the Postgis Docker Image automatically runs .sh script and .sal scripts which are in this directory.
@@ -27,4 +30,3 @@ chown -R non-root-postgres-user:non-root-postgres-group /docker-entrypoint-initd
 COPY ./db-init/ /docker-entrypoint-initdb.d/
 
 USER non-root-postgres
-
