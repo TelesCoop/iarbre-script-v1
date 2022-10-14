@@ -1,32 +1,26 @@
-# # ARB::Base de données postgis pour le calcul du calque de plantabilité
+# ARB::Base de données postgis pour le calcul du calque de plantabilité
 
-# FROM postgis/postgis
+FROM postgis/postgis
 
-# # Create another dir for pgdata than /var/postgresql/data/
-# # see http://heidloff.net/article/deploying-postgres-on-openshift/
-# USER root
+# Create another dir for pgdata than /var/postgresql/data/
+# see http://heidloff.net/article/deploying-postgres-on-openshift/
+USER root
 
 # ENV PGDATA=/var/lib/postgresql/data/pgdata
-# # RUN mkdir arb-data
+ENV PGDATA=/arb-data/pgdata
 # RUN groupadd non-root-postgres-group && \
 # useradd non-root-postgres-user --group non-root-postgres-group && \
-# mkdir -p $PGDATA && \
-# chown -R non-root-postgres-user:non-root-postgres-group /$PGDATA && \
-# chmod 777 /$PGDATA
+RUN mkdir -p $PGDATA && \
+chown -R postgres:0 /$PGDATA && \
+chmod 777 /$PGDATA
 
-# # Entry point. 
-# COPY ./db-init/ /docker-entrypoint-initdb.d/
-
-# RUN ls -l /docker-entrypoint-initdb.d/
+# Entry point. 
+COPY ./db-init/ /docker-entrypoint-initdb.d/
 
 # USER non-root-postgres
 
-FROM mdillon/postgis:10-alpine
-
-USER root
-
-RUN chown postgres:0 -R ${PGDATA}
-
-COPY ./db-init/ /docker-entrypoint-initdb.d/
-
+# FROM mdillon/postgis:10-alpine
+# USER root
+# RUN chown postgres:0 -R ${PGDATA}
+# COPY ./db-init/ /docker-entrypoint-initdb.d/
 USER postgres
