@@ -5,6 +5,12 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- ------------------------
+--        POSTGIS
+-- ------------------------
+
+CREATE ROLE adm;
+
+-- ------------------------
 --         SCHEMA 
 -- ------------------------
 
