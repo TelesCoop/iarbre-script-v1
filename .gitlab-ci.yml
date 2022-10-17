@@ -92,7 +92,7 @@ Build Calqul Python:
     - *set_env
     - *build_and_push_image
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "launch-script"'
       changes: # build image only if sources have changed. 
       - Dockerfiles/python/Dockerfile # Image definition has changed 
       - Dockerfiles/python/scripts/* # Python scripts have changed
@@ -115,7 +115,7 @@ Build Calqul Postgis:
     - cd $IMAGE_DIR
     - *build_and_push_image
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "launch-script"'
       changes: # build image only if sources have changed. 
       - Dockerfiles/db/**/* # db scripts have changed
       - .gitlab-ci.yml
@@ -136,7 +136,7 @@ Deploy Calqul:
   script:
    - *apply_confs
   rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "launch-script"'
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
     - ns-test-d01 # No possibility to put varaibles here :(
