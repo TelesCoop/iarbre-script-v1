@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calqul-db-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
+  labels:
+    apps: calqul-db-__NAMESPACE_ENV__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calqul-db-__NAMESPACE_ENV__
+      role: primary
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: calqul-db-__NAMESPACE_ENV__
+        role: primary
+        tier: database
+    spec:
+      imagePullSecrets:
+        - name: forge-secret
+      volumes:
+        - name: db-data
+          persistentVolumeClaim: 
+            claimName: pvc-01-__NAMESPACE__-claim
+      containers:
+      - name: calqul-db-__NAMESPACE_ENV__
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-db-__NAMESPACE_ENV__
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 120
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        ressources:
+          requests:
+            memory: "256M"
+            cpu: "200mi"
+          limits:
+            memory: "512M"
+            cpu: "500mi"
+        env:
+        - name: POSTGRES_DB
+          value: "__POSTGRES_DB__"
+        - name: POSTGRES_PASSWORD
+          value: "__POSTGRES_PASSWORD__"
+        - name: POSTGRES_PORT
+          value: "__POSTGRES_PORT__"
+        - name: POSTGRES_SERVER
+          value: "__POSTGRES_SERVER__"
+        - name: POSTGRES_USER
+          value: "__POSTGRES_USER__"
+        - name: POSTGRES_SCHEMA
+          value: "__POSTGRES_SCHEMA__"
+          # need to define PGDATA env var because not using the default /var/lib/postgresql/data, but a subpath under it.
+        - name: PGDATA
+          value: /arb-data/pgdata
+        volumeMounts:
+          # need a subpath as postgres wants an empty folder (the mounted folder `$PGDATA` has a `lost+found` directory)
+          # see https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
+          - name: db-data
+            mountPath: "/arb-data"
+            subpath: pgdata
+
