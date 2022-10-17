@@ -35,6 +35,7 @@ from utils import *
 DB_params = None
 DB_schema = None
 PythonLaunch = None
+CommunesFilePath = None
 ENV_targetProj = None
 RemoveTempFile = None
 SkipExistingData = None
@@ -169,18 +170,13 @@ def initCommunes():
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
 
-    # Ask user geojson path ?
-    # DEBUG LOCAL : "./file_data/communes_gl.geojson"
-    while True:
-        filePathResponse = input("Please enter the geoJSON file path (with geometry and insee column) : ")
-        if not filePathResponse:
-            print(style.RED + "Please enter an awnser... \n", style.RESET)
-        else:
-            # Good response
-            break
+    # Get communes file path in .env and check if file exist
+    if not os.path.isfile(CommunesFilePath):
+        debugLog(style.RED, "File not found in " + CommunesFilePath + " : Please verify your path and relaunch this script.", logging.ERROR)
+        return
 
     # Load geojson file in Dataframe
-    communesGDF = createGDFfromGeoJSON(filePathResponse)
+    communesGDF = createGDFfromGeoJSON(CommunesFilePath)
 
     if communesGDF is not None:
         # Clean useless attribute
@@ -916,6 +912,7 @@ def initEnv():
     global DB_params
     global DB_schema
     global PythonLaunch
+    global CommunesFilePath
     global ENV_targetProj
     global RemoveTempFile
     global SkipExistingData
@@ -930,6 +927,7 @@ def initEnv():
     }
     DB_schema = os.getenv('DB_SCHEMA')
     PythonLaunch = os.getenv('PYTHON_LAUNCH')
+    CommunesFilePath = os.getenv('COMMUNES_FILE_PATH')
     ENV_targetProj = os.getenv('TARGET_PROJ')
     RemoveTempFile = os.getenv('REMOVE_TEMP_FILE')
     SkipExistingData = os.getenv('SKIP_EXISTING_DATA')

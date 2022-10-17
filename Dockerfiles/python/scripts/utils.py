@@ -123,6 +123,7 @@ def checkEnvFile():
     dbPwd = os.getenv('DB_PWD')
     dbName = os.getenv('DB_NAME')
     dbSchema = os.getenv('DB_SCHEMA')
+    communesFilePath = os.getenv('COMMUNES_FILE_PATH')
     targetProj = os.getenv('TARGET_PROJ')
     boolTempFile = os.getenv('REMOVE_TEMP_FILE')
     skipExistingData = os.getenv('SKIP_EXISTING_DATA')
@@ -134,7 +135,7 @@ def checkEnvFile():
         sys.exit(0)
     else:
         # Check all var in .env file
-        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None):
+        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or communesFilePath == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None):
             debugLog(style.RED, "Please make sure you have correctly initialized the .env file", logging.ERROR)
             sys.exit(0)
 
