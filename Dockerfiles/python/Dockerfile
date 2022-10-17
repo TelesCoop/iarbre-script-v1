@@ -11,13 +11,14 @@ ENV GDAL_DATA="/usr/local/lib/python3.7/dist-packages/fiona/gdal_data/"
 
 # Basic libs and install python3.7
 RUN apt-get update && apt-get upgrade -y \
-&& apt-get install -y procps wget python3.7 python3-pip gdal-bin libgdal-dev apt-utils \
+&& apt-get install -y procps wget python3.7 python3-pip gdal-bin libgdal-dev apt-utils git \
 && apt-get clean \
 apt-get -y install proj proj-dev && \
 # https://stackoverflow.com/questions/70508775/error-could-not-build-wheels-for-pycairo-which-is-required-to-install-pyprojec
 apt-get install -y libcairo2 libcairo2-dev && \
+apt-get
 ################################# Debug and diagnose tools #################################
-apt-get install -qy apt-utils vim iputils-ping net-tools telnet curl postgresql-client &&\
+# apt-get install -qy apt-utils vim iputils-ping net-tools telnet curl postgresql-client &&\
 ############################################################################################
 rm -rf /var/lib/apt/lists/*
 
