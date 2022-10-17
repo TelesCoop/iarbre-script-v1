@@ -75,7 +75,7 @@ fi;
 stage "Launch computations..."
 cd $scripts_dir
 comment "Init communes"
-python main.py initCommunes
+python3 main.py initCommunes
 
 python3 main.py initGrid
 python3 main.py initDatas
