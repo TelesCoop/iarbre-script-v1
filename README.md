@@ -24,7 +24,7 @@ pip install -r requirements.txt
 
 * Lancer une première fois le script pour afficher la documentation
 ```bash
-python main.py
+python - main.py
 ```
 
 **Bravo ! Vous êtes désormais prêt à lancer un nouveau calcul du calque de plantabilité !** 🎉
@@ -34,7 +34,7 @@ python main.py
 La documentation du script vous aidera à comprendre les arguments à passer pour lancer chaque étape du calcul :
 
 ```bash
-$ python main.py help
+$ python - main.py help
 
 Args:
   initCommunes                                        Insert Communes in database from a geoJSON file path (with geometry and insee column)
@@ -45,8 +45,8 @@ Args:
                                                       Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
   computeIndices                                      Compute the plantability indices on each tile with database informations. 
   computeAll <gridSize: int, listInseeCode: int>      Generate all the plantability layer (launch all previous steps). 
-                                                      List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256) 
-                                                      but you can launch treatments for only one commune (e.g. python main.py 5 69266)
+                                                      List of inseeCode must be separated with comma (,) and without space (e.g. python - main.py 5 69266,69388,69256) 
+                                                      but you can launch treatments for only one commune (e.g. python - main.py 5 69266)
   help                                                Show this documentation
 ```
 
@@ -117,8 +117,17 @@ Vous trouverez le détail de ce projet sur les documents suivants :
 ## Intégration continue & Déploiement
 
 ## Build
-Image de base Python : https://hub.docker.com/_/python
+Image de base Debian : https://hub.docker.com/_/debian:buster-slim
 
+### Configuration de Gitlab
+les variables comportant les données de connexion à la base PostGIS doivent être initiialisées dans Gitlab.
+Sous la rubrique Settings > CI/CD > Variables :
+POSTGRES_DB         calque_planta_temp
+POSTGRES_PASSWORD   xxxxxx
+POSTGRES_PORT       5432
+POSTGRES_SERVER     calqul-db-service (Le service OpenShift qui est routé vers la base PostGIS)
+POSTGRES_USER       calqul
+POSTGRES_SCHEMA     calqul
 ## Deploy
 
 ### Déploiemet d'un Job Openshift
@@ -132,3 +141,22 @@ Doc :
 
 ### Suppression d'un job
  - https://access.redhat.com/documentation/en-us/openshift_container_platform/3.4/html/developer_guide/dev-guide-scheduled-jobs
+
+### Commandes lancées par le job
+- main.py initCommunes
+  
+- main.py initGrid
+  
+- main.py initDatas
+  
+- main.py computeFactors
+  
+- main.py computeIndices
+  
+- main.py computeAll
+  
+- main.py test
+  
+- main.py testDB
+  
+- main.py help

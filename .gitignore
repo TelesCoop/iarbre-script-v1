@@ -1,3 +1,6 @@
 __pycache__/*
-logs/*
+logs/
+tmp/
+Dockerfiles/python/.env
+! Dockerfiles/python/.env.example
 .env
