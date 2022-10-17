@@ -16,7 +16,6 @@ RUN apt-get update && apt-get upgrade -y \
 apt-get -y install proj proj-dev && \
 # https://stackoverflow.com/questions/70508775/error-could-not-build-wheels-for-pycairo-which-is-required-to-install-pyprojec
 apt-get install -y libcairo2 libcairo2-dev && \
-apt-get
 ################################# Debug and diagnose tools #################################
 # apt-get install -qy apt-utils vim iputils-ping net-tools telnet curl postgresql-client &&\
 ############################################################################################
