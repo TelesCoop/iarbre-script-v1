@@ -133,10 +133,13 @@ Deploy Calqul:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
   before_script:
     - *prepare_deployment
+    - echo  $CI_COMMIT_BRANCH && echo $CI_DEFAULT_BRANCH
   script:
    - *apply_confs
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "launch-script"'
+  # rules:
+    # - if: '$CI_COMMIT_BRANCH == "launch-script"'
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
     - ns-test-d01 # No possibility to put varaibles here :(
