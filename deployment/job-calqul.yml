@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: calqul-__NAMESPACE_ENV__
+  name: calqul-job-__NAMESPACE_ENV__
 spec:
   # maximum duration the job can run => 40h 
   activeDeadlineSeconds: 144000 
   template:         
     metadata:
-      name: calqul-__NAMESPACE_ENV__
+      name: calqul-job-__NAMESPACE_ENV__
     spec:
       volumes:
       - name: arb-data
@@ -30,7 +30,8 @@ spec:
       - name: update-data-source
         image: alpine/git:latest
         imagePullPolicy: IfNotPresent
-        command: ['/bin/sh', '-c', 'git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files']
+        # command: ['/bin/sh', '-c', 'git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files']
+        command: ['sh', '-c', 'until true; do echo "Waiting until end of world..."; sleep 3; done;']
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
