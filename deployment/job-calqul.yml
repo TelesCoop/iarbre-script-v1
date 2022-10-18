@@ -25,6 +25,17 @@ spec:
           # subpath: out
       restartPolicy: Never
 
+      # Clone or update sources data before calculation
+      initContainers:
+      - name: update-data-source
+        image: busybox:latest
+        imagePullPolicy: Always
+        command: apt-get update && apt-get install git && git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files
+        volumeMounts:
+        - name: arb-data
+          mountPath: "/arb-data/source-files"
+
+          
   # Waiting for the Database POD to be ready. 
   # ~~ NOT SURE IT IS WORKING ??? ~~
   #
