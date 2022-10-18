@@ -88,6 +88,7 @@ Build Calqul Python:
   stage: Build Calqul
   environment: dev
   variables:
+    DOCKER_TLS_CERTDIR: ""
     IMAGE_NAME: calqul-python-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/python
   services:
@@ -111,6 +112,7 @@ Build Calqul Postgis:
   stage: Build Calqul
   environment: dev
   variables:
+    DOCKER_TLS_CERTDIR: ""
     IMAGE_NAME: calqul-db-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/db
   services:
