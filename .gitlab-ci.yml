@@ -35,6 +35,7 @@ variables:
   - export NO_PROXY=grandlyon.fr
   - export KUBECONFIG=$KUBECONFIG_DEV
   - echo Preparing Deployment on $NAMESPACE 
+  - echo $NAMESPACE_ENV
 
   # DB deployment file
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/db-calqul.yml
@@ -79,9 +80,9 @@ stages:
 
 Build Calqul Python:
   stage: Build Calqul
+  environment: dev
   variables:
     DOCKER_TLS_CERTDIR: ""
-    NAMESPACE_ENV: "d01"
     IMAGE_NAME: calqul-python-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/python
   services:
@@ -103,9 +104,9 @@ Build Calqul Python:
 
 Build Calqul Postgis:
   stage: Build Calqul
+  environment: dev
   variables:
     DOCKER_TLS_CERTDIR: ""
-    NAMESPACE_ENV: "d01"
     IMAGE_NAME: calqul-db-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/db
   services:
@@ -133,11 +134,33 @@ Deploy Calqul:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
   before_script:
     - *prepare_deployment
-    - echo  $CI_COMMIT_BRANCH && echo $CI_DEFAULT_BRANCH
   script:
    - *apply_confs
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
-    - ns-test-d01 # No possibility to put varaibles here :(
+    - ns-test-d01 # No possibility to put variables here :(
+
+# *********************************************************************************************
+# * MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN  *
+# *********************************************************************************************
+
+# BUILD
+
+# DEPLOY
+Deploy Calqul in Production:
+  stage: Deploy Calqul in production
+  environment: production
+  # NAMESPACE_ENV is defined in gitlab
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  only:
+    - main
+  tags:
+    #- ns-arb-d01 @TODO : Change after when the right namespace is available  
+    - ns-test-d01 # No possibility to put variables here :(
