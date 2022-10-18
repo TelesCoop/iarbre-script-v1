@@ -73,7 +73,7 @@ variables:
 stages:
   - Build Calqul
   - Deploy Calqul
-  - Deploy Calqul in Production
+  - Deploy Calqul Production
 
 # *********************************************************************************************
 # * BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD *
@@ -150,8 +150,8 @@ Deploy Calqul:
 # BUILD
 
 # DEPLOY
-Deploy Calqul in Production:
-  stage: Deploy Calqul in production
+Deploy Calqul Production:
+  stage: Deploy Calqul Production
   environment: production
   # NAMESPACE_ENV is defined in gitlab
   variables:
