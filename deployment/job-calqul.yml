@@ -30,7 +30,7 @@ spec:
       - name: update-data-source
         image: alpine/git:latest
         imagePullPolicy: IfNotPresent
-        command: ["/bin/sh", "-c", "git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files"]
+        command: ['/bin/sh', '-c', 'git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files']
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
