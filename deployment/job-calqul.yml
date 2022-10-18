@@ -28,9 +28,9 @@ spec:
       # Clone or update sources data before calculation
       initContainers:
       - name: update-data-source
-        image: busybox:latest
+        image: alpine/git:latest
         imagePullPolicy: Always
-        command: ["/bin/sh", "-c", "apt-get update && apt-get install git;", "git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files"]
+        command: ["/bin/sh", "-c", "git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files"]
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
