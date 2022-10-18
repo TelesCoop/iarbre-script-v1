@@ -135,6 +135,7 @@ Build Calqul Postgis:
 
 Deploy Calqul:
   stage: Deploy Calqul
+  environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
   before_script:
