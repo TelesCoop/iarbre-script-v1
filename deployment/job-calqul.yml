@@ -31,7 +31,7 @@ spec:
         image: alpine/git:latest
         imagePullPolicy: IfNotPresent
         # command: ["/bin/sh", "-c", "git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files"]
-        command: ['/bin/sh', '-c', 'echo "hello world!"']
+        command: ['/bin/sh', '-c', 'echo "hello world!"; sleep 60;']
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
