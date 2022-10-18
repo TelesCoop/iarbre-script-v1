@@ -1,6 +1,12 @@
 #
 # Gitlab CI/CD : Build archive and Docker images and deploy on Openshift
 #
+# Pour gérer les déploiements dans les différents environnement s (d01, r01, p01),
+# 3 environnements gitlab ont été créer et 
+# 3 variables NAMESPACE_ENV associées sont renseignées 
+# avec les 3 valeurs {d01, r01, p01}.
+# Cela permet de mutulialiser tous les fichiers de déploiements ainsi que toutes les étapes de build.
+# le 'stage' de déploiement en production est forcément différent du fait qu'il DOIT être manuel
 
 variables:
     TRIGRAMME: test #arb @TODO : Change after when the right namespace is available
@@ -34,8 +40,7 @@ variables:
 .prepare_deployment: &prepare_deployment
   - export NO_PROXY=grandlyon.fr
   - export KUBECONFIG=$KUBECONFIG_DEV
-  - echo Preparing Deployment on $NAMESPACE 
-  - echo $NAMESPACE_ENV
+  - echo "Preparing Deployment on $NAMESPACE ($NAMESPACE_ENV)"
 
   # DB deployment file
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/db-calqul.yml
@@ -83,7 +88,6 @@ Build Calqul Python:
   stage: Build Calqul
   environment: dev
   variables:
-    DOCKER_TLS_CERTDIR: ""
     IMAGE_NAME: calqul-python-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/python
   services:
@@ -107,7 +111,6 @@ Build Calqul Postgis:
   stage: Build Calqul
   environment: dev
   variables:
-    DOCKER_TLS_CERTDIR: ""
     IMAGE_NAME: calqul-db-$NAMESPACE_ENV
     IMAGE_DIR: ./Dockerfiles/db
   services:
@@ -131,7 +134,6 @@ Build Calqul Postgis:
 Deploy Calqul:
   stage: Deploy Calqul
   variables:
-    NAMESPACE_ENV: 'd01'
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
   before_script:
     - *prepare_deployment
@@ -153,7 +155,6 @@ Deploy Calqul:
 Deploy Calqul Production:
   stage: Deploy Calqul Production
   environment: production
-  # NAMESPACE_ENV is defined in gitlab
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
   before_script:
@@ -164,4 +165,6 @@ Deploy Calqul Production:
     - main
   tags:
     #- ns-arb-d01 @TODO : Change after when the right namespace is available  
-    - ns-test-d01 # No possibility to put variables here :(
+    # In production, the namespace will be different, as we can't to put variables here :(
+    # we need anorher stage only for procudtion banch.
+    - ns-test-d01 
