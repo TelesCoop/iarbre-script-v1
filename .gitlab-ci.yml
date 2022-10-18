@@ -73,6 +73,7 @@ variables:
 stages:
   - Build Calqul
   - Deploy Calqul
+  - Deploy Calqul in Production
 
 # *********************************************************************************************
 # * BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD *
