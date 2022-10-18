@@ -69,7 +69,7 @@ variables:
   - oc apply -f deployment/service-calqul.yml
 
   # Job
-  - oc delete jobs --selector job-name=calqul-$NAMESPACE_ENV 
+  - oc delete jobs --selector job-name=calqul-job-$NAMESPACE_ENV 
   - oc create -f deployment/job-calqul.yml
 
 ################################################################################
