@@ -4,5 +4,5 @@ RUN apk add git-lfs
 
 COPY update_data.sh  ./
 
-# ENTRYPOINT [ "/bin/sh", "update_data.sh" ]
-ENTRYPOINT [ "/bin/sh" ]
+ENTRYPOINT [ "/bin/sh", "./update_data.sh" ]
+# ENTRYPOINT [ "/bin/sh" ]
