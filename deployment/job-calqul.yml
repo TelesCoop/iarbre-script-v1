@@ -29,26 +29,23 @@ spec:
       initContainers:
       - name: update-data-source
         image: alpine/git:latest
+        env:
+          - name: GIT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: username
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: password
+          - name: HTTP_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+          - name: HTTPS_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
         imagePullPolicy: IfNotPresent
-        # command: ['/bin/sh', '-c', 'git clone https://forge.grandlyon.com/erasme/data-recalcul-calque.git /arb-data/source-files']
-        command: ["sh", "-c", "sleep 600;"]
+        command: ["/bin/sh", "-c", "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git /arb-data/source-files/data-recalcul-calque;"]
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
-
-
-  # Waiting for the Database POD to be ready. 
-  # ~~ NOT SURE IT IS WORKING ??? ~~
-  #
-  # initContainers:
-  # - name: wait-for-database
-  #   image: busybox:latest
-  #   imagePullPolicy: IfNotPresent
-  #   command: ["sh", "-c", "until nc -vz ${POD_NAME}.${POD_NAMESPACE} __POSTGRES_PORT__; do echo "Waiting for ${POD_NAME} to get ready..."; sleep 3; done;"]
-  #   env:
-  #     - name: POD_NAME
-  #       value: calqul-db-__NAMESPACE_ENV__
-  #     - name: POD_NAMESPACE
-  #       valueFrom:
-  #         fieldRef:
-  #           fieldPath: metadata.namespace
