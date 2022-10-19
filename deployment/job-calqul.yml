@@ -45,7 +45,16 @@ spec:
           - name: HTTPS_PROXY
             value: "http://proxyhttppro.grandlyon.fr:8080"
         imagePullPolicy: IfNotPresent
-        command: ["/bin/sh", "-c", "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git /arb-data/source-files/data-recalcul-calque;"]
+        # command: ["/bin/sh", "-c", "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git /arb-data/source-files/data-recalcul-calque;"]
+        command:
+        - /bin/sh
+        - -c
+        - mkdir -p /arb-data/source-files/data-recalcul-calque;
+        - cd /arb-data/source-files/data-recalcul-calque;
+        - git init; 
+        - git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; 
+        - git fetch origin; 
+        - git checkout main;
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
