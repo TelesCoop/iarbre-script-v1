@@ -48,7 +48,7 @@ spec:
         command:
         - /bin/sh
         - -c
-        - ls -lR /arb-data; /git/update_data.sh
+        - ls -la /git; /git/update_data.sh
         # - mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; [[ ! -d ".git" ]] && { git init; git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; }; git checkout .; git pull origin main;
         # git fetch origin; git checkout main
         volumeMounts:
