@@ -1,5 +1,10 @@
 #/bin/sh
 
+echo "-------------------------------------------"
+echo "GIT_USERNAME=$GIT_USERNAME"
+echo "GIT_PASSWORD=$GIT_PASSWORD"
+echo "-------------------------------------------"
+
 mkdir -p /arb-data/source-files/data-recalcul-calque
 cd /arb-data/source-files/data-recalcul-calque
 
