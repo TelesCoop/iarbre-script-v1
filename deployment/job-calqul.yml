@@ -28,7 +28,7 @@ spec:
       # Clone or update sources data before calculation
       initContainers:
       - name: update-data-source
-        image: alpine/git:latest
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs__NAMESPACE_ENV__
         env:
           - name: GIT_USERNAME
             valueFrom:
@@ -51,7 +51,7 @@ spec:
         command:
         - /bin/sh
         - -c
-        - mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; pwd; [[ ! -d ".git" ]] && { git init; git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; } || { git checkout .; git pull origin main; }
+        - mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; [[ ! -d ".git" ]] && { git init; git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; }; git checkout .; git pull origin main;
         # git fetch origin; git checkout main
         volumeMounts:
         - name: arb-data

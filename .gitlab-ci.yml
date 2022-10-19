@@ -129,6 +129,26 @@ Build Calqul Postgis:
   tags:
     - build-push-to-registry
 
+Build Calqul Git-lfs:
+  stage: Build Calqul
+  environment: dev
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE_NAME: calqul-git-lfs-$NAMESPACE_ENV
+    IMAGE_DIR: ./Dockerfiles/git
+  services:
+    - docker:dind
+  script:
+    - *docker_login
+    - cd $IMAGE_DIR
+    - *build_and_push_image
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes: # build image only if sources have changed. 
+      - Dockerfiles/git/**/* # db scripts have changed
+      - .gitlab-ci.yml
+  tags:
+    - build-push-to-registry
 # *********************************************************************************************
 # * DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLO *
 # *********************************************************************************************
