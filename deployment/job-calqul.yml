@@ -51,7 +51,7 @@ spec:
         command:
         - /bin/sh
         - -c
-        - mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; git init; git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; git pull origin main;
+        - mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; git checkout .; git init; git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git; git pull origin main;
         # git fetch origin; git checkout main
         volumeMounts:
         - name: arb-data
