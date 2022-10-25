@@ -1,0 +1,15 @@
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: atrium-svc
+  namespace: __NAMESPACE__
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: arb-atrium-data-__NAMESPACE_ENV__
+---

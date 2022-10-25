@@ -1,0 +1,19 @@
+# Main route fo atrium
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: main
+  namespace: my-namespace
+spec:
+  host: "arb-data-atrium-dev.air.grandlyon.fr"
+  path: /
+  to:
+    kind: Service
+    name: atrium-svc
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
