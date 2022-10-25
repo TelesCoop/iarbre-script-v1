@@ -1,0 +1,30 @@
+hostname: arb-data-dev.air.grandlyon.fr
+debug_mode: false
+http_port: 8080
+tls_mode: BehindProxy
+letsencrypt_email: foo@bar.com
+log_to_file: false
+session_duration_days: 1
+apps:
+davs:
+  - id: 1
+    host: arb-data-dev
+    directory: /arb-data/config
+    writable: true
+    name: Files 1
+    icon: 983856
+    color: 4292030255
+    secured: false
+    allow_symlinks: false
+    roles:
+      - ADMINS
+      - USERS
+users:
+  - login: admin
+    password: $argon2id$v=19$m=4096,t=3,p=1$QWsdpHrjCaPwy3IODegzNA$dqyioLh9ndJ3V7OoKpkCaczJmGNKjuG99F5hisd3bPs
+    roles:
+      - ADMINS
+  - login: user
+    password: $argon2id$v=19$m=4096,t=3,p=1$QWsdpHrjCaPwy3IODegzNA$dqyioLh9ndJ3V7OoKpkCaczJmGNKjuG99F5hisd3bPs
+    roles:
+      - USERS
