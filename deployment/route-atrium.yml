@@ -3,7 +3,7 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: main
-  namespace: my-namespace
+  namespace: __NAMESPACE__
 spec:
   host: "arb-data-atrium-dev.air.grandlyon.fr"
   path: /
