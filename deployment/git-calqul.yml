@@ -52,5 +52,5 @@ spec:
         - name: arb-data
           mountPath: "/arb-data/generated-files"
           # subpath: out
-      restartPolicy: Never
+      restartPolicy: Always
 
