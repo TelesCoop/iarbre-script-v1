@@ -48,7 +48,7 @@ spec:
         command:
         - /bin/sh
         - -c
-        -  rm -rf /arb-data/source-files/data-recalcul-calque; mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/data-recalcul-calque; git lfs clone https://arb-data-access-token:sj_-yDyc3nnvAmWmP76h@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/;  echo "Data ready !"; 
+        -  rm -rf /arb-data/source-files/data-recalcul-calque; mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files; git lfs clone https://arb-data-access-token:sj_-yDyc3nnvAmWmP76h@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/;  echo "Data ready !"; 
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
