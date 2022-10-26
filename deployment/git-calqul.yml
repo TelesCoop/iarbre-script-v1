@@ -1,14 +1,23 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: calqul-git-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
+  labels:
+    apps: calqul-git-__NAMESPACE_ENV__
 spec:
-  # maximum duration the job can run => 40h 
-  activeDeadlineSeconds: 144000 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calqul-git-__NAMESPACE_ENV__
+      role: primary
+      tier: git
   template:         
     metadata:
       name: calqul-git-__NAMESPACE_ENV__
     spec:
+      imagePullSecrets:
+        - name: forge-secret
       volumes:
       - name: arb-data
         persistentVolumeClaim: 
