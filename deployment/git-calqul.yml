@@ -11,18 +11,20 @@ spec:
     matchLabels:
       app: calqul-git-lfs-__NAMESPACE_ENV__
       role: primary
-      tier: git
-  template:         
+      tier: data-sources
+  template:
     metadata:
-      name: calqul-git-lfs-__NAMESPACE_ENV__
-      labels: calqul-git-lfs-__NAMESPACE_ENV__
+      labels:
+        app: calqul-git-lfs-__NAMESPACE_ENV__
+        role: primary
+        tier: data-sources
     spec:
       imagePullSecrets:
         - name: forge-secret
       volumes:
-      - name: arb-data
-        persistentVolumeClaim: 
-          claimName: pvc-01-__NAMESPACE__-claim
+        - name: arb-data
+          persistentVolumeClaim: 
+            claimName: pvc-01-__NAMESPACE__-claim
       containers:
       - name: calqul-git-lfs-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__
@@ -49,9 +51,63 @@ spec:
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
-          # subpath: source-files
         - name: arb-data
           mountPath: "/arb-data/generated-files"
-          # subpath: out
-      restartPolicy: Always
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: calqul-git-lfs-__NAMESPACE_ENV__
+#   namespace: __NAMESPACE__
+#   labels:
+#     apps: calqul-git-lfs-__NAMESPACE_ENV__
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: calqul-git-lfs-__NAMESPACE_ENV__
+#       role: primary
+#       tier: git
+#   template:         
+#     metadata:
+#       name: calqul-git-lfs-__NAMESPACE_ENV__
+#       labels: calqul-git-lfs-__NAMESPACE_ENV__
+#     spec:
+#       imagePullSecrets:
+#         - name: forge-secret
+#       volumes:
+#       - name: arb-data
+#         persistentVolumeClaim: 
+#           claimName: pvc-01-__NAMESPACE__-claim
+#       containers:
+#       - name: calqul-git-lfs-__NAMESPACE_ENV__
+#         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__
+#         env:
+#           - name: GIT_USERNAME
+#             valueFrom:
+#               secretKeyRef:
+#                 name: arb-data-access-token
+#                 key: username
+#           - name: GIT_PASSWORD
+#             valueFrom:
+#               secretKeyRef:
+#                 name: arb-data-access-token
+#                 key: password
+#           - name: HTTP_PROXY
+#             value: "http://proxyhttppro.grandlyon.fr:8080"
+#           - name: HTTPS_PROXY
+#             value: "http://proxyhttppro.grandlyon.fr:8080"
+#         command:
+#         - /bin/sh
+#         - -c
+#         - sleep 3600;
+#         # - rm -rf /arb-data/source-files/data-recalcul-calque; mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/; git lfs install --force; git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/; cd data-recalcul-calque; git pull origin main;
+#         volumeMounts:
+#         - name: arb-data
+#           mountPath: "/arb-data/source-files"
+#           # subpath: source-files
+#         - name: arb-data
+#           mountPath: "/arb-data/generated-files"
+#           # subpath: out
+#       restartPolicy: Always
 
