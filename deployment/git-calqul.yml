@@ -15,6 +15,7 @@ spec:
   template:         
     metadata:
       name: calqul-git-lfs-__NAMESPACE_ENV__
+      labels: calqul-git-lfs-__NAMESPACE_ENV__
     spec:
       imagePullSecrets:
         - name: forge-secret
