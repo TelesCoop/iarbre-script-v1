@@ -48,8 +48,13 @@ spec:
         command:
         - /bin/sh
         - -c
+<<<<<<< HEAD
         - sleep 3600;
         # - rm -rf /arb-data/source-files/data-recalcul-calque; mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/; git lfs install --force; git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/; cd data-recalcul-calque; git pull origin main;
+=======
+        # - rm -rf /arb-data/source-files/data-recalcul-calque; mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files/; git lfs install --force; git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/; cd data-recalcul-calque; git pull origin main;
+        - ls -lRa /arb-data; sleep 300;
+>>>>>>> 96acc873b929aac529ebeb85690b45dfdbedd74c
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
