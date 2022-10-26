@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: calqul-git-__NAMESPACE_ENV__
+  name: calqul-git-lfs-__NAMESPACE_ENV__
   namespace: __NAMESPACE__
   labels:
-    apps: calqul-git-__NAMESPACE_ENV__
+    apps: calqul-git-lfs-__NAMESPACE_ENV__
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: calqul-git-__NAMESPACE_ENV__
+      app: calqul-git-lfs-__NAMESPACE_ENV__
       role: primary
       tier: git
   template:         
     metadata:
-      name: calqul-git-__NAMESPACE_ENV__
+      name: calqul-git-lfs-__NAMESPACE_ENV__
     spec:
       imagePullSecrets:
         - name: forge-secret
@@ -23,7 +23,7 @@ spec:
         persistentVolumeClaim: 
           claimName: pvc-01-__NAMESPACE__-claim
       containers:
-      - name: calqul-python-__NAMESPACE_ENV__
+      - name: calqul-git-lfs-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__
         env:
           - name: GIT_USERNAME
