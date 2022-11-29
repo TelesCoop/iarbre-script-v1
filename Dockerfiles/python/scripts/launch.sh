@@ -2,13 +2,24 @@
 ################################################################################
 # ARB : Lancement du recalcul des indices du calque de plantabilité.
 ################################################################################
+namespace_env=$1
+DB_HOST=$2
+DB_PORT=$3
+DB_NAME=$4
+DB_USER=$5
+
 DATA_REPO="https://forge.grandlyon.com/erasme/data-recalcul-calque.git"
 
 scripts_dir="/app"
 data_dir="/arb-data/source-files/data-recalcul-calque"
+backup_dir="/arb-data/generated-files"
 stage=1
 line="\e[39m-----------------------------------------------"
 need_update=1
+today=$(date +"%Y%m%d")
+dump_name="calque-plantabilite-$namespace_env-$today"
+tag="1.0" # @TODO : should be parametric from last commit on data repo.
+archive_version="v$tag-$today"
 
 ################################################################################
 # functions
@@ -40,53 +51,76 @@ check () {
   fi;
 }
 
-################################################################################
-mkdir -p $data_dir
+# Overloading 'Exit' builtin function to get rid of 
+# the running state every where in the code
+exit () {
+  error_code=$1
+  echo "Exiting '$error_code'. (Sleeping for 1h for debug purpose)"
+  sleep 3600
+  builtin exit $error_code
+}
 
-stage "Check source files in $data_dir"
-cd $data_dir
-
-current_commit=$(git rev-parse --short HEAD)
-if [ $? -eq 128 ]; then
-  comment "Data repository is empty. Is this your first time, young Padawan ?"
-  comment "Cloning repo, it can take a while..."
-  cd ..
-  git clone $DATA_REPO 
-  need_update=0
-else
-  comment "Current commit is $current_commit"
-  cd $data_dir
-fi;
-
-# Checking for update...
-[ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\// /g') | cut -f1) ] &&  need_update=0 ||  need_update=1
-
-if [ $need_update -eq 0 ]; then
-  # We are up to date
-  comment "\e[32mData are up to date."
-else
-  comment "\e[93mNew version of source data is available !\e[39m"
-  git pull origin main
-  new_commit=$(git rev-parse --short HEAD)
-  comment "New commit is : \e[93m'$new_commit'\e[39m"
-  git diff --compact-summary $current_commit $new_commit
-fi;
-
-stage "Launch computations..."
+#---------------------------------------------------------------
+# M A I N
+#---------------------------------------------------------------
+stage "Launch ENV Initializations..."
 cd $scripts_dir
+
+# All the needed variables a given by parameter passing
+comment "command line is '$0 $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER'"
+
+comment "psql version..."
+psql -V
+check
+
+comment "Postgres server says : "
+pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
+check
+
+stage "Launch Database Initializations..."
 comment "Init communes"
 python3 main.py initCommunes
 
-python3 main.py initGrid
+comment "Init Grid"
+python3 main.py initGrid 5
+comment "InitDatas"
 python3 main.py initDatas
 
-# Multiprocessing task
-# python3 main.py computeFactors
+stage "Launch Computations..."
+comment "Computing factors"
+python3 main.py computeFactors # Possibly Multiprocessing task, Should have a list of townships
 
-# python3 main.py computeIndices
+comment "Computing Indices"
+python3 main.py computeIndices
 
-# Launching everything, it is possible to give a list of township
+# Launching everything, it is possible to give a list of townships
 # python3 main.py computeAll
 
-stage "Sleeping a while for debug purpose..."
-sleep 300
+stage "Dumping result database"
+#
+# Option "--no-password"  is set not to have to provide password by prompt.
+# This requires the presnece of /root/.pgpass file (600 mode) with such a content : "hostname:port:database:username:password"
+# https://stackoverflow.com/questions/50404041/pg-dumpall-without-prompting-password
+#
+comment "pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}"
+pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}
+check
+
+comment "Commpressing dump as $dump_name.tgz"
+tar cvzf $backup_dir/$dump_name.tgz $backup_dir/$dump_name.sql
+check
+
+stage "Uploading archive in repo with tag $archive_version"
+comment "Upload to file server 'Geo'"
+
+stage "Cleanup backup dir '$backup_dir'"
+comment "old sql files"
+find $backup_dir -name "*.sql" -exec rm -f {} \;
+check
+
+comment "old tgz files"
+find $backup_dir -name "*.tgz" -mtime +5 -exec rm -f {} \;
+check
+
+stage "End of script."
+exit 0
