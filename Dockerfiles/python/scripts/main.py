@@ -947,7 +947,7 @@ def main():
     if argv:
         firstArgv = sys.argv[1:][0]
 
-        # Switch case...
+        # Sfs2itch case...
         if firstArgv == 'initCommunes':
             initCommunes()
         elif firstArgv == 'initGrid':

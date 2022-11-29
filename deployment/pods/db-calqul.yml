@@ -22,7 +22,7 @@ spec:
       imagePullSecrets:
         - name: forge-secret
       volumes:
-        - name: db-data
+        - name: arb-data
           persistentVolumeClaim: 
             claimName: pvc-01-__NAMESPACE__-claim
       containers:
@@ -35,7 +35,7 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 5432
-          initialDelaySeconds: 120
+          initialDelaySeconds: 15
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
@@ -68,7 +68,6 @@ spec:
         volumeMounts:
           # need a subpath as postgres wants an empty folder (the mounted folder `$PGDATA` has a `lost+found` directory)
           # see https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
-          - name: db-data
+          - name: arb-data
             mountPath: "/arb-data"
             subpath: pgdata
-

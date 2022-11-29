@@ -1,0 +1,36 @@
+#
+# Pod d'accès au PVC. Utile pour remettre l'environnement de travail à blanc, y compris les fichiers Postgres.
+# 
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: calqul-pvc-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
+  labels:
+    app: calqul-pvc-__NAMESPACE_ENV__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calqul-pvc-__NAMESPACE_ENV__
+      role: secondary
+      tier: exploitation  
+  template:
+    metadata:
+      labels:
+        app: calqul-pvc-__NAMESPACE_ENV__
+        role: secondary
+        tier: exploitation
+    spec:
+      containers:
+        - name: calqul-pvc-__NAMESPACE_ENV__
+          image: registry.gitlab.grandlyon.fr/openshift-as-code/reposit-gl/busybox:1.0
+          command: ["sh", "-c", "tail -f /dev/null"]
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /mnt/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc-01-__NAMESPACE__-claim

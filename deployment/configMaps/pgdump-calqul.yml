@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calqul-pgdump-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
+  labels:
+    job-name: calqul-job-pgdump-__NAMESPACE_ENV__
+data:
+  psqldump.sh: |
+    #!/bin/bash
+    BACKUPDIR="/arb-data/backup"
+    ls -l /arb-data
+    while [ -f /arb-data/run/python-running ]
+    do
+      sleep 5
+      echo "Waiting for calculation to finish..."
+    done
+    echo "Generating a Postgres Dump..."
+    pg_dump -n "__POSTGRES_SCHEMA__" __POSTGRES_DB__ > ${BACKUPDIR}/__POSTGRES_SCHEMA__-__POSTGRES_DB___-__NAMESPACE_ENV___$(date -I).sql
+    echo "Deleting dumps older than 30 days"
+    find ${BACKUPDIR} -name "*.sql" -mtime +30 -exec rm -rf {} \;
+    sleep 300
