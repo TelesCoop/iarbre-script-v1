@@ -395,7 +395,7 @@ def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='app
     # Concat params
     params = dict(service='WFS', version=wfs_version,request='GetFeature', typeName=layer_name, outputFormat=outputFormat, crs=targetProj)
     # Load data in Bytes
-    with BytesCollection(requests.get(url,params=params).content) as f:
+    with BytesCollection(requests.get(url,params=params, timeout=600).content) as f:
         # Make GDF
         df = gp.GeoDataFrame.from_features(f)
     
