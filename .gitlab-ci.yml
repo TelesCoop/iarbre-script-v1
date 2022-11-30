@@ -66,13 +66,9 @@ variables:
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/jobs/master-calqul.yml
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/jobs/master-calqul.yml
 
-  # Git-lfs deployment file For test only
-  # - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/pods/git-calqul.yml
-  # - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/pods/git-calqul.yml
-
   # Git-lfs deployment file
-  - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/git-calqul.yml
-  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/git-calqul.yml
+  - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/pods/git-calqul.yml
+  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/pods/git-calqul.yml
 
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
@@ -92,10 +88,6 @@ variables:
   # Git-lfs for test only
   # - oc delete pods --selector pod-name=calqul-git-lfs-$NAMESPACE_ENV #--grace-period=0 --force
   # - oc apply -f deployment/pods/git-calqul.yml
-
-  # Git-lfs
-  # - oc delete pods --selector pod-name=calqul-git-lfs-$NAMESPACE_ENV #--grace-period=0 --force
-  # - oc apply -f deployment/git-calqul.yml
 
   # Job
   - oc delete jobs --selector job-name=calqul-master-job-$NAMESPACE_ENV 

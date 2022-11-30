@@ -16,13 +16,6 @@ spec:
       containers:
       - name: calqul-python-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
-      resources:
-        requests:
-          cpu: 200m
-          memory: 256Mi
-        limits:
-          cpu: 1
-          memory: 1024Mi
         env:
           - name: PGPASSWORD
             valueFrom:
@@ -41,6 +34,13 @@ spec:
         - name: arb-data
           mountPath: "/arb-data/run" # storing a file telling export-job the state of python script
       restartPolicy: Never
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+        limits:
+          cpu: 1
+          memory: 1024Mi
 
       # Clone or update sources data before calculation
       initContainers:
