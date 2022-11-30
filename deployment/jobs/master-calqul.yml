@@ -22,10 +22,10 @@ spec:
               secretKeyRef:
                 name: database-secret-__NAMESPACE_ENV__
                 key: password 
-          - name: http_proxy
-            value: "proxyhttppro.grandlyon.fr:8080"
-          - name: https_proxy
-            value: "proxyhttppro.grandlyon.fr:8080"
+          - name: HTTP_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+          - name: HTTPS_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
@@ -36,11 +36,11 @@ spec:
       restartPolicy: Never
       resources:
         requests:
-          cpu: 200m
-          memory: 256Mi
+          cpu: 400m
+          memory: 512Mi
         limits:
           cpu: 1
-          memory: 1024Mi
+          memory: 2048Mi
 
       # Clone or update sources data before calculation
       initContainers:
