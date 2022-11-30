@@ -35,7 +35,7 @@ from utils import *
 DB_params = None
 DB_schema = None
 PythonLaunch = None
-CommunesFilePath = None
+SourceDataPath = None
 ENV_targetProj = None
 RemoveTempFile = None
 SkipExistingData = None
@@ -173,12 +173,12 @@ def initCommunes():
     debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
 
     # Get communes file path in .env and check if file exist
-    if not os.path.isfile(CommunesFilePath):
-        debugLog(style.RED, "File not found in " + CommunesFilePath + " : Please verify your path and relaunch this script.", logging.ERROR)
+    if not os.path.isfile(SourceDataPath + "/communes_gl.geojson"):
+        debugLog(style.RED, "File not found in " + SourceDataPath + "/communes_gl.geojson : Please verify your path and relaunch this script.", logging.ERROR)
         return
 
     # Load geojson file in Dataframe
-    communesGDF = createGDFfromGeoJSON(CommunesFilePath)
+    communesGDF = createGDFfromGeoJSON(SourceDataPath + "/communes_gl.geojson")
 
     if communesGDF is not None:
         # Clean useless attribute
@@ -389,7 +389,7 @@ def initDatas():
         if currMData['temp_file_path']:
             # Load source data from file
             debugLog(style.BLUE, 'Load method for \'' + currMDataName + '\' : local geoJSON or SHP file', logging.INFO)
-            currentGDF = createGDFfromGeoJSON("./file_data/" + currMData['temp_file_path'])
+            currentGDF = createGDFfromGeoJSON( SourceDataPath + "/" + currMData['temp_file_path'])
             
             # Check input projection and reproj in 2154
             currentGDF = checkAndReproj(currentGDF, ENV_targetProj)
@@ -914,7 +914,7 @@ def initEnv():
     global DB_params
     global DB_schema
     global PythonLaunch
-    global CommunesFilePath
+    global SourceDataPath
     global ENV_targetProj
     global RemoveTempFile
     global SkipExistingData
@@ -931,8 +931,8 @@ def initEnv():
     }
     DB_schema = os.getenv('DB_SCHEMA')
     PythonLaunch = os.getenv('PYTHON_LAUNCH')
-    CommunesFilePath = os.getenv('COMMUNES_FILE_PATH')
     ENV_targetProj = os.getenv('TARGET_PROJ')
+    SourceDataPath = os.getenv('SOURCE_DATA_PATH')
     RemoveTempFile = os.getenv('REMOVE_TEMP_FILE')
     SkipExistingData = os.getenv('SKIP_EXISTING_DATA')
     EnableTruncate = os.getenv('ENABLE_TRUNCATE')
