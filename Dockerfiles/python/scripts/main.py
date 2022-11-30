@@ -40,6 +40,8 @@ ENV_targetProj = None
 RemoveTempFile = None
 SkipExistingData = None
 EnableTruncate = None
+HttpProxy = None
+Proxies = None
 
 # ------------------------
 #           DOC
@@ -396,7 +398,7 @@ def initDatas():
             #TODO: check API format is geoJSON (API geometry) ??
             # OR Load source data from API
             debugLog(style.BLUE, 'Load method for \'' + currMDataName + '\' : external API', logging.INFO)
-            currentGDF = wfs2gp_df(currMData['source_name'], currMData['source_url'], reprojMetro=True, targetProj=ENV_targetProj)
+            currentGDF = wfs2gp_df(currMData['source_name'], currMData['source_url'], reprojMetro=True, targetProj=ENV_targetProj, proxies=Proxies)
         else:
             debugLog(style.RED, "Incorrect or no load method was found for this metadata \'" + currMDataName + "\'. Skipped... ", logging.ERROR)
             continue
@@ -917,6 +919,8 @@ def initEnv():
     global RemoveTempFile
     global SkipExistingData
     global EnableTruncate
+    global HttpProxy
+    global Proxies
 
     # Assign values
     DB_params = {
@@ -932,6 +936,12 @@ def initEnv():
     RemoveTempFile = os.getenv('REMOVE_TEMP_FILE')
     SkipExistingData = os.getenv('SKIP_EXISTING_DATA')
     EnableTruncate = os.getenv('ENABLE_TRUNCATE')
+    HttpProxy = os.getenv('HTTP_PROXY')
+
+    Proxies = { 
+                "http"  : HttpProxy, 
+                "https" : HttpProxy
+                }
 
 # ------------------------
 #          MAIN

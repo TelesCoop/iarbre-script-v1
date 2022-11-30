@@ -391,11 +391,11 @@ def splitList(alist, wanted_parts=1):
 # ---- GEOM OPERATIONS ----
 # -------------------------
 
-def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='application/gml+xml; version=3.2', reprojMetro=False, targetProj=None):
+def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='application/gml+xml; version=3.2', reprojMetro=False, targetProj=None, req_timeout=600, proxies=None):
     # Concat params
     params = dict(service='WFS', version=wfs_version,request='GetFeature', typeName=layer_name, outputFormat=outputFormat, crs=targetProj)
     # Load data in Bytes
-    with BytesCollection(requests.get(url,params=params, timeout=600).content) as f:
+    with BytesCollection(requests.get(url,params=params, timeout=req_timeout, proxies=proxies).content) as f:
         # Make GDF
         df = gp.GeoDataFrame.from_features(f)
     
