@@ -80,17 +80,24 @@ check
 stage "Launch Database Initializations..."
 comment "Init communes"
 python3 main.py initCommunes
+check
+
 comment "Init Grid"
 python3 main.py initGrid 5
+check
+
 comment "InitDatas"
 python3 main.py initDatas
+check
 
 stage "Launch Computations..."
 comment "Computing factors"
 python3 main.py computeFactors # Possibly Multiprocessing task, Should have a list of townships
+check 
 
 comment "Computing Indices"
 python3 main.py computeIndices
+check
 
 # Launching everything, it is possible to give a list of townships
 # python3 main.py computeAll

@@ -24,6 +24,14 @@ from shapely.geometry import Polygon, MultiPolygon
 if not platform.system() != "Linux":
     import resource
 
+
+# -----------------------------------------------------
+# ----        Explicit Return code function        ----
+# ---- Usefull for exiting code from openShift Job ----
+# -----------------------------------------------------
+def return_error_and_exit_job(Code=-1):
+    return Code
+
 # -------------
 # ---- LOG ----
 # -------------
