@@ -29,10 +29,10 @@ spec:
         resources:
           requests:
             cpu: 1
-            memory: 1999Mi
+            memory: 2000Mi
           limits:
             cpu: 2
-            memory: 3999Mi
+            memory: 2000Mi
         volumeMounts:
         - name: arb-data
           mountPath: "/arb-data/source-files"
