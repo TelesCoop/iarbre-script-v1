@@ -131,21 +131,21 @@ def checkEnvFile():
     dbPwd = os.getenv('DB_PWD')
     dbName = os.getenv('DB_NAME')
     dbSchema = os.getenv('DB_SCHEMA')
-    communesFilePath = os.getenv('COMMUNES_FILE_PATH')
     targetProj = os.getenv('TARGET_PROJ')
     boolTempFile = os.getenv('REMOVE_TEMP_FILE')
     skipExistingData = os.getenv('SKIP_EXISTING_DATA')
     enableTruncate = os.getenv('ENABLE_TRUNCATE')
+    sourceDataPath = os.getenv('SOURCE_DATA_PATH')
 
     # Check if file exists
     if file_exists == False:
         debugLog(style.RED, "The .env file is not found. Please create it based on .env.example", logging.ERROR)
-        sys.exit(0)
+        return_error_and_exit_job -1
     else:
         # Check all var in .env file
-        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or communesFilePath == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None):
+        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None or sourceDataPath == None):
             debugLog(style.RED, "Please make sure you have correctly initialized the .env file", logging.ERROR)
-            sys.exit(0)
+            return_error_and_exit_job -1
 
 # -------------------------
 # ---- DATE OPERATIONS ----
