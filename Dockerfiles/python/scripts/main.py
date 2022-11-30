@@ -1052,8 +1052,11 @@ if __name__ == "__main__":
     initLogging(logsPath)
 
     # Load .env values
-    load_dotenv()
-
+    try:
+        load_dotenv()
+    except (e):
+        return_error_and_exit_job -1
+        
     # Check .env file initialization
     checkEnvFile()
 
