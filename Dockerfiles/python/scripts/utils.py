@@ -644,11 +644,11 @@ def createGDFfromGeoJSON(filePath):
         currentGDF = gp.read_file(filePath)
 
         #  PGL - Debug
-        import shutil
         with open('/app/tmp/dump_communes_gl.gp', 'w') as fd:
-            shutil.copyfileobj(currentGDF, fd)
+            fd.write(currentGDF)
+            fd.close()
         # /PGL - Debug
-        
+
         # Count
         lenDF = len(currentGDF)
         # Log
