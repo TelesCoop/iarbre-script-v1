@@ -180,12 +180,6 @@ def initCommunes():
     # Load geojson file in Dataframe
     communesGDF = createGDFfromGeoJSON(SourceDataPath + "/communes_gl.geojson")
 
-    #  PGL - Debug
-    with open('/app/tmp/dump_communes_gl-all.gp', 'w') as f:
-        f.write(str(communesGDF))
-        f.close()
-    # /PGL - Debug
-
     if communesGDF is not None:
         # Clean useless attribute
         communesGDF = communesGDF[columnsArrFromGeoJSON]
@@ -195,6 +189,12 @@ def initCommunes():
 
         # Convert to WKT
         communesGDF = convertGeomToWKT(communesGDF)
+
+        #  PGL - Debug
+        with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
+            f.write(str(communesGDF))
+            f.close()
+        # /PGL - Debug
 
         # Insert in DB
         insertGDFintoDB(DB_params, DB_schema, communesGDF, 'communes', columnsListToDB)
