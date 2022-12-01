@@ -370,10 +370,6 @@ def insertGDFintoDB(DB_params, DB_schema, gdf, tablename, columnsListToDB):
     gdf.to_csv(buffer, sep=';', index_label='id', header=False, index=False)
     buffer.seek(0)
 
-    # PGL - DEBUG
-    print(buffer.partition('\n')[0])
-    # /PGL 
-
     # Set Schema 'base'
     cur.execute(f'SET search_path TO ' + DB_schema)
 
