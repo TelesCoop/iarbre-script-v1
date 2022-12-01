@@ -371,9 +371,7 @@ def insertGDFintoDB(DB_params, DB_schema, gdf, tablename, columnsListToDB):
     buffer.seek(0)
 
     # PGL - DEBUG
-    debug = StringIO()
-    debug = buffer
-    print(debug.truncate(255))
+    print(buffer.partition('\n')[0])
     # /PGL 
 
     # Set Schema 'base'
