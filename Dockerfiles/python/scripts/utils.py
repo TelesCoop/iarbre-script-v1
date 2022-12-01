@@ -441,7 +441,8 @@ def convertGeomToWKT(df):
     # print(type(df.geometry))
 
     # Convert geom to WKT
-    df = df.to_wkt()
+    # df = df.to_wkt()
+    df = df.wkt
     debugLog(style.GREEN, "Successful convert dataframe geom into WKT format", logging.INFO)
     
     return df

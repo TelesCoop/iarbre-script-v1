@@ -186,6 +186,12 @@ def initCommunes():
             
         # Check input projection and reproj in 2154
         communesGDF = checkAndReproj(communesGDF, ENV_targetProj)
+        
+        #  PGL - Debug
+        with open('/app/tmp/dump_communes_gl.gdf', 'w') as f:
+            f.write(str(communesGDF))
+            f.close()
+        # /PGL - Debug
 
         # Convert to WKT
         communesGDF = convertGeomToWKT(communesGDF)
