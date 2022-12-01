@@ -370,13 +370,6 @@ def insertGDFintoDB(DB_params, DB_schema, gdf, tablename, columnsListToDB):
     gdf.to_csv(buffer, sep=';', index_label='id', header=False, index=False)
     buffer.seek(0)
 
-    #  PGL - Debug
-    import shutil
-    with open('/app/tmp/dump_communes_gl.txt', 'w') as fd:
-        shutil.copyfileobj(buffer, fd)
-        buffer.seek(0)
-    # /PGL - Debug
-
     # Set Schema 'base'
     cur.execute(f'SET search_path TO ' + DB_schema)
 
@@ -649,6 +642,13 @@ def createGDFfromGeoJSON(filePath):
     try:
         # Read
         currentGDF = gp.read_file(filePath)
+
+        #  PGL - Debug
+        import shutil
+        with open('/app/tmp/dump_communes_gl.gp', 'w') as fd:
+            shutil.copyfileobj(currentGDF, fd)
+        # /PGL - Debug
+        
         # Count
         lenDF = len(currentGDF)
         # Log
