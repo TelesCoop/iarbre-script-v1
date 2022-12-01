@@ -116,7 +116,7 @@ def testDBConnexion():
     # Close DB
     closeDB(conn, cur)
 
-    return_error_and_exit_job -1
+    return_error_and_exit_job(-1)
 
 # ------------------------
 #         COMMUNES
@@ -175,7 +175,7 @@ def initCommunes():
     # Get communes file path in .env and check if file exist
     if not os.path.isfile(SourceDataPath + "/communes_gl.geojson"):
         debugLog(style.RED, "File not found in " + SourceDataPath + "/communes_gl.geojson : Please verify your path and relaunch this script.", logging.ERROR)
-        return_error_and_exit_job -2
+        return_error_and_exit_job(-2)
 
     # Load geojson file in Dataframe
     communesGDF = createGDFfromGeoJSON(SourceDataPath + "/communes_gl.geojson")
@@ -263,7 +263,7 @@ def initGrid(gridSize=30, inseeCode=None):
         debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
     else:
         debugLog(style.RED, "There is no communes to merge with the Grid. Please launch initCommunes first", logging.INFO)
-        return_error_and_exit_job -3
+        return_error_and_exit_job(-3)
 
     # Get Communes data
     query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes"
@@ -303,7 +303,7 @@ def initDatas():
     metaDataCount = getCountfromDB(DB_params, DB_schema, 'metadatas')
     if metaDataCount < 1:
         debugLog(style.RED, "Not metadatas was found in database. Please relaunch this script after inserting one", logging.ERROR)
-        return_error_and_exit_job -3
+        return_error_and_exit_job(-3)
     
     # Get all MetaData
     metaQuery = "SELECT * FROM " + DB_schema + ".metadatas ORDER BY id"
@@ -581,7 +581,7 @@ def computeFactors(inseeCode=None):
     # Check if inseeCode is numeric
     if inseeCode and not inseeCode.isdigit():
         debugLog(style.RED, "The inseeCode argument is not a number. Please correct your input", logging.INFO)
-        return_error_and_exit_job -4
+        return_error_and_exit_job(-4)
 
     # Get all tiles (filtered by insee if input)
     tilesQuery = 'SELECT id, geom_poly as geom, insee, indice FROM ' + DB_schema + '.tiles'
@@ -595,10 +595,10 @@ def computeFactors(inseeCode=None):
         # Check length depend on inseeCode
         if inseeCode:
             debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
-            return_error_and_exit_job -3
+            return_error_and_exit_job(-3)
         else:
             debugLog(style.YELLOW, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.INFO)
-            return_error_and_exit_job -3
+            return_error_and_exit_job(-3)
 
     # Get all factors
     factorsQuery = "SELECT * FROM " + DB_schema + ".factors ORDER BY id"
@@ -821,7 +821,7 @@ def computeIndices():
     # Check empty data for TILES_FACTORS table
     if tfCount == 0:
         debugLog(style.RED, "There is no data in tiles_factors table. Make sure you have launch this script with computeFactors argument before", logging.ERROR)
-        return_error_and_exit_job -3
+        return_error_and_exit_job(-3)
 
     # Get TILES count
     tCount = getCountfromDB(DB_params, DB_schema, 'tiles', None, conn, cur)
@@ -829,7 +829,7 @@ def computeIndices():
     # Check empty data for TILES table
     if tCount == 0:
         debugLog(style.RED, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.ERROR)
-        return_error_and_exit_job -3
+        return_error_and_exit_job(-3)
 
     # Launch SQL Query
     updateIndiceQuery = "UPDATE base.tiles t SET indice = sub.sum_indice FROM (SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id GROUP BY id_tile) as sub WHERE t.id = sub.id_tile; COMMIT;"
@@ -1055,8 +1055,8 @@ if __name__ == "__main__":
     try:
         load_dotenv()
     except (e):
-        return_error_and_exit_job -1
-        
+        return_error_and_exit_job(-1)
+
     # Check .env file initialization
     checkEnvFile()
 

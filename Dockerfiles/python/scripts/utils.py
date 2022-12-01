@@ -30,7 +30,7 @@ if not platform.system() != "Linux":
 # ---- Usefull for exiting code from openShift Job ----
 # -----------------------------------------------------
 def return_error_and_exit_job(Code=-1):
-    return Code
+    sys.exit(Code)
 
 # -------------
 # ---- LOG ----
@@ -140,12 +140,12 @@ def checkEnvFile():
     # Check if file exists
     if file_exists == False:
         debugLog(style.RED, "The .env file is not found. Please create it based on .env.example", logging.ERROR)
-        return_error_and_exit_job -1
+        return_error_and_exit_job(-1)
     else:
         # Check all var in .env file
         if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None or sourceDataPath == None):
             debugLog(style.RED, "Please make sure you have correctly initialized the .env file", logging.ERROR)
-            return_error_and_exit_job -1
+            return_error_and_exit_job(-1)
 
 # -------------------------
 # ---- DATE OPERATIONS ----
