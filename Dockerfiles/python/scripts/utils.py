@@ -642,13 +642,6 @@ def createGDFfromGeoJSON(filePath):
     try:
         # Read
         currentGDF = gp.read_file(filePath)
-
-        #  PGL - Debug
-        with open('/app/tmp/dump_communes_gl.gp', 'w') as fd:
-            fd.write(currentGDF)
-            fd.close()
-        # /PGL - Debug
-
         # Count
         lenDF = len(currentGDF)
         # Log
