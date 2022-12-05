@@ -953,7 +953,7 @@ def initEnv():
 #          MAIN
 # ------------------------
 
-# @memory(percentage=0.8)
+@memory(percentage=0.8)
 def main():
     # Launch function depend on argv
     argv = sys.argv[1:]
