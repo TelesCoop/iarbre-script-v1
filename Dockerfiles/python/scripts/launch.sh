@@ -77,10 +77,10 @@ comment "Postgres server says : "
 pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
 check
 
-stage "Launch Database Initializations..."
-comment "Init communes"
-python3 main.py initCommunes
-check
+# stage "Launch Database Initializations..."
+# comment "Init communes"
+# python3 main.py initCommunes
+# check
 
 comment "Init Grid"
 python3 main.py initGrid 5

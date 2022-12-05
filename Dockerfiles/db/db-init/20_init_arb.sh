@@ -16,10 +16,4 @@ echo "--------------------------------------------------------------------------
 
 psql -U $POSTGRES_USER -d $POSTGRES_DB -f /docker-entrypoint-initdb.d/sql/30-create_tables.sql
 psql -U $POSTGRES_USER -d $POSTGRES_DB -f /docker-entrypoint-initdb.d/sql/40-insert_data.sql
-
-# echo "POSTGRES_DB=$POSTGRES_DB"         
-# echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"   
-# echo "POSTGRES_PORT=$POSTGRES_PORT"       
-# echo "POSTGRES_SERVER=$POSTGRES_SERVER"     
-# echo "POSTGRES_USER=$POSTGRES_USER"       
-# echo "POSTGRES_SCHEMA=$POSTGRES_SCHEMA"  
+psql -U $POSTGRES_USER -d $POSTGRES_DB -f /docker-entrypoint-initdb.d/sql/50-insert_communes.sql
