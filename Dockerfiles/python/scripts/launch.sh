@@ -80,7 +80,9 @@ DB_HOST=$2
 DB_PORT=$3
 DB_NAME=$4
 DB_USER=$5
-CODE_INSEE=69275
+
+GRID_SIZE=5
+CODE_INSEE=69275 # Décine-Charpieu
 
 DATA_REPO="https://forge.grandlyon.com/erasme/data-recalcul-calque.git"
 
@@ -156,20 +158,20 @@ check
 # python3 main.py initCommunes
 # check
 
-comment "Init Grid"
-python3 main.py initGrid 5 $CODE_INSEE
+comment "Init Grid $GRID_SIZE $CODE_INSEE"
+python3 main.py initGrid $GRID_SIZE $CODE_INSEE
 check
 
-comment "InitDatas"
+comment "InitDatas $CODE_INSEE"
 python3 main.py initDatas $CODE_INSEE
 check
 
 stage "Launch Computations..."
-comment "Computing factors"
+comment "Computing factors $CODE_INSEE"
 python3 main.py computeFactors $CODE_INSEE # Possibly Multiprocessing task, Should have a list of townships
 check 
 
-comment "Computing Indices"
+comment "Computing Indices $CODE_INSEE"
 python3 main.py computeIndices $CODE_INSEE 
 check
 
