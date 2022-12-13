@@ -81,8 +81,8 @@ DB_PORT=$3
 DB_NAME=$4
 DB_USER=$5
 
-GRID_SIZE=5
-CODE_INSEE=69275 # Décine-Charpieu
+GRID_SIZE=25
+CODE_INSEE= # Décine-Charpieu 69275
 
 DATA_REPO="https://forge.grandlyon.com/erasme/data-recalcul-calque.git"
 
