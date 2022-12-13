@@ -232,8 +232,75 @@ python3 main.py initGrid 25 69387
  python3 main.py initGrid 25 69034
  
 comment "InitDatas $CODE_INSEE"
-python3 main.py initDatas $CODE_INSEE
-check
+#python3 main.py initDatas $CODE_INSEE
+#check
+ python3 main.py initDatas 69387
+ python3 main.py initDatas 69388
+ python3 main.py initDatas 69386
+ python3 main.py initDatas 69384
+ python3 main.py initDatas 69389
+ python3 main.py initDatas 69381
+ python3 main.py initDatas 69383
+ python3 main.py initDatas 69385
+ python3 main.py initDatas 69382
+ python3 main.py initDatas 69087
+ python3 main.py initDatas 69279
+ python3 main.py initDatas 69033
+ python3 main.py initDatas 69260
+ python3 main.py initDatas 69207
+ python3 main.py initDatas 69275 
+ python3 main.py initDatas 69278
+ python3 main.py initDatas 69266
+ python3 main.py initDatas 69259
+ python3 main.py initDatas 69088
+ python3 main.py initDatas 69100
+ python3 main.py initDatas 69204
+ python3 main.py initDatas 69293
+ python3 main.py initDatas 69091
+ python3 main.py initDatas 69096
+ python3 main.py initDatas 69117
+ python3 main.py initDatas 69271
+ python3 main.py initDatas 69046
+ python3 main.py initDatas 69256
+ python3 main.py initDatas 69290
+ python3 main.py initDatas 69296
+ python3 main.py initDatas 69199
+ python3 main.py initDatas 69283
+ python3 main.py initDatas 69292
+ python3 main.py initDatas 69276
+ python3 main.py initDatas 69149
+ python3 main.py initDatas 69282
+ python3 main.py initDatas 69040
+ python3 main.py initDatas 69081
+ python3 main.py initDatas 69233
+ python3 main.py initDatas 69191
+ python3 main.py initDatas 69063
+ python3 main.py initDatas 69069
+ python3 main.py initDatas 69153
+ python3 main.py initDatas 69116
+ python3 main.py initDatas 69205
+ python3 main.py initDatas 69194
+ python3 main.py initDatas 69072
+ python3 main.py initDatas 69089
+ python3 main.py initDatas 69202
+ python3 main.py initDatas 69127
+ python3 main.py initDatas 69029
+ python3 main.py initDatas 69163
+ python3 main.py initDatas 69286
+ python3 main.py initDatas 69273
+ python3 main.py initDatas 69152
+ python3 main.py initDatas 69068
+ python3 main.py initDatas 69003
+ python3 main.py initDatas 69250
+ python3 main.py initDatas 69244
+ python3 main.py initDatas 69044
+ python3 main.py initDatas 69085
+ python3 main.py initDatas 69142
+ python3 main.py initDatas 69143
+ python3 main.py initDatas 69071
+ python3 main.py initDatas 69168
+ python3 main.py initDatas 69284
+ python3 main.py initDatas 69034
 
 stage "Launch Computations..."
 comment "Computing factors $CODE_INSEE"
