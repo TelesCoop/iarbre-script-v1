@@ -75,6 +75,8 @@
 #  66 | MONTANAY                   | 69284
 #  67 | CALUIRE-ET-CUIRE           | 69034
 
+alias python=python3
+
 namespace_env=$1
 DB_HOST=$2
 DB_PORT=$3
@@ -158,10 +160,77 @@ check
 # python3 main.py initCommunes
 # check
 
-comment "Init Grid $GRID_SIZE $CODE_INSEE"
-python3 main.py initGrid $GRID_SIZE $CODE_INSEE
-check
-
+#comment "Init Grid $GRID_SIZE $CODE_INSEE"
+#python3 main.py initGrid $GRID_SIZE $CODE_INSEE
+#check
+python3 main.py initGrid 25 69387
+ python3 main.py initGrid 25 69388
+ python3 main.py initGrid 25 69386
+ python3 main.py initGrid 25 69384
+ python3 main.py initGrid 25 69389
+ python3 main.py initGrid 25 69381
+ python3 main.py initGrid 25 69383
+ python3 main.py initGrid 25 69385
+ python3 main.py initGrid 25 69382
+ python3 main.py initGrid 25 69087
+ python3 main.py initGrid 25 69279
+ python3 main.py initGrid 25 69033
+ python3 main.py initGrid 25 69260
+ python3 main.py initGrid 25 69207
+ python3 main.py initGrid 25 69275 
+ python3 main.py initGrid 25 69278
+ python3 main.py initGrid 25 69266
+ python3 main.py initGrid 25 69259
+ python3 main.py initGrid 25 69088
+ python3 main.py initGrid 25 69100
+ python3 main.py initGrid 25 69204
+ python3 main.py initGrid 25 69293
+ python3 main.py initGrid 25 69091
+ python3 main.py initGrid 25 69096
+ python3 main.py initGrid 25 69117
+ python3 main.py initGrid 25 69271
+ python3 main.py initGrid 25 69046
+ python3 main.py initGrid 25 69256
+ python3 main.py initGrid 25 69290
+ python3 main.py initGrid 25 69296
+ python3 main.py initGrid 25 69199
+ python3 main.py initGrid 25 69283
+ python3 main.py initGrid 25 69292
+ python3 main.py initGrid 25 69276
+ python3 main.py initGrid 25 69149
+ python3 main.py initGrid 25 69282
+ python3 main.py initGrid 25 69040
+ python3 main.py initGrid 25 69081
+ python3 main.py initGrid 25 69233
+ python3 main.py initGrid 25 69191
+ python3 main.py initGrid 25 69063
+ python3 main.py initGrid 25 69069
+ python3 main.py initGrid 25 69153
+ python3 main.py initGrid 25 69116
+ python3 main.py initGrid 25 69205
+ python3 main.py initGrid 25 69194
+ python3 main.py initGrid 25 69072
+ python3 main.py initGrid 25 69089
+ python3 main.py initGrid 25 69202
+ python3 main.py initGrid 25 69127
+ python3 main.py initGrid 25 69029
+ python3 main.py initGrid 25 69163
+ python3 main.py initGrid 25 69286
+ python3 main.py initGrid 25 69273
+ python3 main.py initGrid 25 69152
+ python3 main.py initGrid 25 69068
+ python3 main.py initGrid 25 69003
+ python3 main.py initGrid 25 69250
+ python3 main.py initGrid 25 69244
+ python3 main.py initGrid 25 69044
+ python3 main.py initGrid 25 69085
+ python3 main.py initGrid 25 69142
+ python3 main.py initGrid 25 69143
+ python3 main.py initGrid 25 69071
+ python3 main.py initGrid 25 69168
+ python3 main.py initGrid 25 69284
+ python3 main.py initGrid 25 69034
+ 
 comment "InitDatas $CODE_INSEE"
 python3 main.py initDatas $CODE_INSEE
 check
