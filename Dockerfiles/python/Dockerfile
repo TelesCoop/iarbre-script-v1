@@ -45,6 +45,7 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
 && pip install --no-cache-dir manimlib \
 && pip install --no-cache-dir manimce \
 && pip install rtree pygeos \
+&& pip install --upgrade shapely \
 && pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Add a non root user (OpenShift Requirements)
