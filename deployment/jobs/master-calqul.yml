@@ -6,7 +6,7 @@ spec:
   # maximum duration the job can run => 40h 
   activeDeadlineSeconds: 144000 
   completions: 1
-  backoffLimit: 2
+  backoffLimit: 10
   parallelism: 1
   template:         
     metadata:
