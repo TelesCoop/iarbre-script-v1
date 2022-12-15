@@ -166,7 +166,7 @@ check
 #python3 main.py initGrid $GRID_SIZE $CODE_INSEE
 #check
 stage "INIT GRID"
-for $CODE_INSEE in $LIST_CODE_INSEE
+for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
   python3 main.py initGrid $GRID_SIZE $CODE_INSEE
@@ -176,14 +176,14 @@ done
 stage "InitDatas"
 #python3 main.py initDatas $CODE_INSEE
 #check
-for $CODE_INSEE in $LIST_CODE_INSEE
+for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
   python3 main.py initDatas $CODE_INSEE
   #check
 done
 
-for $CODE_INSEE in $LIST_CODE_INSEE
+for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
   python3 main.py computeFactors $CODE_INSEE
@@ -195,7 +195,7 @@ done
 #python3 main.py computeFactors $CODE_INSEE # Possibly Multiprocessing task, Should have a list of townships
 #check 
 
-for $CODE_INSEE in $LIST_CODE_INSEE
+for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
   python3 main.py computeIndices $CODE_INSEE
