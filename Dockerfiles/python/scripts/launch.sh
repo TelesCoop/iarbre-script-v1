@@ -183,6 +183,7 @@ do
   #check
 done
 
+stage "Compute Factors"
 for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
@@ -195,6 +196,7 @@ done
 #python3 main.py computeFactors $CODE_INSEE # Possibly Multiprocessing task, Should have a list of townships
 #check 
 
+stage "Compute Indices"
 for CODE_INSEE in $LIST_CODE_INSEE
 do
   stage "Commune $CODE_INSEE"
