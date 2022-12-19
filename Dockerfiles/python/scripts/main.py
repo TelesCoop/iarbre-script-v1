@@ -737,7 +737,7 @@ def computeFactors(inseeCode=None):
             roundCutFactorArea = round(cutFactorArea)
 
             # DEBUG Log
-            # debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
+            debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
 
             # Insert area into TILES_FACTOR (with id_tile & id_factor)
             insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "); COMMIT;"
