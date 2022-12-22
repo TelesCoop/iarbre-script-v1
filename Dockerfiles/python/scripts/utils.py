@@ -287,7 +287,11 @@ def getDatafromDB(DB_params, sqlQuery, connInput = None, curInput = None):
 
 def insertDataInDB(DBcursor, sqlQuery):
     # Insert Data
-    DBcursor.execute(sqlQuery)
+    try:
+        DBcursor.execute(sqlQuery)
+    except psycopg2.Error as e:
+        print(e)
+        raise
     
     #TODO: Get return data ?
     # dataValues = json.dumps(cur.fetchall(), indent=2, default=dateConverter)

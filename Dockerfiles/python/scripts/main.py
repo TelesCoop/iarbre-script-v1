@@ -740,8 +740,18 @@ def computeFactors(inseeCode=None):
             debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
 
             # Insert area into TILES_FACTOR (with id_tile & id_factor)
-            insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "); COMMIT;"
-            insertDataInDB(cur, insertTileFactorQuery)
+            insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
+            
+            try:
+                insertDataInDB(cur, insertTileFactorQuery)
+            except psycopg2.Error:
+                return_error_and_exit_job(-5)
+
+            try:
+                cur.commit()
+            except psycopg2.Error as e:
+                print(e)
+                return_error_and_exit_job(-5)
 
             ##End of current cutFactor (tile) loop
 
