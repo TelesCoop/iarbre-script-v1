@@ -1,0 +1,30 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: arb-database-__NAMESPACE_ENV__-route
+  namespace: __NAMESPACE__
+spec:
+  host: arb-database-__NAMESPACE_ENV__-route-__NAMESPACE__.apps.air.grandlyon.fr
+  to:
+    kind: Service
+    name: calqul-db-service-__NAMESPACE_ENV__
+  port:
+    targetPort: 5432
+  tls:
+    termination: edge
+
+
+# apiVersion: route.openshift.io/v1
+# kind: Route
+# metadata:
+#   name: arb-database-d01-route
+#   namespace: ns-arb-d01
+# spec:
+#   host: arb-database-d01-route-ns-arb-d01.apps.air.grandlyon.fr
+#   to:
+#     kind: Service
+#     name: calqul-db-service-d01
+#   port:
+#     targetPort: "5432"
+#   tls:
+#     termination: edge
