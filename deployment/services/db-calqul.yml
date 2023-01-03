@@ -12,3 +12,4 @@ spec:
       protocol: TCP
       port: 5432
       targetPort: 5432
+      # nodePort: 30005 # Port d'exposition pour connexion d'un client vers le pod de base de données
