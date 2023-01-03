@@ -13,8 +13,14 @@ ARG DB_USER_ENV
 # Getting some Args and Setting some ENV variables
 ENV CPLUS_INCLUDE_PATH="/usr/include/gdal"
 ENV C_INCLUDE_PATH="/usr/include/gdal"
-ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/pyproj/proj_dir/share/proj"
+# ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/pyproj/proj_dir/share/proj"
+ENV PROJ_LIB="/usr/local/lib/python3.7/dist-packages/fiona/proj_data/"
 ENV GDAL_DATA="/usr/local/lib/python3.7/dist-packages/fiona/gdal_data/"
+
+# setx GDAL_DATA "C:\Program Files\GDAL\gdal-data"
+# setx GDAL_DRIVER_PATH "C:\Program Files\GDAL\gdalplugins"
+# setx PROJ_LIB "C:\Program Files\GDAL\projlib"
+# setx PYTHONPATH "C:\Program Files\GDAL\"
 
 ENV NS_ENV=$NAMESPACE_ENV
 ENV DB_HOST="$DB_HOST_ENV-$NAMESPACE_ENV"
