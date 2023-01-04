@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+
+  # postgres:
+  #   container_name: calqul_db
+  #   build:
+  #     context: ./Dockerfiles/db
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - .env-docker-compose-dev
+  #   environment:
+  #     - POSTGRES_DB=calque_planta_temp
+  #     - POSTGRES_SCHEMA=base
+  #     - POSTGRES_USER=calqul
+  #     - POSTGRES_PASSWORD=calqul
+  #     - POSTGRES_SERVER=localhost
+  #     - POSTGRES_PORT=5432
+  #   ports:
+  #     - 5432:5432 
+  #   # env_file:
+  #   #   - .env-docker-compose-dev
+  #   volumes:
+  #     - ./Dockerfiles/db/db-init/:/docker-entrypoint-initdb.d/
+  #     - ./db-data/:/var/lib/postgresql/data/
+
+  python:
+    container_name: calqul_python
+    build:
+      context: ./Dockerfiles/python
+      dockerfile: Dockerfile
+    env_file:
+      - .env-docker-compose-dev
+    environment:
+      - DATABASE_URL=postgres://calqul:calqul@calqul_db:5432/calque_planta_temp
+    # depends_on:
+    #   - db
+
+networks:
+  calqul_network:
+    name: calqul_network
