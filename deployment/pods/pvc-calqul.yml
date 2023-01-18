@@ -30,6 +30,13 @@ spec:
           volumeMounts:
             - mountPath: /mnt/data
               name: data
+      ressources:
+        requests:
+          memory: "64M"
+          cpu: "200mi"
+        limits:
+          memory: "256M"
+          cpu: "500mi"
       volumes:
         - name: data
           persistentVolumeClaim:
