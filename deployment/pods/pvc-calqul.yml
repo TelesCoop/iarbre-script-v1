@@ -30,7 +30,7 @@ spec:
           volumeMounts:
             - mountPath: /mnt/data
               name: data
-      ressources:
+      resources:
         requests:
           memory: "32M"
           cpu: "100mi"
