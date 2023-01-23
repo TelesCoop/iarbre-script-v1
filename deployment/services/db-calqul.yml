@@ -4,7 +4,7 @@ metadata:
   name: calqul-db-service-__NAMESPACE_ENV__
   namespace: __NAMESPACE__
 spec:
-  type: NodePort
+  # type: NodePort
   selector:
     app: calqul-db-__NAMESPACE_ENV__
     tier: database
