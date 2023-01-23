@@ -32,11 +32,11 @@ spec:
               name: data
       ressources:
         requests:
-          memory: "64M"
-          cpu: "200mi"
+          memory: "32M"
+          cpu: "100mi"
         limits:
-          memory: "256M"
-          cpu: "500mi"
+          memory: "64M"
+          cpu: "100mi"
       volumes:
         - name: data
           persistentVolumeClaim:
