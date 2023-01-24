@@ -62,6 +62,10 @@ variables:
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/services/db-calqul.yml
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/services/db-calqul.yml
 
+  # DB service file Debug & Dev only
+  - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/services/db-calqul-debug.yml
+  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/services/db-calqul-debug.yml
+
   # Job deployment file
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/jobs/master-calqul.yml
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/jobs/master-calqul.yml
@@ -84,6 +88,8 @@ variables:
   - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
   - oc apply -f deployment/pods/db-calqul.yml
   - oc apply -f deployment/services/db-calqul.yml
+  # Db Dev & Debug only
+  - oc apply -f deployment/services/db-calqul-debug.yml
   
   # Git-lfs for test only
   # - oc delete pods --selector pod-name=calqul-git-lfs-$NAMESPACE_ENV #--grace-period=0 --force

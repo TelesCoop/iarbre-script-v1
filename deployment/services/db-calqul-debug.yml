@@ -1,0 +1,19 @@
+# Service de'accès à la bbase de données depuis l'extérieur du cluster OpenShift.
+#   - Ce service est utilisé pour se connecter en client/serveur depuis un client PostGresql 
+#     sur un poste de travail. - DEV & DEBUG ONLY -
+apiVersion: v1
+kind: Service
+metadata:
+  name: calqul-db-ext-__NAMESPACE_ENV__
+  namespace: __NAMESPACE__
+spec:
+  type: NodePort
+  selector:
+    app: calqul-db-__NAMESPACE_ENV__
+    tier: database
+  ports:
+    - name: tcp-5432-ext
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 30005
