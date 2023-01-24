@@ -748,7 +748,7 @@ def computeFactors(inseeCode=None):
                 return_error_and_exit_job(-5)
 
             try:
-                cur.commit()
+                conn.commit()
             except psycopg2.Error as e:
                 print(e)
                 return_error_and_exit_job(-5)
