@@ -946,14 +946,14 @@ def initEnv():
         "password"  : os.getenv('DB_PWD'),
         "database"  : os.getenv('DB_NAME'),
     }
-    DB_schema = os.getenv('DB_SCHEMA')
-    PythonLaunch = os.getenv('PYTHON_LAUNCH')
-    ENV_targetProj = os.getenv('TARGET_PROJ')
-    SourceDataPath = os.getenv('SOURCE_DATA_PATH')
-    RemoveTempFile = os.getenv('REMOVE_TEMP_FILE')
-    SkipExistingData = os.getenv('SKIP_EXISTING_DATA')
-    EnableTruncate = os.getenv('ENABLE_TRUNCATE')
-    HttpProxy = os.getenv('HTTP_PROXY')
+    DB_schema = os.getenv('DB_SCHEMA').strip()
+    PythonLaunch = os.getenv('PYTHON_LAUNCH').strip()
+    ENV_targetProj = os.getenv('TARGET_PROJ').strip()
+    SourceDataPath = os.getenv('SOURCE_DATA_PATH').strip()
+    RemoveTempFile = os.getenv('REMOVE_TEMP_FILE').strip()
+    SkipExistingData = os.getenv('SKIP_EXISTING_DATA').strip()
+    EnableTruncate = os.getenv('ENABLE_TRUNCATE').strip()
+    HttpProxy = os.getenv('HTTP_PROXY').strip()
 
     Proxies = { 
                 "http"  : HttpProxy, 
