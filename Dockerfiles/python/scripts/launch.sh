@@ -3,6 +3,9 @@
 # ARB : Lancement du recalcul des indices du calque de plantabilité.
 ################################################################################
 alias python=python3
+source .env
+echo "SKIP_EXISTING_DATA=$SKIP_EXISTING_DATA"
+exit 0
 
 namespace_env=$1
 DB_HOST=$2
