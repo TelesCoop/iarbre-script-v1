@@ -4,8 +4,6 @@
 ################################################################################
 alias python=python3
 source .env
-echo "SKIP_EXISTING_DATA=$SKIP_EXISTING_DATA"
-exit 0
 
 namespace_env=$1
 DB_HOST=$2
@@ -89,11 +87,12 @@ comment "Postgres server says : "
 pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
 check
 
-stage "INIT GRID"
-for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
-    stage "Init Grid : $NOM_COMMUNE"
-    python3 main.py initGrid $GRID_SIZE ${LISTE_COMMUNES[$NOM_COMMUNE]}
-done
+# # if (SKIP_EXISTING_DATA="True")
+# stage "INIT GRID"
+# for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
+#     stage "Init Grid : $NOM_COMMUNE"
+#     python3 main.py initGrid $GRID_SIZE ${LISTE_COMMUNES[$NOM_COMMUNE]}
+# done
  
 stage "InitDatas"
 python3 main.py initDatas
