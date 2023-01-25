@@ -358,37 +358,38 @@ def initDatas():
 
             # Ask user to clean table ?
             if EnableTruncate:
-                while True:
-                    removeDataResponse = input("Do you want to clean those data ? (y/n) : ")
-                    if removeDataResponse.lower() not in ('y', 'n'):
-                        print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                    else:
-                        # Good response
-                        break
+                # while True:
+                #     removeDataResponse = input("Do you want to clean those data ? (y/n) : ")
+                #     if removeDataResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
 
-                if removeDataResponse.lower() == 'y':
-                    # Delete DATAS for current metadata
-                    deleteQFilter = "id_metadata = " + str(currMDataID)
-                    deleteDataInDB(DB_params, DB_schema, 'datas', deleteQFilter)
+                # if removeDataResponse.lower() == 'y':
+                # Delete DATAS for current metadata
+                deleteQFilter = "id_metadata = " + str(currMDataID)
+                deleteDataInDB(DB_params, DB_schema, 'datas', deleteQFilter)
+                # Log
+                debugLog(style.GREEN, "Successfully remove all datas for \'" + currMDataName + "\'", logging.INFO)
+            else:
+                # # Ask user to skip this metadata ? (if not deleted)
+                # while True:
+                #     skipResponse = input("Do you want to skip this metadata \'" + currMDataName + "\' ? (y/n) : ")
+                #     if skipResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
+
+                # if skipResponse.lower() == 'y':
+                if SkipExistingData == 'True':
                     # Log
-                    debugLog(style.GREEN, "Successfully remove all datas for \'" + currMDataName + "\'", logging.INFO)
-                else:
-                    # Ask user to skip this metadata ? (if not deleted)
-                    while True:
-                        skipResponse = input("Do you want to skip this metadata \'" + currMDataName + "\' ? (y/n) : ")
-                        if skipResponse.lower() not in ('y', 'n'):
-                            print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                        else:
-                            # Good response
-                            break
-
-                    if skipResponse.lower() == 'y':
-                        # Log
-                        debugLog(style.MAGENTA, "Current metadata \'" + currMDataName + "\' was skipped", logging.INFO)
-                        # End timer
-                        endTimerLog(currMDTimer)
-                        # Skip this item in loop
-                        continue
+                    debugLog(style.MAGENTA, "Current metadata \'" + currMDataName + "\' was skipped", logging.INFO)
+                    # End timer
+                    endTimerLog(currMDTimer)
+                    # Skip this item in loop
+                    continue
 
         # Init GDF
         currentGDF = None
@@ -958,6 +959,16 @@ def initEnv():
                 "http"  : HttpProxy, 
                 "https" : HttpProxy
                 }
+    
+    # display param value for debug
+    debugLog(style.WHITE, "DB_schema="+DB_schema, logging.INFO)
+    debugLog(style.WHITE, "PythonLaunch="+PythonLaunch, logging.INFO)
+    debugLog(style.WHITE, "ENV_targetProj="+ENV_targetProj, logging.INFO)
+    debugLog(style.WHITE, "SourceDataPath="+SourceDataPath, logging.INFO)
+    debugLog(style.WHITE, "RemoveTempFile="+RemoveTempFile, logging.INFO)
+    debugLog(style.WHITE, "SkipExistingData="+SkipExistingData, logging.INFO)
+    debugLog(style.WHITE, "EnableTruncate="+EnableTruncate, logging.INFO)
+    debugLog(style.WHITE, "HttpProxy="+HttpProxy, logging.INFO)
 
 # ------------------------
 #          MAIN
