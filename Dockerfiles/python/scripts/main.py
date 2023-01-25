@@ -236,25 +236,25 @@ def initGrid(gridSize=30, inseeCode=None):
 
         # Ask user to clean table ?
         if EnableTruncate:
-            while True:
-                removeTilesResponse = input("Do you want to clean the Tiles table ? (y/n) : ")
-                if removeTilesResponse.lower() not in ('y', 'n'):
-                    print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                else:
-                    # Good response
-                    break
+            # while True:
+            #     removeTilesResponse = input("Do you want to clean the Tiles table ? (y/n) : ")
+            #     if removeTilesResponse.lower() not in ('y', 'n'):
+            #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+            #     else:
+            #         # Good response
+            #         break
 
-            if removeTilesResponse.lower() == 'y':
-                # Connect DB
-                conn, cur = connectDB(DB_params)
+            # if removeTilesResponse.lower() == 'y':
+            # Connect DB
+            conn, cur = connectDB(DB_params)
 
-                # Clean tiles
-                resetTilesQuery = "TRUNCATE TABLE " + DB_schema + ".tiles RESTART IDENTITY; COMMIT;"
-                cur.execute(resetTilesQuery)
-                debugLog(style.GREEN, "Successfully remove all tiles", logging.INFO)
+            # Clean tiles
+            resetTilesQuery = "TRUNCATE TABLE " + DB_schema + ".tiles RESTART IDENTITY; COMMIT;"
+            cur.execute(resetTilesQuery)
+            debugLog(style.GREEN, "Successfully remove all tiles", logging.INFO)
 
-                # Close DB
-                closeDB(conn, cur)
+            # Close DB
+            closeDB(conn, cur)
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".tiles is ready", logging.INFO)
