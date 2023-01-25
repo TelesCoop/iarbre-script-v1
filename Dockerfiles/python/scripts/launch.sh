@@ -94,14 +94,17 @@ done
  
 stage "InitDatas"
 python3 main.py initDatas
-#check
+check
 
 stage "Compute Factors & Indices"
 for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
     stage "Compute Factors : $NOM_COMMUNE"
     python3 main.py computeFactors ${LISTE_COMMUNES[$NOM_COMMUNE]}
+    check
+
     stage "Compute Indices : $NOM_COMMUNE"
     python3 main.py computeIndices ${LISTE_COMMUNES[$NOM_COMMUNE]}
+    check
 done
 
 # Launching everything, it is possible to give a list of townships
