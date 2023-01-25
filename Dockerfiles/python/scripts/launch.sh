@@ -100,12 +100,13 @@ check
 
 stage "Compute Factors & Indices"
 for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
+    CODE_INSEE=${LISTE_COMMUNES[$NOM_COMMUNE]}
     stage "Compute Factors : $NOM_COMMUNE"
-    python3 main.py computeFactors ${LISTE_COMMUNES[$NOM_COMMUNE]}
+    python3 main.py computeFactors $CODE_INSEE
     check
 
     stage "Compute Indices : $NOM_COMMUNE"
-    python3 main.py computeIndices ${LISTE_COMMUNES[$NOM_COMMUNE]}
+    python3 main.py computeIndices $CODE_INSEE
     check
 done
 
