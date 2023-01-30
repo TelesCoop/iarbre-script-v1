@@ -1,7 +1,8 @@
 ##################################################################################
 #  Taken from https://github.com/Toblerity/Fiona/issues/1063
 ##################################################################################
-FROM debian:buster-slim
+FROM debian:10
+#buster-slim
 
 # Arguments
 ARG NAMESPACE_ENV
