@@ -10,6 +10,13 @@ ARG DB_PORT_ENV
 ARG DB_NAME_ENV
 ARG DB_USER_ENV
 
+# Injecting ARGS in Environnement
+ENV NS_ENV=$NAMESPACE_ENV
+ENV DB_HOST="$DB_HOST_ENV-$NAMESPACE_ENV"
+ENV DB_PORT=$DB_PORT_ENV
+ENV DB_NAME=$DB_NAME_ENV
+ENV DB_USER=$DB_USER_ENV
+
 # Basic libs and install python3.7
 RUN apt-get update && apt-get upgrade -y \
 && apt-get install -y procps wget python3-pip gdal-bin libgdal-dev apt-utils git \
