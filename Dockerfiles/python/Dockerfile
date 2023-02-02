@@ -32,7 +32,7 @@ apt-get install -qy postgresql-client && \
 ############################################################################################
 rm -rf /var/lib/apt/lists/*
 
-COPY ./scripts/requirements.txt requirements.txt
+# COPY ./scripts/requirements.txt requirements.txt
 
 # Pip
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
@@ -43,9 +43,9 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
 # https://stackoverflow.com/questions/70508775/error-could-not-build-wheels-for-pycairo-which-is-required-to-install-pyprojec
 && pip install --no-cache-dir manimlib \
 && pip install --no-cache-dir manimce \
-&& pip install rtree pygeos \
-&& pip install --upgrade shapely \
-&& pip install --no-cache-dir --upgrade -r requirements.txt
+&& pip install rtree requests python-dotenv numpy pycrypto OWSLib psycopg2-binary \
+&& pip install --upgrade shapely geopandas pandas pathos PyGObject pygeos pyproj 
+# && pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Add a non root user (OpenShift Requirements)
 RUN addgroup calquluser && \ 
