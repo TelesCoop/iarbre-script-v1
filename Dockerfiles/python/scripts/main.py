@@ -1062,7 +1062,7 @@ def main():
             testDBConnexion()
         elif firstArgv == 'help':
             showDoc()
-        elif firstArgv == 'env':
+        elif firstArgv == 'displayEnv':
             displayEnv()
         else:
             showDoc()
