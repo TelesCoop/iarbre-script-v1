@@ -66,6 +66,7 @@ def showDoc():
                                                             List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256) 
                                                             but you can launch treatments for only one commune (e.g. python main.py 5 69266)
         testDB                                              Test the connexion with DB parameters in .env file
+        displayEnv                                          Display all global vars read from .env file.
         help                                                Show this documentation
     """
     
