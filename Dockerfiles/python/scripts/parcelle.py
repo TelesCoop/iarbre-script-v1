@@ -43,7 +43,7 @@ def computeData(df):
     unionGeom = unary_union(df)
     # Make GDF
     dataUnion = {'geometry': unionGeom}
-    unionParcelleDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
+    unionParcelleDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
 
     #TODO: Reproj
     unionParcelleDF = checkAndReproj(unionParcelleDF, ENV_targetProj)

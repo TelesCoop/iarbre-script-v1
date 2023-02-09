@@ -14,7 +14,7 @@ def computeData(df):
     allGeoSerie = currentGeoSerie.explode(index_parts=False)
 
     # Make GDF and buffer 0.1
-    df = gp.GeoDataFrame(allGeoSerie)
+    df = gp.GeoDataFrame.from_dict(allGeoSerie)
     df = makeBufferFromGDF(df, 0.1)
 
     # Regroup
@@ -22,7 +22,7 @@ def computeData(df):
 
     # Make GDF
     dataUnion = {'geometry': unionGeom}
-    unionDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
+    unionDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
 
     return unionDF
 

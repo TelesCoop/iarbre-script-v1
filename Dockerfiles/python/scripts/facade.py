@@ -29,7 +29,7 @@ def computeData(df):
     # Regroup
     unionGeom = unary_union(dfBuffered.geometry)
     dataUnion = {'geometry': unionGeom}
-    unionFacadeGDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
+    unionFacadeGDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
     #TODO: + Clean and repair geom ??
 
     # End union timer
