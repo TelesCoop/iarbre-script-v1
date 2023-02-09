@@ -101,10 +101,11 @@ for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
     python3 main.py computeFactors $CODE_INSEE
     check
 
-    stage "Compute Indices : $NOM_COMMUNE"
-    python3 main.py computeIndices $CODE_INSEE
-    check
 done
+
+stage "Compute Indices"
+python3 main.py computeIndices
+check
 
 # Launching everything, it is possible to give a list of townships
 # python3 main.py computeAll
