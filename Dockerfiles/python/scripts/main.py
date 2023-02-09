@@ -960,6 +960,7 @@ def initEnv():
                 "https" : HttpProxy
                 }
     
+def displayEnv():
     # display param value for debug
     debugLog(style.WHITE, "DB_schema="+DB_schema, logging.INFO)
     debugLog(style.WHITE, "PythonLaunch="+PythonLaunch, logging.INFO)
@@ -1061,6 +1062,8 @@ def main():
             testDBConnexion()
         elif firstArgv == 'help':
             showDoc()
+        elif firstArgv == 'env':
+            displayEnv()
         else:
             showDoc()
             debugLog(style.RED, "Unrecognized arguments for this script", logging.ERROR)

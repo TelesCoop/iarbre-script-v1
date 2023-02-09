@@ -87,12 +87,8 @@ comment "Postgres server says : "
 pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
 check
 
-# # if (SKIP_EXISTING_DATA="True")
-# stage "INIT GRID"
-# for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
-#     stage "Init Grid : $NOM_COMMUNE"
-#     python3 main.py initGrid $GRID_SIZE ${LISTE_COMMUNES[$NOM_COMMUNE]}
-# done
+comment "Python parameters : "
+python3 main.py displayEnv
  
 stage "InitDatas"
 python3 main.py initDatas
