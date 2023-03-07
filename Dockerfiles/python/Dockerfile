@@ -42,8 +42,7 @@ mkdir -p /app && \
 mkdir -p /app/logs && \
 mkdir -p /app/tmp && \
 chown -R calquluser:calquluser /app && \
-chmod 755 /app/logs /app/tmp /app && \
-chmod 755 /app/*.sh
+chmod 755 /app/logs /app/tmp /app 
 
 # WORKDIR /app
 
@@ -53,6 +52,8 @@ COPY --chown=calquluser:calquluser ./scripts/*.py ./
 COPY --chown=calquluser:calquluser ./scripts/*.sh ./
 COPY --chown=calquluser:calquluser ./sql ./
 COPY --chown=calquluser:calquluser .env ./
+
+RUN chmod 755 /app/*.sh
 
 # Arguments
 ARG NAMESPACE_ENV
