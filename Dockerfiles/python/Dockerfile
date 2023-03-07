@@ -79,4 +79,4 @@ ENV DB_USER=$DB_USER_ENV
 
 # Launch calculation
 # Documentation : https://stackoverflow.com/questions/40454470/how-can-i-use-a-variable-inside-a-dockerfile-cmd
-CMD [ "/bin/sh", "-c", "/app/scripts/launch.sh $NS_ENV $DB_HOST $DB_PORT $DB_NAME $DB_USER" ]
+CMD [ "/bin/sh", "-c", "/app/launch.sh $NS_ENV $DB_HOST $DB_PORT $DB_NAME $DB_USER" ]
