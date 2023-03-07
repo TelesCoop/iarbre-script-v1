@@ -20,7 +20,7 @@ LISTE_COMMUNES=( ["LYON-7EME"]="69387" ["LYON-8EME"]="69388" ["LYON-6EME"]="6938
 
 DATA_REPO="https://forge.grandlyon.com/erasme/data-recalcul-calque.git"
 
-scripts_dir="/app"
+scripts_dir="/app/scripts"
 data_dir="/arb-data/source-files/data-recalcul-calque"
 backup_dir="/arb-data/generated-files"
 stage=1
