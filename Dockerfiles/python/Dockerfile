@@ -8,7 +8,7 @@ FROM debian:10
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY ./ /app/
+COPY ./scripts/requirements.txt .
 
 # Basic libs and install python3.7
 RUN apt-get update && apt-get upgrade -y \
@@ -33,7 +33,7 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
 && pip install --no-cache-dir manimce \
 && pip install rtree pygeos \
 && pip install --upgrade shapely \
-&& pip install --no-cache-dir --upgrade -r ./scripts/requirements.txt
+&& pip install --no-cache-dir --upgrade -r ./requirements.txt
 
 # Add a non root user (OpenShift Requirements)
 RUN addgroup calquluser && \ 
@@ -43,11 +43,16 @@ mkdir -p /app/logs && \
 mkdir -p /app/tmp && \
 chown -R calquluser:calquluser /app && \
 chmod 755 /app/logs /app/tmp /app && \
-chmod 755 /app/scripts/*.sh
+chmod 755 /app/*.sh
 
 # WORKDIR /app
 
 USER calquluser
+# Add app 
+COPY --chown=calquluser:calquluser ./scripts/*.py ./
+COPY --chown=calquluser:calquluser ./scripts/*.sh ./
+COPY --chown=calquluser:calquluser ./sql ./
+COPY --chown=calquluser:calquluser .env ./
 
 # Arguments
 ARG NAMESPACE_ENV
@@ -70,15 +75,6 @@ ENV DB_HOST="$DB_HOST_ENV-$NAMESPACE_ENV"
 ENV DB_PORT=$DB_PORT_ENV
 ENV DB_NAME=$DB_NAME_ENV
 ENV DB_USER=$DB_USER_ENV
-
-
-# # Add app 
-# COPY --chown=calquluser:calquluser ./scripts/*.py ./
-# COPY --chown=calquluser:calquluser ./scripts/*.sh ./
-# COPY --chown=calquluser:calquluser ./sql ./
-# COPY --chown=calquluser:calquluser .env ./
-
-# RUN chmod 755 ./*.sh
 
 # Launch calculation
 # Documentation : https://stackoverflow.com/questions/40454470/how-can-i-use-a-variable-inside-a-dockerfile-cmd
