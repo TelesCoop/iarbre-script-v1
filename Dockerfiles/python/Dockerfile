@@ -42,7 +42,8 @@ mkdir -p /app && \
 mkdir -p /app/logs && \
 mkdir -p /app/tmp && \
 chown -R calquluser:calquluser /app && \
-chmod 777 /app/logs /app/tmp /app
+chmod 755 /app/logs /app/tmp /app && \
+chmod 755 /app/scripts/*.sh
 
 # WORKDIR /app
 
