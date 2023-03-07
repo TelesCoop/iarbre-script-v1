@@ -219,7 +219,9 @@ def initGrid(gridSize=30, inseeCode=None):
     # Check tiles length (with insee filter)
     tilesInseeFilter = None
     if inseeCode:
-        tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
+        # tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
+        # @OPTIMIZE : tiles.insee colunm is a integer, so querying as integer to use index.
+        tilesInseeFilter = "insee = " + str(inseeCode) + ""
     tilesCount = getCountfromDB(DB_params, DB_schema, 'tiles', tilesInseeFilter)
 
     # Check for drop Tiles
