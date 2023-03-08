@@ -17,7 +17,7 @@ def computeData(df):
 
     # Make GDF
     dataUnion = {'geometry': unionGeom}
-    unionDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
+    unionDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
 
     return unionDF
 

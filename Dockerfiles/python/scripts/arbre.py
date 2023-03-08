@@ -21,7 +21,7 @@ def computeData(df):
 
     # Make GDF
     dataUnion = {'geometry': unionGeom}
-    unionDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
+    unionDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
 
     # Clean data & explode
     currentGeoSerie = unionDF.loc[:,'geometry']
@@ -31,7 +31,7 @@ def computeData(df):
     currentGeoSerie = currentGeoSerie.simplify(1)
 
     # Make GDF
-    currGDF = gp.GeoDataFrame.from_dict(currentGeoSerie)
+    currGDF = gp.GeoDataFrame(currentGeoSerie)
     currGDF.columns = ['geometry']
 
     return currGDF

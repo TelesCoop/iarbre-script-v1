@@ -12,7 +12,7 @@ def computeData(df):
     # Get only geometry and explode
     currentGeoSerie = df.loc[:,'geometry']
     allGeoSerie = currentGeoSerie.explode(index_parts=False)
-    df = gp.GeoDataFrame.from_dict(allGeoSerie)
+    df = gp.GeoDataFrame(allGeoSerie)
 
     # Buffer 2m
     df = makeBufferFromGDF(df, 2)
@@ -22,7 +22,7 @@ def computeData(df):
 
     # Make GDF
     dataUnion = {'geometry': unionGeom}
-    unionDF = gp.GeoDataFrame.from_dict(dataUnion, crs=ENV_targetProj)
+    unionDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
 
     return unionDF
 
