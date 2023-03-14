@@ -221,8 +221,7 @@ Deploy Calqul Buttons:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   tags:
     - ns-arb-d01
-  when:
-    - manual
+  when: manual
 
 # *********************************************************************************************
 # * MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN  *
