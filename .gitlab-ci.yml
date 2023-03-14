@@ -207,8 +207,8 @@ Build Calqul Git-lfs:
 #   tags:
 #     - ns-arb-d01
 
-Deploy Calqul Buttons:
-  stage: Deploy Calqul Compute Indices
+Deploy Calqul Compute Indices:
+  stage: Deploy Calqul Buttons
   when: manual
   environment: dev
   variables:
