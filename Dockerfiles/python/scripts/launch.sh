@@ -5,11 +5,12 @@
 alias python=python3
 source .env
 
-namespace_env=$1
-DB_HOST=$2
-DB_PORT=$3
-DB_NAME=$4
-DB_USER=$5
+action=$1
+namespace_env=$2
+DB_HOST=$3
+DB_PORT=$4
+DB_NAME=$5
+DB_USER=$6
 
 # GRID_SIZE=50
 GRID_SIZE=5
@@ -51,6 +52,11 @@ comment () {
   echo -e "\e[39m\t-> $1\e[39m"
 }
 
+# Usage
+usage () {
+  comment "$0 [initDatas|computeFactors|computeIndices|dumpDatas|all] $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER"
+}
+
 # Check the last command return code (must be insterted just after the commend )
 check () {
   if [ $? -eq 0 ]; then
@@ -77,7 +83,7 @@ stage "Launch ENV Initializations..."
 cd $scripts_dir
 
 # All the needed variables a given by parameter passing
-comment "command line is '$0 $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER'"
+comment "command line is '$0 $action $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER'"
 
 comment "psql version..."
 psql -V
@@ -90,51 +96,71 @@ check
 comment "Python parameters : "
 python3 main.py displayEnv
  
-stage "InitDatas"
-python3 main.py initDatas
-check
-
-stage "Compute Factors & Indices"
-for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
-    CODE_INSEE=${LISTE_COMMUNES[$NOM_COMMUNE]}
-    stage "Compute Factors : $NOM_COMMUNE"
-    python3 main.py computeFactors $CODE_INSEE
+comment "Checking action to do : "
+case "$action" in 
+  "initDatas"|"computeFactors"|"computeIndices"|"dumpDatas"|"all" )
+    comment "Action is '$action'."
     check
+  ;;
+  *)
+    comment "Actiion parameter is not recognized."
+    usage
+    exit 2
+  ;;
+esac
 
-done
+if [ $action == "initDatas"  ] || [ $action == "all"  ]; then
+  stage "InitDatas"
+  python3 main.py initDatas
+  check
+fi
 
-stage "Compute Indices"
-python3 main.py computeIndices
-check
+if [ $action == "computeFactors"  ] || [ $action == "all"  ]; then
+  stage "Compute Factors & Indices"
+  for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
+      CODE_INSEE=${LISTE_COMMUNES[$NOM_COMMUNE]}
+      stage "Compute Factors : $NOM_COMMUNE"
+      python3 main.py computeFactors $CODE_INSEE
+      check
+  done
+fi
+
+if [ $action == "computeIndices"  ] || [ $action == "all"  ]; then
+  stage "Compute Indices"
+  python3 main.py computeIndices
+  check
+fi
 
 # Launching everything, it is possible to give a list of townships
 # python3 main.py computeAll
 
-stage "Dumping result database"
-#
-# Option "--no-password"  is set not to have to provide password by prompt.
-# This requires the presnece of /root/.pgpass file (600 mode) with such a content : "hostname:port:database:username:password"
-# https://stackoverflow.com/questions/50404041/pg-dumpall-without-prompting-password
-#
-comment "pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}"
-pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}
-check
+if [ $action == "dumpDatas"  ] || [ $action == "all"  ]; then
+  stage "Dumping result database"
+  #
+  # Option "--no-password"  is set not to have to provide password by prompt.
+  # This requires the presnece of /root/.pgpass file (600 mode) with such a content : "hostname:port:database:username:password"
+  # https://stackoverflow.com/questions/50404041/pg-dumpall-without-prompting-password
+  #
+  comment "pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}"
+  pg_dump -n base -h ${DB_HOST} -U ${DB_USER} --no-password --clean --if-exists --file=$backup_dir/$dump_name.sql ${DB_NAME}
+  check
 
-comment "Commpressing dump as $dump_name.tgz"
-tar cvzf $backup_dir/$dump_name.tgz $backup_dir/$dump_name.sql
-check
+  comment "Commpressing dump as $dump_name.tgz"
+  tar cvzf $backup_dir/$dump_name.tgz $backup_dir/$dump_name.sql
+  check
 
-stage "Uploading archive in repo with tag $archive_version"
-comment "Upload to file server 'Geo'"
+  stage "Uploading archive in repo with tag $archive_version"
+  comment "Upload to file server 'Geo'"
 
-stage "Cleanup backup dir '$backup_dir'"
-comment "old sql files"
-find $backup_dir -name "*.sql" -exec rm -f {} \;
-check
+  stage "Cleanup backup dir '$backup_dir'"
+  comment "old sql files"
+  find $backup_dir -name "*.sql" -exec rm -f {} \;
+  check
 
-comment "old tgz files"
-find $backup_dir -name "*.tgz" -mtime +5 -exec rm -f {} \;
-check
+  comment "old tgz files"
+  find $backup_dir -name "*.tgz" -mtime +5 -exec rm -f {} \;
+  check
+fi
 
 stage "End of script."
 exit 0

@@ -56,11 +56,11 @@ COPY --chown=calquluser:calquluser .env ./
 RUN chmod 755 /app/*.sh
 
 # Arguments
-ARG NAMESPACE_ENV
-ARG DB_HOST_ENV
-ARG DB_PORT_ENV
-ARG DB_NAME_ENV
-ARG DB_USER_ENV
+# ARG NAMESPACE_ENV
+# ARG DB_HOST_ENV
+# ARG DB_PORT_ENV
+# ARG DB_NAME_ENV
+# ARG DB_USER_ENV
 
 # Getting some Args and Setting some ENV variables
 ENV CPLUS_INCLUDE_PATH="/usr/include/gdal"
@@ -71,12 +71,14 @@ ENV GDAL_DATA="/usr/local/lib/python3.7/dist-packages/fiona/gdal_data/"
 # Debug verbosity
 ENV PROJ_DEBUG=3
 
-ENV NS_ENV=$NAMESPACE_ENV
-ENV DB_HOST="$DB_HOST_ENV-$NAMESPACE_ENV"
-ENV DB_PORT=$DB_PORT_ENV
-ENV DB_NAME=$DB_NAME_ENV
-ENV DB_USER=$DB_USER_ENV
+# ENV NS_ENV=$NAMESPACE_ENV
+# ENV DB_HOST="$DB_HOST_ENV-$NAMESPACE_ENV"
+# ENV DB_PORT=$DB_PORT_ENV
+# ENV DB_NAME=$DB_NAME_ENV
+# ENV DB_USER=$DB_USER_ENV
 
 # Launch calculation
 # Documentation : https://stackoverflow.com/questions/40454470/how-can-i-use-a-variable-inside-a-dockerfile-cmd
-CMD [ "/bin/sh", "-c", "/app/launch.sh $NS_ENV $DB_HOST $DB_PORT $DB_NAME $DB_USER" ]
+# CMD [ "/bin/sh", "-c", "/app/launch.sh $NS_ENV $DB_HOST $DB_PORT $DB_NAME $DB_USER" ]
+
+CMD [ "/bin/bash" ]
