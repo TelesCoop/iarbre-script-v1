@@ -209,8 +209,8 @@ Build Calqul Git-lfs:
 
 Deploy Calqul Buttons:
   stage: Deploy Calqul Compute Indices
-  environment: dev
   when: manual
+  environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "computeIndices"
