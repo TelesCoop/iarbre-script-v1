@@ -852,7 +852,34 @@ def computeIndices():
         return_error_and_exit_job(-3)
 
     # Launch SQL Query
-    updateIndiceQuery = "UPDATE base.tiles t SET indice = sub.sum_indice FROM (SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id GROUP BY id_tile) as sub WHERE t.id = sub.id_tile; COMMIT;"
+    # updateIndiceQuery = "UPDATE base.tiles t SET indice = sub.sum_indice FROM (SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id GROUP BY id_tile) as sub WHERE t.id = sub.id_tile; COMMIT;"
+
+
+    updateIndiceQuery = "DO \
+                            LANGUAGE plpgsql \
+                            $$DECLARE \
+                            /* declare and open a cursor */ \
+                            c CURSOR FOR SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice  \
+                                            FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id \
+                                            GROUP BY id_tile; \
+                            id_tile int4; \
+                            sum_indice int4; \
+                            begin \
+                            open c; \
+                            LOOP \
+                                /* get next result row */ \
+                                FETCH c INTO id_tile, sum_indice; \
+                                /* system variable FOUND is set by FETCH */ \
+                                EXIT WHEN NOT FOUND; \
+                                /* Maj de la tuile concernée */ \
+                                UPDATE base.tiles t SET t.indice = sum_indice WHERE t.id = id_tile; \
+                                COMMIT; \
+                            END LOOP; \
+                            CLOSE c; \
+                            END;$$;	 \
+                        "
+
+
     cur.execute(updateIndiceQuery)
     debugLog(style.GREEN, "Successfully update indice in all tiles", logging.INFO)
 
