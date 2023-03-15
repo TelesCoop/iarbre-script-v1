@@ -873,12 +873,10 @@ def computeIndices():
                                 EXIT WHEN NOT FOUND; \
                                 /* Maj de la tuile concernée */ \
                                 UPDATE base.tiles SET indice = sum_indice WHERE id = id_tile; \
-                                COMMIT; \
                             END LOOP; \
                             CLOSE c; \
                             END;$$;	 \
                         "
-
 
     cur.execute(updateIndiceQuery)
     debugLog(style.GREEN, "Successfully update indice in all tiles", logging.INFO)
