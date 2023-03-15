@@ -872,7 +872,7 @@ def computeIndices():
                                 /* system variable FOUND is set by FETCH */ \
                                 EXIT WHEN NOT FOUND; \
                                 /* Maj de la tuile concernée */ \
-                                UPDATE base.tiles t SET t.indice = sum_indice WHERE t.id = id_tile; \
+                                UPDATE base.tiles SET indice = sum_indice WHERE id = id_tile; \
                                 COMMIT; \
                             END LOOP; \
                             CLOSE c; \
