@@ -257,22 +257,6 @@ Deploy Compute Indices:
   tags:
     - ns-arb-d01
 
-eploy Compute Indices:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
-  variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-    CALQUL_ACTION: "computeIndices"
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
-
 Deploy Dump Datas:
   stage: Deploy Calqul Buttons
   when: manual
