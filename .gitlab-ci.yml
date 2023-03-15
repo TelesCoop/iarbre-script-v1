@@ -215,7 +215,7 @@ Build Calqul Git-lfs:
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-    CALQUL_ACTION: "initDatas"
+    CALQUL_ACTION: "init-datas"
   before_script:
     - *prepare_deployment
   script:
@@ -231,7 +231,7 @@ Build Calqul Git-lfs:
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-    CALQUL_ACTION: "computeFactors"
+    CALQUL_ACTION: "compute-factors"
   before_script:
     - *prepare_deployment
   script:
@@ -247,7 +247,7 @@ Build Calqul Git-lfs:
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-    CALQUL_ACTION: "computeIndices"
+    CALQUL_ACTION: "compute-indices"
   before_script:
     - *prepare_deployment
   script:
@@ -263,7 +263,7 @@ Build Calqul Git-lfs:
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-    CALQUL_ACTION: "dumpDatas"
+    CALQUL_ACTION: "dump-datas"
   before_script:
     - *prepare_deployment
   script:

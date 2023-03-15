@@ -54,7 +54,7 @@ comment () {
 
 # Usage
 usage () {
-  comment "$0 [initDatas|computeFactors|computeIndices|dumpDatas|all] $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER"
+  comment "$0 [init-datas|compute-factors|compute-indices|dump-datas|all] $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER"
 }
 
 # Check the last command return code (must be insterted just after the commend )
@@ -98,7 +98,7 @@ python3 main.py displayEnv
  
 comment "Checking action to do : "
 case "$action" in 
-  "initDatas"|"computeFactors"|"computeIndices"|"dumpDatas"|"all" )
+  "init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
     comment "Action is '$action'."
     check
   ;;
@@ -109,13 +109,13 @@ case "$action" in
   ;;
 esac
 
-if [ $action == "initDatas"  ] || [ $action == "all"  ]; then
-  stage "InitDatas"
+if [ $action == "init-datas"  ] || [ $action == "all"  ]; then
+  stage "init-datas"
   python3 main.py initDatas
   check
 fi
 
-if [ $action == "computeFactors"  ] || [ $action == "all"  ]; then
+if [ $action == "compute-factors"  ] || [ $action == "all"  ]; then
   stage "Compute Factors & Indices"
   for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
       CODE_INSEE=${LISTE_COMMUNES[$NOM_COMMUNE]}
@@ -125,7 +125,7 @@ if [ $action == "computeFactors"  ] || [ $action == "all"  ]; then
   done
 fi
 
-if [ $action == "computeIndices"  ] || [ $action == "all"  ]; then
+if [ $action == "compute-indices"  ] || [ $action == "all"  ]; then
   stage "Compute Indices"
   python3 main.py computeIndices
   check
@@ -134,7 +134,7 @@ fi
 # Launching everything, it is possible to give a list of townships
 # python3 main.py computeAll
 
-if [ $action == "dumpDatas"  ] || [ $action == "all"  ]; then
+if [ $action == "dump-datas"  ] || [ $action == "all"  ]; then
   stage "Dumping result database"
   #
   # Option "--no-password"  is set not to have to provide password by prompt.
