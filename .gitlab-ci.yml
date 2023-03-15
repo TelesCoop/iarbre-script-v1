@@ -111,8 +111,8 @@ variables:
   # - oc create -f deployment/jobs/master-calqul.yml
   
   # Job Compute indices
-  - oc delete jobs --selector job-name=calqul-job-compute-indices-$NAMESPACE_ENV 
-  - oc create -f deployment/jobs/compute-indices-calqul.yml
+  - oc delete jobs --selector job-name=calqul-stage-$CALQUL_ACTION-$NAMESPACE_ENV 
+  - oc create -f deployment/jobs/stage-calqul.yml
   
 ################################################################################
 #    CI/CD Stages
@@ -209,7 +209,39 @@ Build Calqul Git-lfs:
 #   tags:
 #     - ns-arb-d01
 
-Deploy Calqul Compute Indices:
+Deploy Init Datas:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "initDatas"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+Deploy Compute Factors:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "computeFactors"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+Deploy Compute Indices:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev
@@ -225,6 +257,53 @@ Deploy Calqul Compute Indices:
   tags:
     - ns-arb-d01
 
+eploy Compute Indices:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "computeIndices"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+Deploy Dump Datas:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "dumpDatas"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+Deploy All:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "all"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
 
 # *********************************************************************************************
 # * MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN  *
