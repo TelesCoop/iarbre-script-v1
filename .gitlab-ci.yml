@@ -98,6 +98,7 @@ variables:
   - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
   - oc apply -f deployment/pods/db-calqul.yml
   - oc apply -f deployment/services/db-calqul.yml
+
   # Db Dev & Debug only
   - oc apply -f deployment/services/db-calqul-debug.yml
   
@@ -110,7 +111,7 @@ variables:
   # - oc create -f deployment/jobs/master-calqul.yml
   
   # Job Compute indices
-  - oc delete jobs --selector job-name=calqul-compute-indices-$NAMESPACE_ENV 
+  - oc delete jobs --selector job-name=calqul-job-compute-indices-$NAMESPACE_ENV 
   - oc create -f deployment/jobs/compute-indices-calqul.yml
   
 ################################################################################
