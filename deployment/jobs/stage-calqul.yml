@@ -1,0 +1,59 @@
+# 
+# Job qui lance un pod de calcul des indices 
+#
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+spec:
+  # maximum duration the job can run => 1h 
+  activeDeadlineSeconds: 3600 
+  template:         
+    metadata:
+      name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+    spec:
+      volumes:
+      - name: arb-data
+        persistentVolumeClaim: 
+          claimName: pvc-01-__NAMESPACE__-claim
+      containers:
+      - name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+        # Image Python de calcul du calque
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
+        command: ["/bin/bash", "-c", "/app/launch.sh __CALQUL_ACTION__ __NAMESPACE_ENV__ __POSTGRES_SERVER__ __POSTGRES_PORT__ __POSTGRES_DB__ __POSTGRES_USER__" ]
+        volumeMounts:
+        - name: arb-data
+          mountPath: "/arb-data/source-files"
+        - name: arb-data
+          mountPath: "/arb-data/generated-files"
+        - name: arb-data
+          mountPath: "/arb-data/run" # storing a file telling export-job the state of python script
+        # Sondes
+        resources:
+          requests:
+            cpu: 1
+            memory: 8000Mi
+          limits:
+            cpu: 1
+            memory: 8000Mi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /app/scripts/healthy.sh
+            initialDelaySeconds: 240
+            periodSeconds: 60
+            failureThreshold: 3
+            timeoutSeconds: 10
+        livenessProbe: 
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /app/scripts/healthy.sh
+            initialDelaySeconds: 240
+            periodSeconds: 60
+            failureThreshold: 3
+            timeoutSeconds: 10
+      restartPolicy: Never
