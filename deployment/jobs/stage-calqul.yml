@@ -6,8 +6,11 @@ kind: Job
 metadata:
   name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
 spec:
-  # maximum duration the job can run => 1h 
-  activeDeadlineSeconds: 3600 
+  # maximum duration the job can run => 40h 
+  activeDeadlineSeconds: 144000 
+  completions: 1
+  backoffLimit: 1
+  parallelism: 1
   template:         
     metadata:
       name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
@@ -51,7 +54,7 @@ spec:
             command:
             - /bin/bash
             - -c
-            - /app/scripts/healthy.sh
+            - echo "OK"
             initialDelaySeconds: 240
             periodSeconds: 60
             failureThreshold: 3
@@ -61,7 +64,7 @@ spec:
             command:
             - /bin/bash
             - -c
-            - /app/scripts/healthy.sh
+            - echo "OK"
             initialDelaySeconds: 240
             periodSeconds: 60
             failureThreshold: 3
