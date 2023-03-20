@@ -44,11 +44,11 @@ spec:
           periodSeconds: 20
         resources:
           requests:
-            memory: 256Mi
-            cpu: 200mi
+            cpu: "200mi"
+            memory: "256Mi"
           limits:
-            memory: 1024Mi
-            cpu: 500mi
+            cpu: "1000mi"
+            memory: "1024Mi"
         env:
         - name: POSTGRES_DB
           value: "__POSTGRES_DB__"
