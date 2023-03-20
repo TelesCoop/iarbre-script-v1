@@ -42,13 +42,13 @@ spec:
             port: 5432
           initialDelaySeconds: 15
           periodSeconds: 20
-      resources:
-        requests:
-          memory: "256M"
-          cpu: "1000mi"
-        limits:
-          memory: "1024M"
-          cpu: "1000mi"
+      # resources:
+      #   requests:
+      #     memory: "256M"
+      #     cpu: "1000mi"
+      #   limits:
+      #     memory: "1024M"
+      #     cpu: "1000mi"
         env:
         - name: POSTGRES_DB
           value: "__POSTGRES_DB__"
