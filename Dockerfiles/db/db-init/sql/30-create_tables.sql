@@ -123,3 +123,4 @@ CREATE INDEX CONCURRENTLY datas_geom_index ON base.datas USING GIST (geom_poly);
 
 CREATE INDEX tiles_insee ON base.tiles USING btree (insee);
 CREATE INDEX tiles_factors_id_factor ON base.tiles_factors USING btree (id_factor);
+CREATE INDEX tiles_factors_id_tiles ON base.tiles_factors USING btree (id_tile);
