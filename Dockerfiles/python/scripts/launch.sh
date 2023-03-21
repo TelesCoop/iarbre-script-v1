@@ -90,21 +90,24 @@ comment "command line is '$0 $action $namespace_env $DB_HOST $DB_PORT $DB_NAME $
 # check
 
 comment "Postgres server says : "
-nb_try=1
-while [ $nb_try -lt 11 ]; do
-  is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
-  if [ "x$is_pgready" != "x0" ]; then
-    comment "Try #$nb_try : PostGIS Database is not ready. Sleeping for 30s, before retry..."
-    sleep 1;
-    ((nb_try++))
-  else
-    break
-  fi  
-done
-if [ "x$is_pgready" != "x0" ]; then
-  is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
-  check
-fi;
+pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
+check 
+
+# nb_try=1
+# while [ $nb_try -lt 11 ]; do
+#   is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
+#   if [ "x$is_pgready" != "x0" ]; then
+#     comment "Try #$nb_try : PostGIS Database is not ready. Sleeping for 30s, before retry..."
+#     sleep 1;
+#     ((nb_try++))
+#   else
+#     break
+#   fi  
+# done
+# if [ "x$is_pgready" != "x0" ]; then
+#   is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
+#   check
+# fi;
 
 comment "Python parameters : "
 python3 main.py displayEnv
