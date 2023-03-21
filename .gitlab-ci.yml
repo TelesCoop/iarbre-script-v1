@@ -209,7 +209,23 @@ Build Calqul Git-lfs:
 #   tags:
 #     - ns-arb-d01
 
-1. Init Datas:
+1. Init Grid:
+  stage: Deploy Calqul Buttons
+  when: manual
+  environment: dev
+  variables:
+    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+    CALQUL_ACTION: "init-grid"
+  before_script:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+2. Init Datas:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev
@@ -225,7 +241,7 @@ Build Calqul Git-lfs:
   tags:
     - ns-arb-d01
 
-2. Compute Factors:
+3. Compute Factors:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev
@@ -241,7 +257,7 @@ Build Calqul Git-lfs:
   tags:
     - ns-arb-d01
 
-3. Compute Indices:
+4. Compute Indices:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev
@@ -257,7 +273,7 @@ Build Calqul Git-lfs:
   tags:
     - ns-arb-d01
 
-4. Dump Datas:
+5. Dump Datas:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev

@@ -54,7 +54,7 @@ comment () {
 
 # Usage
 usage () {
-  comment "$0 [init-datas|compute-factors|compute-indices|dump-datas|all] $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER"
+  comment "$0 [init-grid|init-datas|compute-factors|compute-indices|dump-datas|all] $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER"
 }
 
 # Check the last command return code (must be insterted just after the commend )
@@ -92,17 +92,17 @@ comment "command line is '$0 $action $namespace_env $DB_HOST $DB_PORT $DB_NAME $
 comment "Postgres server says : "
 nb_try=1
 while [ $nb_try -lt 11 ]; do
-  is_pgready=$(pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER)
-  if [ $is_pgready -ne 0 ]; then
+  is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
+  if [ "x$is_pgready" != "x0" ]; then
     comment "Try #$nb_try : PostGIS Database is not ready. Sleeping for 30s, before retry..."
-    sleep 30;
+    sleep 1;
     ((nb_try++))
   else
     break
   fi  
 done
-if [ $is_pgready -ne 0 ]; then
-  is_pgready=$(pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER)
+if [ "x$is_pgready" != "x0" ]; then
+  is_pgready=$("pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER")
   check
 fi;
 
@@ -111,7 +111,7 @@ python3 main.py displayEnv
  
 comment "Checking action to do : "
 case "$action" in 
-  "init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
+  "init-grid"|"init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
     comment "Action is '$action'."
     check
   ;;
@@ -121,6 +121,12 @@ case "$action" in
     exit 2
   ;;
 esac
+
+if [ $action == "init-grid"  ] || [ $action == "all"  ]; then
+  stage "init-grid"
+  python3 main.py initGrid $GRID_SIZE
+  check
+fi
 
 if [ $action == "init-datas"  ] || [ $action == "all"  ]; then
   stage "init-datas"
