@@ -1,4 +1,4 @@
-# Fiona==1.8.21
+Fiona==1.8.21
 geopandas==0.10.2
 numpy==1.21.6
 OWSLib==0.26.0
@@ -9,7 +9,8 @@ pycrypto==2.6.1
 PyGObject==3.30.4
 python-dotenv==0.20.0
 requests==2.21.0
-# Shapely==1.8.2
+Shapely==1.8.2
+pyproj==3.2.1
 
 # asn1crypto==0.24.0
 # attrs==21.4.0
