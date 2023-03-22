@@ -71,7 +71,7 @@ CREATE TABLE base.datas (
 CREATE TABLE base.communes (
 	id serial PRIMARY KEY,
 	libelle character varying(255) NULL,
-	insee character int NULL,
+	insee int NULL,
 	geom_poly geometry(POLYGON) NOT NULL
 );
 
