@@ -129,6 +129,7 @@ if [ $action == "init-grid"  ] || [ $action == "all"  ]; then
   # Do InitGrid, township by town ship to avoid memory overflow
   stage "init-grid"
   for NOM_COMMUNE in $( echo "${!LISTE_COMMUNES[@]}" | tr ' ' '\n' | sort ); do
+      stage "Init Grid : $NOM_COMMUNE"
       CODE_INSEE=${LISTE_COMMUNES[$NOM_COMMUNE]}
       python3 main.py initGrid $GRID_SIZE $CODE_INSEE
     check
