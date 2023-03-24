@@ -12,7 +12,6 @@ DB_PORT=$4
 DB_NAME=$5
 DB_USER=$6
 
-# GRID_SIZE=50
 GRID_SIZE=5
 
 declare -A LISTE_COMMUNES
@@ -85,9 +84,9 @@ cd $scripts_dir
 # All the needed variables a given by parameter passing
 comment "command line is '$0 $action $namespace_env $DB_HOST $DB_PORT $DB_NAME $DB_USER'"
 
-# comment "psql version..."
-# psql -V
-# check
+comment "psql version..."
+psql -V
+check
 
 comment "Postgres server says : "
 pg_isready -d $DB_NAME -h $DB_HOST -p $DB_PORT -U $DB_USER
