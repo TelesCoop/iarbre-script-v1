@@ -247,7 +247,7 @@ def getCountfromDB(DB_params, DB_schema, tableName, queryFilter=None, connInput 
         cur = curInput
     
     # Build request
-    countQuery = "SELECT COUNT(*) FROM " + DB_schema + "." + tableName
+    countQuery = "SELECT COUNT(1) FROM " + DB_schema + "." + tableName
 
     if queryFilter:
         countQuery = countQuery + " WHERE " + queryFilter

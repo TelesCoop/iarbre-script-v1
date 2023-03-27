@@ -836,7 +836,7 @@ def computeIndices():
     conn, cur = connectDB(DB_params)
 
     # Get TILES_FACTORS count
-    tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', None, conn, cur)
+    tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', 'id < 100', conn, cur)
 
     # Check empty data for TILES_FACTORS table
     if tfCount == 0:
@@ -844,7 +844,7 @@ def computeIndices():
         return_error_and_exit_job(-3)
 
     # Get TILES count
-    tCount = getCountfromDB(DB_params, DB_schema, 'tiles', None, conn, cur)
+    tCount = getCountfromDB(DB_params, DB_schema, 'tiles', 'id < 100', conn, cur)
 
     # Check empty data for TILES table
     if tCount == 0:
