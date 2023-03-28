@@ -625,6 +625,13 @@ def computeFactors(inseeCode=None):
         # Check count
         currTFDataCount = 0
         if inseeCode:
+            #
+            # PGL : peut-être créer une table temp à la fin de l'étyape précédente (initDatas), avec la requête suivante et se contenter d'interroger cette table ?
+            # SELECT id_factor, t.insee, count(1) 
+            # FROM base.tiles_factors tf, base.tiles t
+            # WHERE tf.id_tile = t.id 
+            # group by id_factor, t.insee
+            #
             # Check TILES_FACTORS existing data (with insee)
             queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
             currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
@@ -633,7 +640,13 @@ def computeFactors(inseeCode=None):
             # Check TILES_FACTORS existing data
             qFilter = 'id_factor = ' + str(currFactorID)
             currTFDataCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', qFilter)
-
+            #
+            # PGL : Cette requête prend environ 10s
+            # @TODO : la requête suivante prendrait 20s, mais pourrait être faite une fois (~20s) pour toute et stockée dans un Hashmap
+            # select id_factor, count(1) 
+            # from base.tiles_factors tf 
+            # group by id_factor
+            #
         # Check count for tiles_factors Data
         if currTFDataCount > 0:
             debugLog(style.YELLOW, "/!\ Some datas (tiles_factors & area) already exist for the factor \'" + currFactorName + "\' in database", logging.INFO)
