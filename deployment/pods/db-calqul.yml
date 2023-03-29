@@ -42,7 +42,7 @@ spec:
             port: 5432
           initialDelaySeconds: 15
           periodSeconds: 20
-      - resources:
+        resources:
           limits:
             cpu: 400m
             memory: 500Mi
