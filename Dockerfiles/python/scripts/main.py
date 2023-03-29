@@ -235,7 +235,7 @@ def initGrid(gridSize=30, inseeCode=None):
     tilesCount = getProgress(cur, DB_schema, inseeCode)
 
     # Check for drop Tiles
-    if tilesCount > 0:
+    if int(tilesCount) > 0:
         logInseeSuffix = "for inseeCode {}".format(inseeCode)
         # logInseeSuffix = ''
         # if inseeCode:
