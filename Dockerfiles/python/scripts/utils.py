@@ -827,8 +827,8 @@ def setProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
         qryFilter = ' and id_factor = ' + id_factor
         insertComplement = ', ' + id_factor
     # Ensure there is only one occurence for the township
-    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE codeInsee = ' + codeInsee + qryFilter)
-    insertDataInDB(DBcursor,'INSERT INTO ' + stage + '_progress VALUES (' + codeInsee + insertComplement + ')')
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
+    insertDataInDB(DBcursor,'INSERT INTO ' + DBSchema + '.' + stage + '_progress VALUES (' + codeInsee + insertComplement + ')')
 
 def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     stage = 'tiles'
@@ -837,5 +837,5 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
         stage = 'factors'
         qryFilter = ' and id_factor = ' + id_factor
     DBcursor.execute('SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
-    dataValues = json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter)
+    dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0][0]
     return dataValues

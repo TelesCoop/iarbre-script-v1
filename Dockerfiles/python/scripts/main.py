@@ -652,8 +652,8 @@ def computeFactors(inseeCode=None):
 
         # queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
         # currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
-        currTFDataFAI = getProgress(cur, DB_schema, inseeCode, currFactorID)
-        currTFDataCount = json.loads(currTFDataFAI)[0]['count']
+        currTFDataCount = getProgress(cur, DB_schema, inseeCode, currFactorID)
+        # currTFDataCount = json.loads(currTFDataFAI)[0]['count']
 
         # if inseeCode:
         #     # Check TILES_FACTORS existing data (with insee)
