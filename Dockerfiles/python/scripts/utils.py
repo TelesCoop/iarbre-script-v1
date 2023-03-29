@@ -215,7 +215,7 @@ def connectDB(params_DB, jsonEnable = False):
             cur = conn.cursor()
 
         # Log
-        debugLog(style.GREEN, "Database connection successfully opened", logging.INFO)
+        # debugLog(style.GREEN, "Database connection successfully opened", logging.INFO)
         
         return conn, cur
 
@@ -231,7 +231,7 @@ def closeDB(conn, cur):
         cur.close()
         
         # Log
-        debugLog(style.GREEN, "Database connection successfully closed", logging.INFO)
+        # debugLog(style.GREEN, "Database connection successfully closed", logging.INFO)
 
     except (Exception, psycopg2.Error) as error :
         debugLog(style.RED, "Error while trying to connect in PostgreSQL database : {}".format(error), logging.ERROR)
@@ -257,7 +257,7 @@ def getCountfromDB(DB_params, DB_schema, tableName, queryFilter=None, connInput 
     countValue = cur.fetchone()[0]
 
     # Log
-    debugLog(style.BLUE, "Found {} entites in table {}".format(countValue, tableName), logging.INFO)
+    # debugLog(style.BLUE, "Found {} entites in table {}".format(countValue, tableName), logging.INFO)
 
     if connInput is None and curInput is None:
         # Final close cursor & DB
@@ -813,3 +813,29 @@ class style():
     WHITE = '\033[37m'
     UNDERLINE = '\033[4m'
     RESET = '\033[0m'
+
+
+# -----------------------------
+# ---- PROGRESS OPERATIONS ----
+# -----------------------------
+def setProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
+    stage = 'tiles'
+    qryFilter = ''
+    insertComplement = ''
+    if id_factor:
+        stage = 'factors'
+        qryFilter = ' and id_factor = ' + id_factor
+        insertComplement = ', ' + id_factor
+    # Ensure there is only one occurence for the township
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE codeInsee = ' + codeInsee + qryFilter)
+    insertDataInDB(DBcursor,'INSERT INTO ' + stage + '_progress VALUES (' + codeInsee + insertComplement + ')')
+
+def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
+    stage = 'tiles'
+    qryFilter = ''
+    if id_factor:
+        stage = 'factors'
+        qryFilter = ' and id_factor = ' + id_factor
+    DBcursor.execute('SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
+    dataValues = json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter)
+    return dataValues

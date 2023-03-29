@@ -209,26 +209,37 @@ def initCommunes():
 # ------------------------
 
 def initGrid(gridSize=30, inseeCode=None):
+
+    # Stop launching without insee code
+    if not inseeCode:
+        return_error_and_exit_job(-3)
+
     # Log & Timer
-    logInseeSuffix = ''
-    if inseeCode:
-        logInseeSuffix = "and with inseeCode {}".format(inseeCode)
+    logInseeSuffix = "and with inseeCode {}".format(inseeCode)
+    # logInseeSuffix = ''
+    # if inseeCode:
+    #     logInseeSuffix = "and with inseeCode {}".format(inseeCode)
     debugLog(style.YELLOW, "Launch initialisation script of \'Grid\' with size {}x{} {}".format(gridSize, gridSize, logInseeSuffix), logging.INFO)
     gridTimer = startTimerLog('Generate Grid')
 
+    conn, cur = connectDB(DB_params)
+
     # Check tiles length (with insee filter)
-    tilesInseeFilter = None
-    if inseeCode:
-        # tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
-        # @OPTIMIZE : tiles.insee colunm is a integer, so querying as integer to use index.
-        tilesInseeFilter = "insee = " + str(inseeCode) + ""
-    tilesCount = getCountfromDB(DB_params, DB_schema, 'tiles', tilesInseeFilter)
+    # tilesInseeFilter = None
+    # if inseeCode:
+    #     # tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
+    #     # @OPTIMIZE : tiles.insee colunm is a integer, so querying as integer to use index.
+    #     tilesInseeFilter = "insee = " + str(inseeCode) + ""
+    # tilesCount = getCountfromDB(DB_params, DB_schema, 'tiles', tilesInseeFilter)
+
+    tilesCount = getProgress(cur, DB_schema, inseeCode)
 
     # Check for drop Tiles
     if tilesCount > 0:
-        logInseeSuffix = ''
-        if inseeCode:
-            logInseeSuffix = "for inseeCode {}".format(inseeCode)
+        logInseeSuffix = "for inseeCode {}".format(inseeCode)
+        # logInseeSuffix = ''
+        # if inseeCode:
+        #     logInseeSuffix = "for inseeCode {}".format(inseeCode)
         debugLog(style.YELLOW, "/!\ Some Tiles already exist in database {}".format(logInseeSuffix), logging.INFO)
 
         if SkipExistingData == 'True':
@@ -249,7 +260,7 @@ def initGrid(gridSize=30, inseeCode=None):
 
             # if removeTilesResponse.lower() == 'y':
             # Connect DB
-            conn, cur = connectDB(DB_params)
+            # conn, cur = connectDB(DB_params)
 
             # Clean tiles
             resetTilesQuery = "TRUNCATE TABLE " + DB_schema + ".tiles RESTART IDENTITY; COMMIT;"
@@ -257,15 +268,16 @@ def initGrid(gridSize=30, inseeCode=None):
             debugLog(style.GREEN, "Successfully remove all tiles", logging.INFO)
 
             # Close DB
-            closeDB(conn, cur)
+            # closeDB(conn, cur)
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".tiles is ready", logging.INFO)
 
     # Check communes length
-    communeFilter = None
-    if inseeCode:
-        communeFilter = "insee = '" + str(inseeCode) + "'"
+    communeFilter = "insee = '" + str(inseeCode) + "'"
+    # communeFilter = None
+    # if inseeCode:
+    #     communeFilter = "insee = '" + str(inseeCode) + "'"
     communesCount = getCountfromDB(DB_params, DB_schema, 'communes', communeFilter)
 
     if communesCount > 0:
@@ -276,8 +288,9 @@ def initGrid(gridSize=30, inseeCode=None):
 
     # Get Communes data
     query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes"
-    if inseeCode:
-        query = query + " WHERE " + communeFilter
+    query = query + " WHERE " + communeFilter
+    # if inseeCode:
+    #     query = query + " WHERE " + communeFilter
     
     communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
@@ -292,6 +305,12 @@ def initGrid(gridSize=30, inseeCode=None):
 
     # Insert grid init
     insertGDFintoDB(DB_params, DB_schema, wktGrid, 'tiles', columnsListToDB)
+
+    # Setting progress for this insee code
+    setProgress(cur, DB_schema, inseeCode)
+
+    # Close DB
+    closeDB(conn, cur)
 
     # End timer
     endTimerLog(gridTimer)
@@ -581,34 +600,40 @@ def insertMDDatas(df, id_metadata, id_factor):
     insertGDFintoDB(DB_params, DB_schema, currGDF, 'datas', columnsListToDB)
 
 def computeFactors(inseeCode=None):
-    # Log
-    logInseeSuffix = ''
-    if inseeCode:
-        logInseeSuffix = "for commune '{}'".format(inseeCode)
-    debugLog(style.YELLOW, "Launch compute process for factors {}".format(logInseeSuffix), logging.INFO)
-    computeTimer = startTimerLog('Compute factors {}'.format(logInseeSuffix))
-    
+    # Do not allow the run without inse code
+    if not inseeCode:
+        return_error_and_exit_job(-3)
+
     # Check if inseeCode is numeric
     if inseeCode and not inseeCode.isdigit():
         debugLog(style.RED, "The inseeCode argument is not a number. Please correct your input", logging.INFO)
         return_error_and_exit_job(-4)
 
-    # Get all tiles (filtered by insee if input)
-    tilesQuery = 'SELECT id, geom_poly as geom, insee, indice FROM ' + DB_schema + '.tiles'
-    if inseeCode:
-        tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
-    # Get Tiles from DB
-    tilesGDF = getGDFfromDB(DB_params, tilesQuery, ENV_targetProj)
+    # Log
+    logInseeSuffix = "for commune '{}'".format(inseeCode)
+    # logInseeSuffix = ''
+    # if inseeCode:
+    #     logInseeSuffix = "for commune '{}'".format(inseeCode)
+    debugLog(style.YELLOW, "Launch compute process for factors {}".format(logInseeSuffix), logging.INFO)
+    computeTimer = startTimerLog('Compute factors {}'.format(logInseeSuffix))
+
+    # Connect to DB
+    conn, cur = connectDB(DB_params, jsonEnable=True)
+
+    tilesOK = getProgress(cur, DB_schema, inseeCode)
 
     # Check empty data for all table
-    if len(tilesGDF) == 0:
+    # if len(tilesGDF) == 0:
+    if tilesOK == 0:
+        debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
+        return_error_and_exit_job(-3)
         # Check length depend on inseeCode
-        if inseeCode:
-            debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
-            return_error_and_exit_job(-3)
-        else:
-            debugLog(style.YELLOW, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.INFO)
-            return_error_and_exit_job(-3)
+        # if inseeCode:
+        #     debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
+        #     return_error_and_exit_job(-3)
+        # else:
+        #     debugLog(style.YELLOW, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.INFO)
+        #     return_error_and_exit_job(-3)
 
     # Get all factors
     factorsQuery = "SELECT * FROM " + DB_schema + ".factors ORDER BY id"
@@ -624,29 +649,22 @@ def computeFactors(inseeCode=None):
 
         # Check count
         currTFDataCount = 0
-        if inseeCode:
-            #
-            # PGL : peut-être créer une table temp à la fin de l'étyape précédente (initDatas), avec la requête suivante et se contenter d'interroger cette table ?
-            # SELECT id_factor, t.insee, count(1) 
-            # FROM base.tiles_factors tf, base.tiles t
-            # WHERE tf.id_tile = t.id 
-            # group by id_factor, t.insee
-            #
-            # Check TILES_FACTORS existing data (with insee)
-            queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
-            currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
-            currTFDataCount = json.loads(currTFDataFAI)[0]['count']
-        else:
-            # Check TILES_FACTORS existing data
-            qFilter = 'id_factor = ' + str(currFactorID)
-            currTFDataCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', qFilter)
-            #
-            # PGL : Cette requête prend environ 10s
-            # @TODO : la requête suivante prendrait 20s, mais pourrait être faite une fois (~20s) pour toute et stockée dans un Hashmap
-            # select id_factor, count(1) 
-            # from base.tiles_factors tf 
-            # group by id_factor
-            #
+
+        # queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
+        # currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
+        currTFDataFAI = getProgress(cur, DB_schema, inseeCode, currFactorID)
+        currTFDataCount = json.loads(currTFDataFAI)[0]['count']
+
+        # if inseeCode:
+        #     # Check TILES_FACTORS existing data (with insee)
+        #     queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
+        #     currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
+        #     currTFDataCount = json.loads(currTFDataFAI)[0]['count']
+        # else:
+        #     # Check TILES_FACTORS existing data
+        #     qFilter = 'id_factor = ' + str(currFactorID)
+        #     currTFDataCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', qFilter)
+
         # Check count for tiles_factors Data
         if currTFDataCount > 0:
             debugLog(style.YELLOW, "/!\ Some datas (tiles_factors & area) already exist for the factor \'" + currFactorName + "\' in database", logging.INFO)
@@ -659,27 +677,31 @@ def computeFactors(inseeCode=None):
 
             # Ask user to clean table ?
             if EnableTruncate:
-                while True:
-                    removeDataResponse = input("Do you want to clean those datas ? (y/n) : ")
-                    if removeDataResponse.lower() not in ('y', 'n'):
-                        print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                    else:
-                        # Good response
-                        break
+                # while True:
+                #     removeDataResponse = input("Do you want to clean those datas ? (y/n) : ")
+                #     if removeDataResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
 
-                if removeDataResponse.lower() == 'y':
-                    if inseeCode:
-                        # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
-                        deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
-                        deleteCustomDataInDB(DB_params, deleteTFQuery)
-                    else:
-                        # DELETE TILES_FACTORS datas with id_factor
-                        deleteQFilter = "id_factor = " + str(currFactorID)
-                        deleteDataInDB(DB_params, DB_schema, 'tiles_factors', deleteQFilter)
+                # if removeDataResponse.lower() == 'y':
+                    # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
+                deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
+                deleteCustomDataInDB(DB_params, deleteTFQuery)
+
+                    # if inseeCode:
+                    #     # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
+                    #     deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
+                    #     deleteCustomDataInDB(DB_params, deleteTFQuery)
+                    # else:
+                    #     # DELETE TILES_FACTORS datas with id_factor
+                    #     deleteQFilter = "id_factor = " + str(currFactorID)
+                    #     deleteDataInDB(DB_params, DB_schema, 'tiles_factors', deleteQFilter)
                     
 
                     # Log
-                    debugLog(style.GREEN, "Successfully remove all TILES_FACTORS datas for \'" + currFactorName + "\' ", logging.INFO)
+                debugLog(style.GREEN, "Successfully remove all TILES_FACTORS datas for \'" + currFactorName + "\' ", logging.INFO)
 
         # Log & timer per factor
         currFactorTimer = startTimerLog("Compute factor " + currFactorName)
@@ -690,15 +712,24 @@ def computeFactors(inseeCode=None):
 
         # Get commmune geom to filter data
         communesGDF = None
-        if inseeCode:
-            query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
-            communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
-            # Filter data with commune geom (if insee)
-            currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+        query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
+        communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
-            # Log
-            debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
+        # Filter data with commune geom (if insee)
+        currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+
+        #     # Log
+        #     debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
+        # if inseeCode:
+        #     query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
+        #     communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
+
+        #     # Filter data with commune geom (if insee)
+        #     currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+
+        #     # Log
+        #     debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
 
         if len(currFDataGDF) > 1:
             # Union timer
@@ -718,6 +749,15 @@ def computeFactors(inseeCode=None):
         # Clip timer
         clipTimer = startTimerLog('Clip datas with tiles')
 
+        # Get all tiles (filtered by insee if input)
+        tilesQuery = 'SELECT id, geom_poly as geom, insee, indice FROM ' + DB_schema + '.tiles'
+        tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
+
+        # if inseeCode:
+        #     tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
+        # Get Tiles from DB
+        tilesGDF = getGDFfromDB(DB_params, tilesQuery, ENV_targetProj)
+        
         # Intersect & cut data with tiles geom (clip)
         interFData = tilesGDF.clip(unionFactorGDF)
         
@@ -731,9 +771,6 @@ def computeFactors(inseeCode=None):
         debugLog(style.YELLOW, 'Successfully match factor \'{}\' datas with tiles. Found {} entites / {} tiles '.format(currFactorName, len(interFGDF), len(tilesGDF)), logging.INFO)
 
         debugLog(style.YELLOW, 'Calculating area for current factor tiles and insert in database', logging.INFO)
-
-        # Connect to DB
-        conn, cur = connectDB(DB_params, jsonEnable=True)
 
         # Loop in all RESULT cutFactor Geom (with tiles info)
         for index, row in interFGDF.iterrows():
@@ -772,19 +809,23 @@ def computeFactors(inseeCode=None):
 
             ##End of current cutFactor (tile) loop
 
-        # Close cursor & DB connexion
-        closeDB(conn, cur)
-
         # Log
         debugLog(style.GREEN, 'Successfully insert all informations and area in database', logging.INFO)
         
         # Ending log
         endTimerLog(currFactorTimer)
 
+        # updating process
+        setProgress(cur, DB_schema, inseeCode, currFactorID)
+
         ##End of current factor loop
 
     # Log & timer end script
     endTimerLog(computeTimer)
+
+    # Close cursor & DB connexion
+    closeDB(conn, cur)
+    
     debugLog(style.YELLOW, "End of computing factors process", logging.INFO)
 
 def multiComputeFactors(communesSplitedArray):
@@ -849,7 +890,8 @@ def computeIndices():
     conn, cur = connectDB(DB_params)
 
     # Get TILES_FACTORS count
-    tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', 'id < 100', conn, cur)
+    # tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', 'id < 100', conn, cur)
+    tfCount = getCountfromDB(DB_params, DB_schema, 'factors_progress', None , conn, cur)
 
     # Check empty data for TILES_FACTORS table
     if tfCount == 0:
@@ -857,7 +899,8 @@ def computeIndices():
         return_error_and_exit_job(-3)
 
     # Get TILES count
-    tCount = getCountfromDB(DB_params, DB_schema, 'tiles', 'id < 100', conn, cur)
+    # tCount = getCountfromDB(DB_params, DB_schema, 'tiles', 'id < 100', conn, cur)
+    tCount = getCountfromDB(DB_params, DB_schema, 'tiles_progress', None, conn, cur)
 
     # Check empty data for TILES table
     if tCount == 0:

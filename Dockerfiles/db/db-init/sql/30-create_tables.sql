@@ -114,6 +114,20 @@ CREATE TABLE base.tiles_factors (
 		ON DELETE NO ACTION
 );
 
+-- --------------------------------
+--     TABLES AVANCEMENT CALCUL
+-- --------------------------------
+CREATE TABLE base.tiles_progress (
+	insee int4 NOT NULL,
+	CONSTRAINT tiles_progress_pk PRIMARY KEY (insee)
+);
+
+CREATE TABLE base.factors_progress (
+	insee int4 NOT NULL,
+	id_factor int4 NOT NULL,
+	CONSTRAINT factors_progress_pk PRIMARY KEY (insee,id_factor)
+);
+
 -- ------------------------
 --         INDEX
 -- ------------------------
