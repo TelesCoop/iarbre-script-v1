@@ -835,7 +835,12 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     qryFilter = ''
     if id_factor:
         stage = 'factors'
-        qryFilter = ' and id_factor = ' + id_factor
-    DBcursor.execute('SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
-    dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0][0]
+        qryFilter = ' and id_factor = {}'.format(id_factor)
+
+    qry = 'SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter
+    debugLog(style.YELLOW, qry, logging.INFO)
+    DBcursor.execute(qry)
+    dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0]['count']
     return dataValues
+
+
