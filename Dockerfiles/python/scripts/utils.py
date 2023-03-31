@@ -824,7 +824,7 @@ def setProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     insertComplement = ''
     if id_factor:
         stage = 'factors'
-        qryFilter = ' and id_factor = ' + id_factor
+        qryFilter = ' and id_factor = {}'.format(id_factor)
         insertComplement = ', ' + id_factor
     # Ensure there is only one occurence for the township
     DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
