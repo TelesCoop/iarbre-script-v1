@@ -79,6 +79,11 @@ variables:
   - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__CALQUL_ACTION__/$CALQUL_ACTION/g" deployment/jobs/stage-calqul.yml 
   
+  - sed -i "s/__MEM_REQUEST__/$MEM_REQUEST/g" deployment/jobs/stage-calqul.yml 
+  - sed -i "s/__MEM_LIMIT__/$MEM_LIMIT/g" deployment/jobs/stage-calqul.yml 
+  - sed -i "s/__CPU_REQUEST__/$CPU_REQUEST/g" deployment/jobs/stage-calqul.yml 
+  - sed -i "s/__CPU_LIMIT__/$CPU_LIMIT/g" deployment/jobs/stage-calqul.yml 
+  
 
   # Git-lfs deployment file
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/pods/git-calqul.yml
@@ -216,6 +221,10 @@ Build Calqul Git-lfs:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "init-grid"
+    MEM_REQUEST: "1000Mi"
+    CPU_REQUEST: 1
+    MEM_LIMIT: "3500Mi"
+    CPU_LIMIT: 1
   before_script:
     - *prepare_deployment
   script:
@@ -232,6 +241,10 @@ Build Calqul Git-lfs:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "init-datas"
+    MEM_REQUEST: "2000Mi"
+    CPU_REQUEST: 1
+    MEM_LIMIT: "8000Mi"
+    CPU_LIMIT: 1
   before_script:
     - *prepare_deployment
   script:
@@ -248,6 +261,10 @@ Build Calqul Git-lfs:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "compute-factors"
+    MEM_REQUEST: "2000Mi"
+    CPU_REQUEST: 1
+    MEM_LIMIT: "2000Mi"
+    CPU_LIMIT: 1
   before_script:
     - *prepare_deployment
   script:
@@ -264,6 +281,10 @@ Build Calqul Git-lfs:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "compute-indices"
+    MEM_REQUEST: "1000Mi"
+    CPU_REQUEST: 1
+    MEM_LIMIT: "1000Mi"
+    CPU_LIMIT: 1
   before_script:
     - *prepare_deployment
   script:
@@ -280,6 +301,10 @@ Build Calqul Git-lfs:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "dump-datas"
+    MEM_REQUEST: "256Mi"
+    CPU_REQUEST: "100m"
+    MEM_LIMIT: "500Mi"
+    CPU_LIMIT: "200m"
   before_script:
     - *prepare_deployment
   script:
@@ -296,6 +321,10 @@ All Stages:
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "all"
+    MEM_REQUEST: "2000Mi"
+    CPU_REQUEST: 1
+    MEM_LIMIT: "8000Mi"
+    CPU_LIMIT: 1
   before_script:
     - *prepare_deployment
   script:

@@ -6,8 +6,8 @@ kind: Job
 metadata:
   name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
 spec:
-  # maximum duration the job can run => 40h 
-  activeDeadlineSeconds: 144000 
+  # maximum duration the job can run => 160h 
+  activeDeadlineSeconds: 576000
   completions: 1
   backoffLimit: 1
   parallelism: 1
@@ -44,11 +44,11 @@ spec:
             value: "http://proxyhttppro.grandlyon.fr:8080"
         resources:
           requests:
-            cpu: 1
-            memory: 2000Mi
+            cpu: __CPU_REQUEST__  # 1
+            memory: __MEM_REQUEST__ # 2000Mi
           limits:
-            cpu: 1
-            memory: 8000Mi
+            cpu: __CPU_LIMIT__ # 1
+            memory: __MEM_LIMIT__ # 8000Mi
         readinessProbe:
           exec:
             command:
