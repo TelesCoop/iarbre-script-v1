@@ -772,6 +772,7 @@ def computeFactors(inseeCode=None):
 
         debugLog(style.YELLOW, 'Calculating area for current factor tiles and insert in database', logging.INFO)
 
+        insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES "
         # Loop in all RESULT cutFactor Geom (with tiles info)
         for index, row in interFGDF.iterrows():
             # Craft row item in dict format
@@ -791,25 +792,24 @@ def computeFactors(inseeCode=None):
             roundCutFactorArea = round(cutFactorArea)
 
             # DEBUG Log
-            debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
+            # debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
 
             # Insert area into TILES_FACTOR (with id_tile & id_factor)
-            insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
-            
-            try:
-                insertDataInDB(cur, insertTileFactorQuery)
-                conn.commit()
-            except psycopg2.Error as e:
-                print(e)
-                return_error_and_exit_job(-5)
-
-            # try:
-            #     conn.commit()
-            # except psycopg2.Error as e:
-            #     print(e)
-            #     return_error_and_exit_job(-5)
+            # insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
+            insertTileFactorQuery += "(" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "), "
 
             ##End of current cutFactor (tile) loop
+
+        # Insertining all data in database
+        insertTileFactorQuery = insertTileFactorQuery[0,-1] # chunck last comma
+        debugLog(style.YELLOW, insertTileFactorQuery, logging.DEBUG)
+
+        try:
+            insertDataInDB(cur, insertTileFactorQuery)
+            conn.commit()
+        except psycopg2.Error as e:
+            print(e)
+            return_error_and_exit_job(-5)
 
         # Log
         debugLog(style.GREEN, 'Successfully insert all informations and area in database', logging.INFO)
