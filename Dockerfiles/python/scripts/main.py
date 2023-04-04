@@ -672,7 +672,7 @@ def computeFactors(inseeCode=None):
             # Skip factors with existing data in TILES_FACTORS
             if SkipExistingData == 'True':
                 # Log
-                debugLog(style.MAGENTA, "Current factor \'" + currFactorName + "\' was skipped", logging.INFO)
+                debugLog(style.MAGENTA, "Current factor \'" + currFactorName + "\' was skipped for {}.".format(inseeCode), logging.INFO)
                 continue
 
             # Ask user to clean table ?
@@ -798,13 +798,14 @@ def computeFactors(inseeCode=None):
             # insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
             insertedValues += "(" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "), "
 
-            # # Every 1000 lines we bulk insert
-            # if index % 1000:
+            # Every 1000 lines we bulk insert
+            # if len(insertedValues) > 0 and index % 1000:
             #     try:
-            #         insertTileFactorQuery = insertedValues[:-2] # shrink last space and comma
+            #         insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
             #         insertDataInDB(cur, insertTileFactorQuery)
             #         conn.commit()
-            #         insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES "
+            #         insertedValues = ""
+            #         debugLog(style.YELLOW, "A bunch of 1000 Tiles of \'{}\' was inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
             #     except psycopg2.Error as e:
             #         print(e)
             #         return_error_and_exit_job(-5)
@@ -812,13 +813,11 @@ def computeFactors(inseeCode=None):
             ##End of current cutFactor (tile) loop
 
         # Insertining all data in database
-        
-        # debugLog(style.YELLOW, insertTileFactorQuery, logging.DEBUG)
         if len(insertedValues) > 0:
             insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
             try:
                 insertDataInDB(cur, insertTileFactorQuery)
-                conn.commit()
+                debugLog(style.YELLOW, "Tiles of \'{}\' were inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
             except psycopg2.Error as e:
                 print(e)
                 return_error_and_exit_job(-5)
@@ -832,7 +831,12 @@ def computeFactors(inseeCode=None):
         # updating process
         setProgress(cur, DB_schema, inseeCode, currFactorID)
 
-        ##End of current factor loop
+        # commiting new data
+        conn.commit()
+
+        #
+        #  End of current factor loop
+        #
 
     # Log & timer end script
     endTimerLog(computeTimer)
