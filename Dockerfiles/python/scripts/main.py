@@ -798,14 +798,16 @@ def computeFactors(inseeCode=None):
             
             try:
                 insertDataInDB(cur, insertTileFactorQuery)
-            except psycopg2.Error:
-                return_error_and_exit_job(-5)
-
-            try:
                 conn.commit()
             except psycopg2.Error as e:
                 print(e)
                 return_error_and_exit_job(-5)
+
+            # try:
+            #     conn.commit()
+            # except psycopg2.Error as e:
+            #     print(e)
+            #     return_error_and_exit_job(-5)
 
             ##End of current cutFactor (tile) loop
 
