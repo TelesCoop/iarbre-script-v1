@@ -798,26 +798,26 @@ def computeFactors(inseeCode=None):
             # insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
             insertedValues += "(" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "), "
 
-            # Every 1000 lines we bulk insert
-            # if len(insertedValues) > 0 and index % 1000:
-            #     try:
-            #         insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
-            #         insertDataInDB(cur, insertTileFactorQuery)
-            #         conn.commit()
-            #         insertedValues = ""
-            #         debugLog(style.YELLOW, "A bunch of 1000 Tiles of \'{}\' was inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
-            #     except psycopg2.Error as e:
-            #         print(e)
-            #         return_error_and_exit_job(-5)
+            # Every 10000 lines we bulk insert
+            if len(insertedValues) > 0 and index % 10000:
+                try:
+                    insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
+                    insertDataInDB(cur, insertTileFactorQuery)
+                    conn.commit()
+                    insertedValues = ""
+                    debugLog(style.YELLOW, "A bunch of 10000 Tiles of \'{}\' was inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
+                except psycopg2.Error as e:
+                    print(e)
+                    return_error_and_exit_job(-5)
                                 
             ##End of current cutFactor (tile) loop
 
-        # Insertining all data in database
+        # Insertining all available data in database (Possible an amont < 10000 lines )
         if len(insertedValues) > 0:
             insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
             try:
                 insertDataInDB(cur, insertTileFactorQuery)
-                debugLog(style.YELLOW, "Tiles of \'{}\' were inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
+                debugLog(style.YELLOW, "Last tiles of \'{}\' were inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
             except psycopg2.Error as e:
                 print(e)
                 return_error_and_exit_job(-5)
