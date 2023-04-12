@@ -262,9 +262,9 @@ Build Calqul Git-lfs:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "compute-factors"
     MEM_REQUEST: "2000Mi"
-    CPU_REQUEST: 2
+    CPU_REQUEST: "2000m"
     MEM_LIMIT: "2000Mi"
-    CPU_LIMIT: 2
+    CPU_LIMIT: "1500m"
   before_script:
     - *prepare_deployment
   script:
