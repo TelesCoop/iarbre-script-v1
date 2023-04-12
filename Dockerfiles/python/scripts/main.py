@@ -799,7 +799,7 @@ def computeFactors(inseeCode=None):
             insertedValues += "(" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "), "
 
             # Every 10000 lines we bulk insert
-            if len(insertedValues) > 0 and index % 10000:
+            if len(insertedValues) > 0 and index % 10000 == 0:
                 try:
                     insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
                     insertDataInDB(cur, insertTileFactorQuery)
