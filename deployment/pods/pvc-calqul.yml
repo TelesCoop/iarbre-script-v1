@@ -30,6 +30,10 @@ spec:
           volumeMounts:
             - mountPath: /mnt/data
               name: data
+      command:
+      - /bin/sh
+      - -c
+      - watch -n 30 df -h /mnt/data;
       resources:
         requests:
           memory: "32M"
