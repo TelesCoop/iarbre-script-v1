@@ -134,7 +134,7 @@ variables:
 ################################################################################
 stages:
   - Build Calqul
-  - Deploy Calqul Buttons
+  - Deploy Calculation Stages
   - Deploy Calqul Production
 
 # *********************************************************************************************
@@ -225,7 +225,7 @@ Build Calqul Git-lfs:
 #     - ns-arb-d01
 
 1. Init Grid:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
@@ -245,7 +245,7 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 2. Init Datas:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
@@ -265,7 +265,7 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 3. Compute Factors:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
@@ -285,7 +285,7 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 4. Compute Indices:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
@@ -305,7 +305,7 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 5. Dump Datas:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
@@ -325,7 +325,7 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 All Stages:
-  stage: Deploy Calqul Buttons
+  stage: Deploy Calculation Stages
   when: manual
   environment: dev
   variables:
