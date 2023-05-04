@@ -25,15 +25,11 @@ spec:
       containers:
         - name: calqul-pvc-__NAMESPACE_ENV__
           image: registry.gitlab.grandlyon.fr/openshift-as-code/reposit-gl/busybox:1.0
-          command: ["sh", "-c", "tail -f /dev/null"]
+          command: ["sh", "-c", "watch -n 30 df -h /mnt/data"]
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /mnt/data
               name: data
-      command:
-      - /bin/sh
-      - -c
-      - watch -n 30 df -h /mnt/data;
       resources:
         requests:
           memory: "32M"
