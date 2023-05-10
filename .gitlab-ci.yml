@@ -209,140 +209,77 @@ Build Calqul Git-lfs:
 # *********************************************************************************************
 # * DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLOY DEPLO *
 # *********************************************************************************************
-
-# Deploy Calqul:
-#   stage: Deploy Calqul
-#   environment: dev
-#   variables:
-#     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-#   before_script:
-#     - *prepare_deployment
-#   script:
-#    - *apply_confs
-#   rules:
-#     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-#   tags:
-#     - ns-arb-d01
-
-1. Init Grid:
+# Here is a reuseable section for calqul stage deployment
+.deploy_setup:
   stage: Deploy Calqul Buttons
   when: manual
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
+  before_sc#ript:
+    - *prepare_deployment
+  script:
+   - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  tags:
+    - ns-arb-d01
+
+# All manual steps to recalculate map.
+
+1. Init Grid:
+  extends: .deploy_setup
+  variables:
     CALQUL_ACTION: "init-grid"
     MEM_REQUEST: "1000Mi"
     CPU_REQUEST: 1
     MEM_LIMIT: "3500Mi"
     CPU_LIMIT: 1
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 2. Init Datas:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
+  extends: .deploy_setup
   variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "init-datas"
     MEM_REQUEST: "2000Mi"
     CPU_REQUEST: 1
     MEM_LIMIT: "8000Mi"
     CPU_LIMIT: 1
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 3. Compute Factors:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
+  extends: .deploy_setup
   variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "compute-factors"
     MEM_REQUEST: "2000Mi"
     CPU_REQUEST: "1500m"
     MEM_LIMIT: "2000Mi"
     CPU_LIMIT: "2000m"
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 4. Compute Indices:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
+  extends: .deploy_setup
   variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "compute-indices"
     MEM_REQUEST: "1000Mi"
     CPU_REQUEST: 1
     MEM_LIMIT: "1000Mi"
     CPU_LIMIT: 1
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 5. Dump Datas:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
+  extends: .deploy_setup
   variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "dump-datas"
     MEM_REQUEST: "256Mi"
     CPU_REQUEST: "100m"
     MEM_LIMIT: "500Mi"
     CPU_LIMIT: "200m"
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 All Stages:
-  stage: Deploy Calqul Buttons
-  when: manual
-  environment: dev
+  extends: .deploy_setup
   variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
     CALQUL_ACTION: "all"
     MEM_REQUEST: "2000Mi"
     CPU_REQUEST: 1
     MEM_LIMIT: "8000Mi"
     CPU_LIMIT: 1
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  tags:
-    - ns-arb-d01
 
 # *********************************************************************************************
 # * MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN  *
@@ -351,18 +288,4 @@ All Stages:
 # BUILD
 
 # DEPLOY
-Deploy Calqul Production:
-  stage: Deploy Calqul Production
-  environment: production
-  variables:
-    NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-  before_script:
-    - *prepare_deployment
-  script:
-   - *apply_confs
-  only:
-    - main
-  tags:
-    # In production, the namespace will be different, as we can't put variables here :(,
-    # we will need anorher stage only for procudtion branch.
-    - ns-arb-d01
+
