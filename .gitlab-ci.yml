@@ -11,7 +11,9 @@
 variables:
     TRIGRAMME: arb
     REPLICA_ENV: 1
-    
+    DEPLOY_NOTE:
+      description: "Chaque étape est numérotée dans l'ordre d'exécution. Chaque étape redéploie la totalité de l'environnement avec un parmétrage différent."
+
 ################################################################################
 #    Anchors
 ################################################################################
@@ -226,6 +228,15 @@ Build Calqul Git-lfs:
     - ns-arb-d01
 
 # All manual steps to recalculate map.
+
+0. Cleanup:
+  extends: .deploy_setup
+  variables:
+    CALQUL_ACTION: "cleanup"
+    MEM_REQUEST: "256Mi"
+    CPU_REQUEST: "100m"
+    MEM_LIMIT: "500Mi"
+    CPU_LIMIT: "200m"
 
 1. Init Grid:
   extends: .deploy_setup
