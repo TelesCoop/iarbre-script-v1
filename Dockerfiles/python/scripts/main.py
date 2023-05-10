@@ -144,31 +144,33 @@ def initCommunes():
                 endTimerLog(communesTimer)
                 return
 
+        # Les communes ne sont pas détruites car ce sont des données de références qui changent peu.
+        # @TODO Idéalement cette table devrait être remplie avec une API venant de data.grandlyon.com
         # Ask user to clean table ?
-        if EnableTruncate:
-            while True:
-                removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
-                if removeCommunesResponse.lower() not in ('y', 'n'):
-                    print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                else:
-                    # Good response
-                    break
+        #if EnableTruncate:
+            # while True:
+            #   removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
+            #    if removeCommunesResponse.lower() not in ('y', 'n'):
+            #        print(style.RED + "Sorry, wrong response... \n", style.RESET)
+            #    else:
+            #        # Good response
+            #        break
 
-            if removeCommunesResponse.lower() == 'y':
-                # Connect DB
-                conn, cur = connectDB(DB_params)
+            #if removeCommunesResponse.lower() == 'y':
+            #    # Connect DB
+            #    conn, cur = connectDB(DB_params)
 
-                # Truncate COMMUNES
-                resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
-                cur.execute(resetCommunesQuery)
-                debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
+            #    # Truncate COMMUNES
+            #    resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
+            #    cur.execute(resetCommunesQuery)
+            #    debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
 
-                # Close DB
-                closeDB(conn, cur)
-            else:
-                debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
-                endTimerLog(communesTimer)
-                return
+            #    # Close DB
+            #    closeDB(conn, cur)
+            #else:
+            #    debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
+            #    endTimerLog(communesTimer)
+            #    return
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
@@ -1202,5 +1204,9 @@ if __name__ == "__main__":
     tmpPath = './tmp/'
     checkAndCreateDirectory(tmpPath)
 
+    # See if we need to truncate progress tables
+    if EnableTruncate:
+        resetProgress()
+        
     # Launch main function
     main()

@@ -843,4 +843,6 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0]['count']
     return dataValues
 
-
+def resetProgress(DBcursor, DBSchema):
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + 'tiles_progress')
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + 'factors_progress')

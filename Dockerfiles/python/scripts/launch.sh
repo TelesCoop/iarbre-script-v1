@@ -117,6 +117,10 @@ case "$action" in
     comment "Action is '$action'."
     check
   ;;
+  "claenup")
+    comment "Cleanup action : all the progress tables will be truncated..."  
+    sed -i "s/ENABLE_TRUNCATE=False/ENABLE_TRUNCATE=True/g" .env
+  ;;
   *)
     comment "Actiion parameter is not recognized."
     usage
