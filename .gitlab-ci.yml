@@ -216,7 +216,7 @@ Build Calqul Git-lfs:
   environment: dev
   variables:
     NAMESPACE: "ns-$TRIGRAMME-$NAMESPACE_ENV"
-  before_sc#ript:
+  before_script:
     - *prepare_deployment
   script:
    - *apply_confs
