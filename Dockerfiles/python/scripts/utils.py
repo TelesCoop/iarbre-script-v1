@@ -334,7 +334,7 @@ def truncateDataInDB(DB_params, DB_schema, tableName):
     conn, cur = connectDB(DB_params)
     
     # Build request
-    truncateQuery = "TRUNCATE TABLE " + DB_schema + "." + tableName
+    truncateQuery = "TRUNCATE TABLE " + DB_schema + "." + tableName + " CASCADE"
 
     # Execute query
     cur.execute(truncateQuery)
