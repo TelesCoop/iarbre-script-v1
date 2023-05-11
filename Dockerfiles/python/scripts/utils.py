@@ -843,7 +843,7 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0]['count']
     return dataValues
 
-def resetProgress(DB_params, DBSchema):
+def resetProgress(DB_params, DB_schema):
     debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
     deleteDataInDB(DB_params, DB_schema, 'tiles_progress')
     deleteDataInDB(DB_params, DB_schema, 'factors_progress')
