@@ -1168,6 +1168,11 @@ def main():
             showDoc()
         elif firstArgv == 'displayEnv':
             displayEnv()
+        elif firstArgv == 'cleanup':
+            ## See if we need to truncate progress tables
+            #if EnableTruncate == True:
+            print(style.YELLOW + "RESETING PROGRESS TABLES !", style.RESET)
+            resetProgress()
         else:
             showDoc()
             debugLog(style.RED, "Unrecognized arguments for this script", logging.ERROR)
@@ -1203,12 +1208,6 @@ if __name__ == "__main__":
     # Check if ./tmp/ folder exist then create if not
     tmpPath = './tmp/'
     checkAndCreateDirectory(tmpPath)
-
-    # See if we need to truncate progress tables
-    if EnableTruncate == True:
-        print(style.YELLOW + "RESETING PROGRESS TABLES !", style.RESET)
-        print(style.YELLOW + "EnableTruncate={}".format(EnableTruncate), style.RESET)
-        #resetProgress()
-        
+         
     # Launch main function
     main()
