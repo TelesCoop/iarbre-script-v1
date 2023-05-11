@@ -860,21 +860,21 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
 
 def resetProgress(DB_params, DB_schema):
     debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
-    truncateDataInDb(DB_params, DB_schema, 'tiles_progress')
-    truncateDataInDb(DB_params, DB_schema, 'factors_progress')
+    truncateDataInDB(DB_params, DB_schema, 'tiles_progress')
+    truncateDataInDB(DB_params, DB_schema, 'factors_progress')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
 def resetDataInDb(DB_params, DB_schema):
     debugLog(style.WHITE, "Deleting datas table...", logging.INFO)
-    truncateDataInDb(DB_params, DB_schema, 'datas')
+    truncateDataInDB(DB_params, DB_schema, 'datas')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
     debugLog(style.WHITE, "Deleting tiles_factors table...", logging.INFO)
-    truncateDataInDb(DB_params, DB_schema, 'tiles_factors')
+    truncateDataInDB(DB_params, DB_schema, 'tiles_factors')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
     debugLog(style.WHITE, "Deleting tiles table...", logging.INFO)
-    truncateDataInDb(DB_params, DB_schema, 'tiles')
+    truncateDataInDB(DB_params, DB_schema, 'tiles')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
     
