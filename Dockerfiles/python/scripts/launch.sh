@@ -94,16 +94,16 @@ python3 main.py displayEnv
  
 comment "Checking action to do : "
 case "$action" in 
-  "init-grid"|"init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
+  "cleanup|init-grid"|"init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
     comment "Action is '$action'."
     check
   ;;
-  "cleanup")
-    comment "Cleanup action : all the progress tables will be truncated..."  
-    sed -i "s/ENABLE_TRUNCATE=False/ENABLE_TRUNCATE=True/g" .env
-  ;;
+  #"cleanup")
+  #  comment "Cleanup action : all the progress tables will be truncated..."  
+  #  sed -i "s/ENABLE_TRUNCATE=False/ENABLE_TRUNCATE=True/g" .env
+  #;;
   *)
-    comment "Actiion parameter is not recognized."
+    comment "Action parameter is not recognized."
     usage
     exit 2
   ;;
@@ -114,8 +114,6 @@ if [ $action == "cleanup"  ] || [ $action == "all"  ]; then
   # this cleans up the progress tables
   python3 main.py cleanup
   check
-  # clean sources files
-  rm -rf $data_dir/*
 fi
 
 if [ $action == "init-grid"  ] || [ $action == "all"  ]; then

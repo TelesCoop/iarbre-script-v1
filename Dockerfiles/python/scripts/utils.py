@@ -843,6 +843,26 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0]['count']
     return dataValues
 
-def resetProgress(DBcursor, DBSchema):
-    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + 'tiles_progress')
-    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + 'factors_progress')
+def resetProgress(DB_params, DBSchema):
+    debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
+    deleteDataInDB(DB_params, DB_schema, 'tiles_progress')
+    deleteDataInDB(DB_params, DB_schema, 'factors_progress')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+def resetDataInDb(DB_params, DB_schema):
+    debugLog(style.WHITE, "Deleting datas table...", logging.INFO)
+    deleteDataInDB(DB_params, DB_schema, 'datas')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles_factors table...", logging.INFO)
+    deleteDataInDB(DB_params, DB_schema, 'tiles_factors')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles table...", logging.INFO)
+    deleteDataInDB(DB_params, DB_schema, 'tiles')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting factors table...", logging.INFO)
+    deleteDataInDB(DB_params, DB_schema, 'factors')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+    

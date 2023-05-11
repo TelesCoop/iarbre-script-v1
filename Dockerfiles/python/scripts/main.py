@@ -55,6 +55,7 @@ def showDoc():
     Welcome to The master script of plantability !
 
     Args:
+        cleanup                                             Delete all calculated data and progress tables (datas, tiles_factors, tiles, factors, progress_tiles, progress_factors)
         initCommunes                                        Insert Communes in database from a geoJSON file path (with geometry and insee column)
         initGrid <gridSize: int, inseeCode: int>            Generate with the size defined and insert Grid in database merged from a bounding box
                                                             Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
@@ -194,9 +195,9 @@ def initCommunes():
         communesGDF = convertGeomToWKT(communesGDF)
 
         #  PGL - Debug
-        with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
-            f.write(str(communesGDF))
-            f.close()
+        #with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
+        #    f.write(str(communesGDF))
+        #    f.close()
         # /PGL - Debug
 
         # Insert in DB
@@ -1171,8 +1172,9 @@ def main():
         elif firstArgv == 'cleanup':
             ## See if we need to truncate progress tables
             #if EnableTruncate == True:
-            print(style.YELLOW + "RESETING PROGRESS TABLES !", style.RESET)
-            resetProgress()
+            debugLog(style.WHITE, "Reseting data and progress tables", logging.INFO)
+            resetProgress(DB_params, DB_schema)
+            resetDataInDb(DB_params, DB_schema)
         else:
             showDoc()
             debugLog(style.RED, "Unrecognized arguments for this script", logging.ERROR)
