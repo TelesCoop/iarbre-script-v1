@@ -94,7 +94,7 @@ python3 main.py displayEnv
  
 comment "Checking action to do : "
 case "$action" in 
-  "cleanup|init-grid"|"init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
+  "cleanup"|"init-grid"|"init-datas"|"compute-factors"|"compute-indices"|"dump-datas"|"all" )
     comment "Action is '$action'."
     check
   ;;
