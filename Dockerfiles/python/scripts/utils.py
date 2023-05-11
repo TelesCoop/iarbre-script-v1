@@ -329,6 +329,21 @@ def deleteDataInDB(DB_params, DB_schema, tableName, queryFilter=None):
 
     return
 
+def truncateDataInDB(DB_params, DB_schema, tableName):
+    # Connect DB
+    conn, cur = connectDB(DB_params)
+    
+    # Build request
+    truncateQuery = "TRUNCATE TABALE" + DB_schema + "." + tableName
+
+    # Execute query
+    cur.execute(truncateQuery)
+
+    # Final close cursor & DB
+    closeDB(conn, cur)
+
+    return
+
 def deleteCustomDataInDB(DB_params, sqlQuery):
     conn = None
     cur = None
@@ -845,24 +860,21 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
 
 def resetProgress(DB_params, DB_schema):
     debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
-    deleteDataInDB(DB_params, DB_schema, 'tiles_progress')
-    deleteDataInDB(DB_params, DB_schema, 'factors_progress')
+    truncateDataInDb(DB_params, DB_schema, 'tiles_progress')
+    truncateDataInDb(DB_params, DB_schema, 'factors_progress')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
 def resetDataInDb(DB_params, DB_schema):
     debugLog(style.WHITE, "Deleting datas table...", logging.INFO)
-    deleteDataInDB(DB_params, DB_schema, 'datas')
+    truncateDataInDb(DB_params, DB_schema, 'datas')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
     debugLog(style.WHITE, "Deleting tiles_factors table...", logging.INFO)
-    deleteDataInDB(DB_params, DB_schema, 'tiles_factors')
+    truncateDataInDb(DB_params, DB_schema, 'tiles_factors')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
     debugLog(style.WHITE, "Deleting tiles table...", logging.INFO)
-    deleteDataInDB(DB_params, DB_schema, 'tiles')
+    truncateDataInDb(DB_params, DB_schema, 'tiles')
     debugLog(style.GREEN, "Done.", logging.INFO)
 
-    debugLog(style.WHITE, "Deleting factors table...", logging.INFO)
-    deleteDataInDB(DB_params, DB_schema, 'factors')
-    debugLog(style.GREEN, "Done.", logging.INFO)
     
