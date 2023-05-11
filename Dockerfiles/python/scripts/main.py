@@ -1206,7 +1206,10 @@ if __name__ == "__main__":
 
     # See if we need to truncate progress tables
     if EnableTruncate:
-        resetProgress()
+        print(style.YELLOW + "RESETING PROGRESS TABLES !", style.RESET)
+        print(style.YELLOW + "EnableTruncate={}".format(EnableTruncate), style.RESET)
+
+        #resetProgress()
         
     # Launch main function
     main()
