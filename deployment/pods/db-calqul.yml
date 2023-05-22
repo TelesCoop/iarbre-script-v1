@@ -47,8 +47,8 @@ spec:
             cpu: 400m
             memory: 500Mi
           requests:
-            cpu: 200m
-            memory: 256Mi
+            cpu: 400m
+            memory: 500Mi
         env:
         - name: POSTGRES_DB
           value: "__POSTGRES_DB__"
