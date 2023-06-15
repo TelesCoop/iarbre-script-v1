@@ -1,6 +1,6 @@
-__pycache__
 logs/*.log
 tmp/
 Dockerfiles/python/.env
 ! Dockerfiles/python/.env.example
 .env
+__pycache__
