@@ -55,6 +55,7 @@ def showDoc():
     Welcome to The master script of plantability !
 
     Args:
+        cleanup                                             Delete all calculated data and progress tables (datas, tiles_factors, tiles, factors, progress_tiles, progress_factors)
         initCommunes                                        Insert Communes in database from a geoJSON file path (with geometry and insee column)
         initGrid <gridSize: int, inseeCode: int>            Generate with the size defined and insert Grid in database merged from a bounding box
                                                             Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
@@ -144,31 +145,33 @@ def initCommunes():
                 endTimerLog(communesTimer)
                 return
 
+        # Les communes ne sont pas détruites car ce sont des données de références qui changent peu.
+        # @TODO Idéalement cette table devrait être remplie avec une API venant de data.grandlyon.com
         # Ask user to clean table ?
-        if EnableTruncate:
-            while True:
-                removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
-                if removeCommunesResponse.lower() not in ('y', 'n'):
-                    print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                else:
-                    # Good response
-                    break
+        #if EnableTruncate:
+            # while True:
+            #   removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
+            #    if removeCommunesResponse.lower() not in ('y', 'n'):
+            #        print(style.RED + "Sorry, wrong response... \n", style.RESET)
+            #    else:
+            #        # Good response
+            #        break
 
-            if removeCommunesResponse.lower() == 'y':
-                # Connect DB
-                conn, cur = connectDB(DB_params)
+            #if removeCommunesResponse.lower() == 'y':
+            #    # Connect DB
+            #    conn, cur = connectDB(DB_params)
 
-                # Truncate COMMUNES
-                resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
-                cur.execute(resetCommunesQuery)
-                debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
+            #    # Truncate COMMUNES
+            #    resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
+            #    cur.execute(resetCommunesQuery)
+            #    debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
 
-                # Close DB
-                closeDB(conn, cur)
-            else:
-                debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
-                endTimerLog(communesTimer)
-                return
+            #    # Close DB
+            #    closeDB(conn, cur)
+            #else:
+            #    debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
+            #    endTimerLog(communesTimer)
+            #    return
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
@@ -192,9 +195,9 @@ def initCommunes():
         communesGDF = convertGeomToWKT(communesGDF)
 
         #  PGL - Debug
-        with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
-            f.write(str(communesGDF))
-            f.close()
+        #with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
+        #    f.write(str(communesGDF))
+        #    f.close()
         # /PGL - Debug
 
         # Insert in DB
@@ -1166,6 +1169,12 @@ def main():
             showDoc()
         elif firstArgv == 'displayEnv':
             displayEnv()
+        elif firstArgv == 'cleanup':
+            ## See if we need to truncate progress tables
+            #if EnableTruncate == True:
+            debugLog(style.WHITE, "Reseting data and progress tables", logging.INFO)
+            resetProgress(DB_params, DB_schema)
+            resetDataInDb(DB_params, DB_schema)
         else:
             showDoc()
             debugLog(style.RED, "Unrecognized arguments for this script", logging.ERROR)
@@ -1201,6 +1210,6 @@ if __name__ == "__main__":
     # Check if ./tmp/ folder exist then create if not
     tmpPath = './tmp/'
     checkAndCreateDirectory(tmpPath)
-
+         
     # Launch main function
     main()

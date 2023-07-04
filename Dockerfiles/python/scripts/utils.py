@@ -329,6 +329,21 @@ def deleteDataInDB(DB_params, DB_schema, tableName, queryFilter=None):
 
     return
 
+def truncateDataInDB(DB_params, DB_schema, tableName):
+    # Connect DB
+    conn, cur = connectDB(DB_params)
+    
+    # Build request
+    truncateQuery = "TRUNCATE TABLE " + DB_schema + "." + tableName + " CASCADE"
+
+    # Execute query
+    cur.execute(truncateQuery)
+
+    # Final close cursor & DB
+    closeDB(conn, cur)
+
+    return
+
 def deleteCustomDataInDB(DB_params, sqlQuery):
     conn = None
     cur = None
@@ -840,7 +855,29 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     qry = 'SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter
     debugLog(style.YELLOW, qry, logging.INFO)
     DBcursor.execute(qry)
-    dataValues = json.loads(json.dumps(DBcursor.fetchall(), indent=2, default=dateConverter))[0]['count']
+    results = DBcursor.fetchall()
+    debugLog(style.YELLOW, "{}".format(results), logging.INFO)
+    dataValues = results[0]['count'] 
+    # dataValues = DBcursor.fetchall()[0][0]  # Accéder à l'élément à l'indice 0 de la première liste
     return dataValues
 
+def resetProgress(DB_params, DB_schema):
+    debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles_progress')
+    truncateDataInDB(DB_params, DB_schema, 'factors_progress')
+    debugLog(style.GREEN, "Done.", logging.INFO)
 
+def resetDataInDb(DB_params, DB_schema):
+    debugLog(style.WHITE, "Deleting datas table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'datas')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles_factors table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles_factors')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    
