@@ -40,4 +40,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: pvc-01-__NAMESPACE__-claim
+            claimName: pvc-03-__NAMESPACE__-claim

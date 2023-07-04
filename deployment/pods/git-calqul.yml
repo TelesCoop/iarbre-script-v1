@@ -24,7 +24,7 @@ spec:
       volumes:
         - name: arb-data
           persistentVolumeClaim: 
-            claimName: pvc-01-__NAMESPACE__-claim
+            claimName: pvc-03-__NAMESPACE__-claim
       containers:
       - name: calqul-git-lfs-__NAMESPACE_ENV__
         image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__

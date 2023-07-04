@@ -12,7 +12,7 @@ spec:
       volumes:
       - name: arb-data
         persistentVolumeClaim: 
-          claimName: pvc-01-__NAMESPACE__-claim
+          claimName: pvc-03-__NAMESPACE__-claim
       - name: psqldump-volume
         configMap:
           name: calqul-pgdump-__NAMESPACE_ENV__

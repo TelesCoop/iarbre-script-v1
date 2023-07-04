@@ -156,6 +156,7 @@ Build Calqul Python:
     - *set_env
     - *build_and_push_image
   rules:
+  # utiliser $CI_ENVIRONMENT_NAME
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       changes: # build image only if sources have changed. 
       - Dockerfiles/python/Dockerfile # Image definition has changed 
