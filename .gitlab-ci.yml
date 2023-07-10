@@ -117,7 +117,7 @@ variables:
 ################################################################################
 stages:
   - Build Calqul
-  - Deploy Calculation Stages
+  - Deploy Calqul Buttons
   - Deploy Calqul Production
 
 # *********************************************************************************************
