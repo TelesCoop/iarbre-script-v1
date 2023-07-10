@@ -69,11 +69,15 @@ variables:
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/services/db-calqul-debug.yml
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/services/db-calqul-debug.yml
 
-  # Job deployment file
-  - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/jobs/master-calqul.yml
-  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/jobs/master-calqul.yml
-
-  # Job Compute Indices 
+  # Job for all various stages : 
+  # cleanup|init-grid|init-datas|compute-factors|compute-indices|dump-datas|all
+  # 0. cleanup          => Clean progress tables, before a total recalculation.
+  # 1. init-grid        => Init database with each tile on all the territory
+  # 2. init-datas       => Init all data with each factor
+  # 3. compute-factors  => Calculates all factors
+  # 5. compute-indices  => Calculates indices of each tile.
+  # 6. dump-datas       => make a dump of the database. 
+  # 7. all              => Launch all stages in described order above.
   - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/jobs/stage-calqul.yml
   - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/jobs/stage-calqul.yml
   - sed -i "s/__POSTGRES_DB__/$POSTGRES_DB/g" deployment/jobs/stage-calqul.yml 
@@ -81,16 +85,10 @@ variables:
   - sed -i "s/__POSTGRES_SERVER__/$POSTGRES_SERVER-$NAMESPACE_ENV/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__POSTGRES_USER__/$POSTGRES_USER/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__CALQUL_ACTION__/$CALQUL_ACTION/g" deployment/jobs/stage-calqul.yml 
-  
   - sed -i "s/__MEM_REQUEST__/$MEM_REQUEST/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__MEM_LIMIT__/$MEM_LIMIT/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__CPU_REQUEST__/$CPU_REQUEST/g" deployment/jobs/stage-calqul.yml 
   - sed -i "s/__CPU_LIMIT__/$CPU_LIMIT/g" deployment/jobs/stage-calqul.yml 
-  
-
-  # Git-lfs deployment file
-  - sed -i "s/__NAMESPACE__/$NAMESPACE/g" deployment/pods/git-calqul.yml
-  - sed -i "s/__NAMESPACE_ENV__/$NAMESPACE_ENV/g" deployment/pods/git-calqul.yml
 
 # Applying openshift conf anchor
 .apply_confs: &apply_confs
@@ -107,16 +105,8 @@ variables:
   - oc apply -f deployment/pods/db-calqul.yml
   - oc apply -f deployment/services/db-calqul.yml
 
-  # Db Dev & Debug only
+  # Db Dev & Debug only : this maps an external port to acces remotly to the database.
   - oc apply -f deployment/services/db-calqul-debug.yml
-  
-  # Git-lfs for test only
-  # - oc delete pods --selector pod-name=calqul-git-lfs-$NAMESPACE_ENV #--grace-period=0 --force
-  # - oc apply -f deployment/pods/git-calqul.yml
-
-  # # Job All
-  # - oc delete jobs --selector job-name=calqul-master-job-$NAMESPACE_ENV 
-  # - oc create -f deployment/jobs/master-calqul.yml
   
   # Job Stage
   - oc delete jobs --selector job-name=calqul-stage-$CALQUL_ACTION-$NAMESPACE_ENV 

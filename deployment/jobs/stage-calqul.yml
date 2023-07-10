@@ -70,3 +70,31 @@ spec:
             failureThreshold: 3
             timeoutSeconds: 10
       restartPolicy: Never
+
+      # Clone or update sources data before calculation
+      initContainers:
+      - name: calqul-refresh-repository-__NAMESPACE_ENV__
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__
+        env:
+          - name: GIT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: username
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: password
+          - name: HTTP_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+          - name: HTTPS_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - if [ -d /arb-data/source-files/data-recalcul-calque/.git ]; then cd /arb-data/source-files/data-recalcul-calque; git pull origin main; else mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files; git lfs clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/; fi; echo "Data ready !";
+        volumeMounts:
+        - name: arb-data
+          mountPath: "/arb-data/source-files"
