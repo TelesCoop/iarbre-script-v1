@@ -42,6 +42,22 @@ spec:
             port: 5432
           initialDelaySeconds: 15
           periodSeconds: 20
+        env:
+          - name: POSTGRES_DB
+            value: "__POSTGRES_DB__"
+          - name: POSTGRES_PASSWORD
+            value: "__POSTGRES_PASSWORD__"
+          - name: POSTGRES_PORT
+            value: "__POSTGRES_PORT__"
+          - name: POSTGRES_SERVER
+            value: "__POSTGRES_SERVER__"
+          - name: POSTGRES_USER
+            value: "__POSTGRES_USER__"
+          - name: POSTGRES_SCHEMA
+            value: "__POSTGRES_SCHEMA__"
+            # need to define PGDATA env var because not using the default /var/lib/postgresql/data, but a subpath under it.
+          - name: PGDATA
+            value: /arb-data/pgdata
         resources:
           limits:
             cpu: 400m
@@ -49,22 +65,6 @@ spec:
           requests:
             cpu: 200m
             memory: 256Mi
-        env:
-        - name: POSTGRES_DB
-          value: "__POSTGRES_DB__"
-        - name: POSTGRES_PASSWORD
-          value: "__POSTGRES_PASSWORD__"
-        - name: POSTGRES_PORT
-          value: "__POSTGRES_PORT__"
-        - name: POSTGRES_SERVER
-          value: "__POSTGRES_SERVER__"
-        - name: POSTGRES_USER
-          value: "__POSTGRES_USER__"
-        - name: POSTGRES_SCHEMA
-          value: "__POSTGRES_SCHEMA__"
-          # need to define PGDATA env var because not using the default /var/lib/postgresql/data, but a subpath under it.
-        - name: PGDATA
-          value: /arb-data/pgdata
         volumeMounts:
           # need a subpath as postgres wants an empty folder (the mounted folder `$PGDATA` has a `lost+found` directory)
           # see https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
