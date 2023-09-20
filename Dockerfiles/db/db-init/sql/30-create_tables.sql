@@ -132,7 +132,7 @@ CREATE TABLE base.factors_progress (
 --         INDEX
 -- ------------------------
 
-CREATE INDEX CONCURRENTLY tiles_geom_index ON base.tiles (geom_poly);
+CREATE INDEX CONCURRENTLY tiles_geom_index ON base.tiles USING GIST (geom_poly);
 CREATE INDEX CONCURRENTLY datas_geom_index ON base.datas USING GIST (geom_poly);
 
 CREATE INDEX tiles_insee ON base.tiles USING btree (insee);
