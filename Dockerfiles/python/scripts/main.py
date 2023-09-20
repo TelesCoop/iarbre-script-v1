@@ -940,7 +940,7 @@ def computeIndices():
                                             FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id \
                                             GROUP BY id_tile; \
                             id_tile int4; \
-                            sum_indice int4; \
+                            sum_indice float4; \
                             begin \
                             open c; \
                             LOOP \
