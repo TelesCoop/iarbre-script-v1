@@ -21,16 +21,13 @@ LISTE_COMMUNES=( ["ALBIGNY-SUR-SAONE"]="69003" ["BRON"]="69029" ["CAILLOUX-SUR-F
 scripts_dir="/app"
 data_dir="/arb-data/source-files/data-recalcul-calque"
 backup_dir="/arb-data/generated-files"
+cache_dir="/arb-data/geoserver_cache"
 stage=1
 line="\e[39m-----------------------------------------------"
 today=$(date +"%Y%m%d")
 dump_name="calque-plantabilite-$namespace_env-$today"
 tag="1.0" # @TODO : should be parametric from last commit on data repo.
 archive_version="v$tag-$today"
-
-################################################################################
-# functions
-################################################################################
 
 #---------------------------------------------------------------
 # Functions
@@ -98,10 +95,6 @@ case "$action" in
     comment "Action is '$action'."
     check
   ;;
-  #"cleanup")
-  #  comment "Cleanup action : all the progress tables will be truncated..."  
-  #  sed -i "s/ENABLE_TRUNCATE=False/ENABLE_TRUNCATE=True/g" .env
-  #;;
   *)
     comment "Action parameter is not recognized."
     usage
@@ -111,8 +104,13 @@ esac
 
 if [ $action == "cleanup"  ] || [ $action == "all"  ]; then
   stage "cleanup"
+  comment "Cleanup progress tables"
   # this cleans up the progress tables
   python3 main.py cleanup
+  check
+
+  comment "Cleanup tiles cache"
+  find $cache_dir -name "*.png" -exec rm -f {} \;
   check
 fi
 
@@ -149,9 +147,6 @@ if [ $action == "compute-indices"  ] || [ $action == "all"  ]; then
   check
 fi
 
-# Launching everything, it is possible to give a list of townships
-# python3 main.py computeAll
-
 if [ $action == "dump-datas"  ] || [ $action == "all"  ]; then
   stage "Dumping result database"
   #
@@ -166,9 +161,6 @@ if [ $action == "dump-datas"  ] || [ $action == "all"  ]; then
   comment "Commpressing dump as $dump_name.tgz"
   tar cvzf $backup_dir/$dump_name.tgz $backup_dir/$dump_name.sql
   check
-
-  # stage "Uploading archive in repo with tag $archive_version"
-  # comment "Upload to file server 'Geo'"
 
   stage "Cleanup backup dir '$backup_dir'"
   comment "old sql files"

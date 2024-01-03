@@ -80,22 +80,4 @@ VALUES
 ('Déborah', 'BESSON', 'debesson@grandlyon.com', '!PlAnT4-Gl!', 'ADMIN'),
 ('Hind', 'NAIT-BARKA', 'hnaitbarka@grandlyon.com', '!PlAnT4-Gl!', 'ADMIN'),
 ('Anaïs', 'HENRY', 'anhenry@grandlyon.com', '!PlAnT4-Gl!', 'ADMIN');
--- ('prénom', 'nom', 'p.nom@example.com', 'ExAmPlE12', 'USER'),
 
--- ------------------------
---       DUMMY DATA
--- ------------------------
-
--- INSERT INTO base.history
--- (search_name, search_location, id_user) 
--- VALUES
--- ('Lyon', '43.5;25.2', 1);
-
--- INSERT INTO base.tiles_factors
--- (id_tile, id_factor) 
--- VALUES
--- (1, 1);
-
--- ------------------------
---    PROCESS DATA
--- ------------------------
