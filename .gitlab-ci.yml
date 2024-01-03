@@ -5,14 +5,15 @@
 # 3 environnements gitlab ont été créer et 
 # 3 variables NAMESPACE_ENV associées sont renseignées 
 # avec les 3 valeurs {d01, r01, p01}.
-# Cela permet de mutulialiser tous les fichiers de déploiements ainsi que toutes les étapes de build.
-# le 'stage' de déploiement en production est forcément différent du fait qu'il DOIT être manuel
+# Cela permet de mutualiser tous les fichiers de déploiements ainsi que toutes les étapes de build.
+# le 'stage' de déploiement est manuel car on déploie des jobs qui exécutent le caclul étape par étape : 
+# il faut donc pouvoir exercer un controle.
 
 variables:
     TRIGRAMME: arb
     REPLICA_ENV: 1
     DEPLOY_NOTE:
-      description: "Chaque étape est numérotée dans l'ordre d'exécution. Chaque étape redéploie la totalité de l'environnement avec un parmétrage différent."
+      description: "Chaque étape est numérotée dans l'ordre d'exécution. Chaque étape redéploie la totalité de l'environnement avec un parmétrage d'étape de calcul différent."
 
 ################################################################################
 #    Anchors
@@ -71,7 +72,7 @@ variables:
 
   # Job for all various stages : 
   # cleanup|init-grid|init-datas|compute-factors|compute-indices|dump-datas|all
-  # 0. cleanup          => Clean progress tables, before a total recalculation.
+  # 0. cleanup          => Clean progress tables, clean tiles cache, before a total recalculation.
   # 1. init-grid        => Init database with each tile on all the territory
   # 2. init-datas       => Init all data with each factor
   # 3. compute-factors  => Calculates all factors
@@ -204,8 +205,6 @@ Build Calqul Git-lfs:
     - *prepare_deployment
   script:
    - *apply_confs
-  rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   tags:
     - ns-arb-d01
 
