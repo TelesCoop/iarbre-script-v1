@@ -205,6 +205,8 @@ Build Calqul Git-lfs:
     - *prepare_deployment
   script:
    - *apply_confs
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   tags:
     - ns-arb-d01
 
@@ -272,12 +274,4 @@ All Stages:
     CPU_REQUEST: 1
     MEM_LIMIT: "8000Mi"
     CPU_LIMIT: 1
-
-# *********************************************************************************************
-# * MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN BRANCH MAIN  *
-# *********************************************************************************************
-
-# BUILD
-
-# DEPLOY
 
