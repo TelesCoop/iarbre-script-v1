@@ -148,7 +148,6 @@ Build Calqul Python:
   tags:
     - build-push-to-registry
 
-
 Build Calqul Postgis:
   stage: Build Calqul
   environment: dev
@@ -164,8 +163,9 @@ Build Calqul Postgis:
     - *build_and_push_image
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-      changes: # build image only if sources have changed. 
+  tags:
     - build-push-to-registry
+
 Build Calqul Git-lfs:
   stage: Build Calqul
   environment: dev
