@@ -98,11 +98,11 @@ variables:
   - oc apply -f deployment/secrets/database-secret.yml
 
   # PVC Access
-  - oc delete pods --selector pod-name=calqul-pvc-access-$NAMESPACE_ENV #--grace-period=0 --force
+  - oc delete pods --selector pod-name=calqul-pvc-access-$NAMESPACE_ENV 
   - oc apply -f deployment/pods/pvc-calqul.yml
 
   # Db
-  - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV #--grace-period=0 --force
+  - oc delete pods --selector pod-name=calqul-db-$NAMESPACE_ENV 
   - oc apply -f deployment/pods/db-calqul.yml
   - oc apply -f deployment/services/db-calqul.yml
 
@@ -119,7 +119,6 @@ variables:
 stages:
   - Build Calqul
   - Deploy Calqul Buttons
-  - Deploy Calqul Production
 
 # *********************************************************************************************
 # * BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD BUILD *
