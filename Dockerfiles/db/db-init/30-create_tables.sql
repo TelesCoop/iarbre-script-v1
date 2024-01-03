@@ -71,7 +71,7 @@ CREATE TABLE base.datas (
 CREATE TABLE base.communes (
 	id serial PRIMARY KEY,
 	libelle character varying(255) NULL,
-	insee character varying(10) NULL,
+	insee int NULL,
 	geom_poly geometry(POLYGON) NOT NULL
 );
 
@@ -114,9 +114,27 @@ CREATE TABLE base.tiles_factors (
 		ON DELETE NO ACTION
 );
 
+-- --------------------------------
+--     TABLES AVANCEMENT CALCUL
+-- --------------------------------
+CREATE TABLE base.tiles_progress (
+	insee int4 NOT NULL,
+	CONSTRAINT tiles_progress_pk PRIMARY KEY (insee)
+);
+
+CREATE TABLE base.factors_progress (
+	insee int4 NOT NULL,
+	id_factor int4 NOT NULL,
+	CONSTRAINT factors_progress_pk PRIMARY KEY (insee,id_factor)
+);
+
 -- ------------------------
 --         INDEX
 -- ------------------------
 
-CREATE INDEX CONCURRENTLY tiles_geom_index ON base.tiles (geom_poly);
+CREATE INDEX CONCURRENTLY tiles_geom_index ON base.tiles USING GIST (geom_poly);
 CREATE INDEX CONCURRENTLY datas_geom_index ON base.datas USING GIST (geom_poly);
+
+CREATE INDEX tiles_insee ON base.tiles USING btree (insee);
+CREATE INDEX tiles_factors_id_factor ON base.tiles_factors USING btree (id_factor);
+CREATE INDEX tiles_factors_id_tiles ON base.tiles_factors USING btree (id_tile);

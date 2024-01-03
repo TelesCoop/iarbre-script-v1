@@ -35,10 +35,13 @@ from utils import *
 DB_params = None
 DB_schema = None
 PythonLaunch = None
+SourceDataPath = None
 ENV_targetProj = None
 RemoveTempFile = None
 SkipExistingData = None
 EnableTruncate = None
+HttpProxy = None
+Proxies = None
 
 # ------------------------
 #           DOC
@@ -52,6 +55,7 @@ def showDoc():
     Welcome to The master script of plantability !
 
     Args:
+        cleanup                                             Delete all calculated data and progress tables (datas, tiles_factors, tiles, factors, progress_tiles, progress_factors)
         initCommunes                                        Insert Communes in database from a geoJSON file path (with geometry and insee column)
         initGrid <gridSize: int, inseeCode: int>            Generate with the size defined and insert Grid in database merged from a bounding box
                                                             Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
@@ -63,6 +67,7 @@ def showDoc():
                                                             List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256) 
                                                             but you can launch treatments for only one commune (e.g. python main.py 5 69266)
         testDB                                              Test the connexion with DB parameters in .env file
+        displayEnv                                          Display all global vars read from .env file.
         help                                                Show this documentation
     """
     
@@ -113,7 +118,7 @@ def testDBConnexion():
     # Close DB
     closeDB(conn, cur)
 
-    return retcode
+    return_error_and_exit_job(-1)
 
 # ------------------------
 #         COMMUNES
@@ -140,57 +145,60 @@ def initCommunes():
                 endTimerLog(communesTimer)
                 return
 
+        # Les communes ne sont pas détruites car ce sont des données de références qui changent peu.
+        # @TODO Idéalement cette table devrait être remplie avec une API venant de data.grandlyon.com
         # Ask user to clean table ?
-        if EnableTruncate:
-            while True:
-                removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
-                if removeCommunesResponse.lower() not in ('y', 'n'):
-                    print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                else:
-                    # Good response
-                    break
+        #if EnableTruncate:
+            # while True:
+            #   removeCommunesResponse = input("Do you want to clean the Communes table ? (y/n) : ")
+            #    if removeCommunesResponse.lower() not in ('y', 'n'):
+            #        print(style.RED + "Sorry, wrong response... \n", style.RESET)
+            #    else:
+            #        # Good response
+            #        break
 
-            if removeCommunesResponse.lower() == 'y':
-                # Connect DB
-                conn, cur = connectDB(DB_params)
+            #if removeCommunesResponse.lower() == 'y':
+            #    # Connect DB
+            #    conn, cur = connectDB(DB_params)
 
-                # Truncate COMMUNES
-                resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
-                cur.execute(resetCommunesQuery)
-                debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
+            #    # Truncate COMMUNES
+            #    resetCommunesQuery = "TRUNCATE TABLE "+ DB_schema + ".communes RESTART IDENTITY; COMMIT;"
+            #    cur.execute(resetCommunesQuery)
+            #    debugLog(style.GREEN, "Successfully remove all communes", logging.INFO)
 
-                # Close DB
-                closeDB(conn, cur)
-            else:
-                debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
-                endTimerLog(communesTimer)
-                return
+            #    # Close DB
+            #    closeDB(conn, cur)
+            #else:
+            #    debugLog(style.YELLOW, "Init communes was skipped", logging.INFO)
+            #    endTimerLog(communesTimer)
+            #    return
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
 
-    # Ask user geojson path ?
-    # DEBUG LOCAL : "./file_data/communes_gl.geojson"
-    while True:
-        filePathResponse = input("Please enter the geoJSON file path (with geometry and insee column) : ")
-        if not filePathResponse:
-            print(style.RED + "Please enter an awnser... \n", style.RESET)
-        else:
-            # Good response
-            break
+    # Get communes file path in .env and check if file exist
+    if not os.path.isfile(SourceDataPath + "/communes_gl.geojson"):
+        debugLog(style.RED, "File not found in " + SourceDataPath + "/communes_gl.geojson : Please verify your path and relaunch this script.", logging.ERROR)
+        return_error_and_exit_job(-2)
 
     # Load geojson file in Dataframe
-    communesGDF = createGDFfromGeoJSON(filePathResponse)
+    communesGDF = createGDFfromGeoJSON(SourceDataPath + "/communes_gl.geojson")
 
     if communesGDF is not None:
         # Clean useless attribute
         communesGDF = communesGDF[columnsArrFromGeoJSON]
-        
+            
         # Check input projection and reproj in 2154
         communesGDF = checkAndReproj(communesGDF, ENV_targetProj)
-
+        
         # Convert to WKT
         communesGDF = convertGeomToWKT(communesGDF)
+
+        #  PGL - Debug
+        #with open('/app/tmp/dump_communes_gl.wkt', 'w') as f:
+        #    f.write(str(communesGDF))
+        #    f.close()
+        # /PGL - Debug
 
         # Insert in DB
         insertGDFintoDB(DB_params, DB_schema, communesGDF, 'communes', columnsListToDB)
@@ -204,24 +212,37 @@ def initCommunes():
 # ------------------------
 
 def initGrid(gridSize=30, inseeCode=None):
+
+    # Stop launching without insee code
+    if not inseeCode:
+        return_error_and_exit_job(-3)
+
     # Log & Timer
-    logInseeSuffix = ''
-    if inseeCode:
-        logInseeSuffix = "and with inseeCode {}".format(inseeCode)
+    logInseeSuffix = "and with inseeCode {}".format(inseeCode)
+    # logInseeSuffix = ''
+    # if inseeCode:
+    #     logInseeSuffix = "and with inseeCode {}".format(inseeCode)
     debugLog(style.YELLOW, "Launch initialisation script of \'Grid\' with size {}x{} {}".format(gridSize, gridSize, logInseeSuffix), logging.INFO)
     gridTimer = startTimerLog('Generate Grid')
 
+    conn, cur = connectDB(DB_params)
+
     # Check tiles length (with insee filter)
-    tilesInseeFilter = None
-    if inseeCode:
-        tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
-    tilesCount = getCountfromDB(DB_params, DB_schema, 'tiles', tilesInseeFilter)
+    # tilesInseeFilter = None
+    # if inseeCode:
+    #     # tilesInseeFilter = "insee = '" + str(inseeCode) + "'"
+    #     # @OPTIMIZE : tiles.insee colunm is a integer, so querying as integer to use index.
+    #     tilesInseeFilter = "insee = " + str(inseeCode) + ""
+    # tilesCount = getCountfromDB(DB_params, DB_schema, 'tiles', tilesInseeFilter)
+
+    tilesCount = getProgress(cur, DB_schema, inseeCode)
 
     # Check for drop Tiles
-    if tilesCount > 0:
-        logInseeSuffix = ''
-        if inseeCode:
-            logInseeSuffix = "for inseeCode {}".format(inseeCode)
+    if int(tilesCount) > 0:
+        logInseeSuffix = "for inseeCode {}".format(inseeCode)
+        # logInseeSuffix = ''
+        # if inseeCode:
+        #     logInseeSuffix = "for inseeCode {}".format(inseeCode)
         debugLog(style.YELLOW, "/!\ Some Tiles already exist in database {}".format(logInseeSuffix), logging.INFO)
 
         if SkipExistingData == 'True':
@@ -232,45 +253,47 @@ def initGrid(gridSize=30, inseeCode=None):
 
         # Ask user to clean table ?
         if EnableTruncate:
-            while True:
-                removeTilesResponse = input("Do you want to clean the Tiles table ? (y/n) : ")
-                if removeTilesResponse.lower() not in ('y', 'n'):
-                    print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                else:
-                    # Good response
-                    break
+            # while True:
+            #     removeTilesResponse = input("Do you want to clean the Tiles table ? (y/n) : ")
+            #     if removeTilesResponse.lower() not in ('y', 'n'):
+            #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+            #     else:
+            #         # Good response
+            #         break
 
-            if removeTilesResponse.lower() == 'y':
-                # Connect DB
-                conn, cur = connectDB(DB_params)
+            # if removeTilesResponse.lower() == 'y':
+            # Connect DB
+            # conn, cur = connectDB(DB_params)
 
-                # Clean tiles
-                resetTilesQuery = "TRUNCATE TABLE " + DB_schema + ".tiles RESTART IDENTITY; COMMIT;"
-                cur.execute(resetTilesQuery)
-                debugLog(style.GREEN, "Successfully remove all tiles", logging.INFO)
+            # Clean tiles
+            resetTilesQuery = "TRUNCATE TABLE " + DB_schema + ".tiles RESTART IDENTITY; COMMIT;"
+            cur.execute(resetTilesQuery)
+            debugLog(style.GREEN, "Successfully remove all tiles", logging.INFO)
 
-                # Close DB
-                closeDB(conn, cur)
+            # Close DB
+            # closeDB(conn, cur)
 
     # Log
     debugLog(style.YELLOW, "Table " + DB_schema + ".tiles is ready", logging.INFO)
 
     # Check communes length
-    communeFilter = None
-    if inseeCode:
-        communeFilter = "insee = '" + str(inseeCode) + "'"
+    communeFilter = "insee = '" + str(inseeCode) + "'"
+    # communeFilter = None
+    # if inseeCode:
+    #     communeFilter = "insee = '" + str(inseeCode) + "'"
     communesCount = getCountfromDB(DB_params, DB_schema, 'communes', communeFilter)
 
     if communesCount > 0:
         debugLog(style.YELLOW, "Table " + DB_schema + ".communes is ready", logging.INFO)
     else:
         debugLog(style.RED, "There is no communes to merge with the Grid. Please launch initCommunes first", logging.INFO)
-        return
+        return_error_and_exit_job(-3)
 
     # Get Communes data
     query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes"
-    if inseeCode:
-        query = query + " WHERE " + communeFilter
+    query = query + " WHERE " + communeFilter
+    # if inseeCode:
+    #     query = query + " WHERE " + communeFilter
     
     communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
@@ -285,6 +308,12 @@ def initGrid(gridSize=30, inseeCode=None):
 
     # Insert grid init
     insertGDFintoDB(DB_params, DB_schema, wktGrid, 'tiles', columnsListToDB)
+
+    # Setting progress for this insee code
+    setProgress(cur, DB_schema, inseeCode)
+
+    # Close DB
+    closeDB(conn, cur)
 
     # End timer
     endTimerLog(gridTimer)
@@ -305,7 +334,7 @@ def initDatas():
     metaDataCount = getCountfromDB(DB_params, DB_schema, 'metadatas')
     if metaDataCount < 1:
         debugLog(style.RED, "Not metadatas was found in database. Please relaunch this script after inserting one", logging.ERROR)
-        return
+        return_error_and_exit_job(-3)
     
     # Get all MetaData
     metaQuery = "SELECT * FROM " + DB_schema + ".metadatas ORDER BY id"
@@ -354,44 +383,45 @@ def initDatas():
 
             # Ask user to clean table ?
             if EnableTruncate:
-                while True:
-                    removeDataResponse = input("Do you want to clean those data ? (y/n) : ")
-                    if removeDataResponse.lower() not in ('y', 'n'):
-                        print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                    else:
-                        # Good response
-                        break
+                # while True:
+                #     removeDataResponse = input("Do you want to clean those data ? (y/n) : ")
+                #     if removeDataResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
 
-                if removeDataResponse.lower() == 'y':
-                    # Delete DATAS for current metadata
-                    deleteQFilter = "id_metadata = " + str(currMDataID)
-                    deleteDataInDB(DB_params, DB_schema, 'datas', deleteQFilter)
+                # if removeDataResponse.lower() == 'y':
+                # Delete DATAS for current metadata
+                deleteQFilter = "id_metadata = " + str(currMDataID)
+                deleteDataInDB(DB_params, DB_schema, 'datas', deleteQFilter)
+                # Log
+                debugLog(style.GREEN, "Successfully remove all datas for \'" + currMDataName + "\'", logging.INFO)
+            else:
+                # # Ask user to skip this metadata ? (if not deleted)
+                # while True:
+                #     skipResponse = input("Do you want to skip this metadata \'" + currMDataName + "\' ? (y/n) : ")
+                #     if skipResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
+
+                # if skipResponse.lower() == 'y':
+                if SkipExistingData == 'True':
                     # Log
-                    debugLog(style.GREEN, "Successfully remove all datas for \'" + currMDataName + "\'", logging.INFO)
-                else:
-                    # Ask user to skip this metadata ? (if not deleted)
-                    while True:
-                        skipResponse = input("Do you want to skip this metadata \'" + currMDataName + "\' ? (y/n) : ")
-                        if skipResponse.lower() not in ('y', 'n'):
-                            print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                        else:
-                            # Good response
-                            break
-
-                    if skipResponse.lower() == 'y':
-                        # Log
-                        debugLog(style.MAGENTA, "Current metadata \'" + currMDataName + "\' was skipped", logging.INFO)
-                        # End timer
-                        endTimerLog(currMDTimer)
-                        # Skip this item in loop
-                        continue
+                    debugLog(style.MAGENTA, "Current metadata \'" + currMDataName + "\' was skipped", logging.INFO)
+                    # End timer
+                    endTimerLog(currMDTimer)
+                    # Skip this item in loop
+                    continue
 
         # Init GDF
         currentGDF = None
         if currMData['temp_file_path']:
             # Load source data from file
             debugLog(style.BLUE, 'Load method for \'' + currMDataName + '\' : local geoJSON or SHP file', logging.INFO)
-            currentGDF = createGDFfromGeoJSON("./file_data/" + currMData['temp_file_path'])
+            currentGDF = createGDFfromGeoJSON( SourceDataPath + "/" + currMData['temp_file_path'])
             
             # Check input projection and reproj in 2154
             currentGDF = checkAndReproj(currentGDF, ENV_targetProj)
@@ -400,7 +430,7 @@ def initDatas():
             #TODO: check API format is geoJSON (API geometry) ??
             # OR Load source data from API
             debugLog(style.BLUE, 'Load method for \'' + currMDataName + '\' : external API', logging.INFO)
-            currentGDF = wfs2gp_df(currMData['source_name'], currMData['source_url'], reprojMetro=True, targetProj=ENV_targetProj)
+            currentGDF = wfs2gp_df(currMData['source_name'], currMData['source_url'], reprojMetro=True, targetProj=ENV_targetProj, proxies=Proxies)
         else:
             debugLog(style.RED, "Incorrect or no load method was found for this metadata \'" + currMDataName + "\'. Skipped... ", logging.ERROR)
             continue
@@ -573,34 +603,40 @@ def insertMDDatas(df, id_metadata, id_factor):
     insertGDFintoDB(DB_params, DB_schema, currGDF, 'datas', columnsListToDB)
 
 def computeFactors(inseeCode=None):
-    # Log
-    logInseeSuffix = ''
-    if inseeCode:
-        logInseeSuffix = "for commune '{}'".format(inseeCode)
-    debugLog(style.YELLOW, "Launch compute process for factors {}".format(logInseeSuffix), logging.INFO)
-    computeTimer = startTimerLog('Compute factors {}'.format(logInseeSuffix))
-    
+    # Do not allow the run without inse code
+    if not inseeCode:
+        return_error_and_exit_job(-3)
+
     # Check if inseeCode is numeric
     if inseeCode and not inseeCode.isdigit():
         debugLog(style.RED, "The inseeCode argument is not a number. Please correct your input", logging.INFO)
-        return
+        return_error_and_exit_job(-4)
 
-    # Get all tiles (filtered by insee if input)
-    tilesQuery = 'SELECT id, geom_poly as geom, insee, indice FROM ' + DB_schema + '.tiles'
-    if inseeCode:
-        tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
-    # Get Tiles from DB
-    tilesGDF = getGDFfromDB(DB_params, tilesQuery, ENV_targetProj)
+    # Log
+    logInseeSuffix = "for commune '{}'".format(inseeCode)
+    # logInseeSuffix = ''
+    # if inseeCode:
+    #     logInseeSuffix = "for commune '{}'".format(inseeCode)
+    debugLog(style.YELLOW, "Launch compute process for factors {}".format(logInseeSuffix), logging.INFO)
+    computeTimer = startTimerLog('Compute factors {}'.format(logInseeSuffix))
+
+    # Connect to DB
+    conn, cur = connectDB(DB_params, jsonEnable=True)
+
+    tilesOK = getProgress(cur, DB_schema, inseeCode)
 
     # Check empty data for all table
-    if len(tilesGDF) == 0:
+    # if len(tilesGDF) == 0:
+    if tilesOK == 0:
+        debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
+        return_error_and_exit_job(-3)
         # Check length depend on inseeCode
-        if inseeCode:
-            debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
-            return
-        else:
-            debugLog(style.YELLOW, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.INFO)
-            return
+        # if inseeCode:
+        #     debugLog(style.YELLOW, "There is no tiles data for this inseeCode : {}. Please verify your input".format(inseeCode), logging.INFO)
+        #     return_error_and_exit_job(-3)
+        # else:
+        #     debugLog(style.YELLOW, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.INFO)
+        #     return_error_and_exit_job(-3)
 
     # Get all factors
     factorsQuery = "SELECT * FROM " + DB_schema + ".factors ORDER BY id"
@@ -616,15 +652,21 @@ def computeFactors(inseeCode=None):
 
         # Check count
         currTFDataCount = 0
-        if inseeCode:
-            # Check TILES_FACTORS existing data (with insee)
-            queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
-            currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
-            currTFDataCount = json.loads(currTFDataFAI)[0]['count']
-        else:
-            # Check TILES_FACTORS existing data
-            qFilter = 'id_factor = ' + str(currFactorID)
-            currTFDataCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', qFilter)
+
+        # queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
+        # currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
+        currTFDataCount = getProgress(cur, DB_schema, inseeCode, currFactorID)
+        # currTFDataCount = json.loads(currTFDataFAI)[0]['count']
+
+        # if inseeCode:
+        #     # Check TILES_FACTORS existing data (with insee)
+        #     queryFactorAndInsee = "SELECT count(*) FROM base.tiles_factors tf INNER JOIN base.tiles t ON tf.id_tile = t.id AND t.insee = '{}' WHERE id_factor = {};".format(inseeCode, currFactorID)
+        #     currTFDataFAI = getDatafromDB(DB_params, queryFactorAndInsee)
+        #     currTFDataCount = json.loads(currTFDataFAI)[0]['count']
+        # else:
+        #     # Check TILES_FACTORS existing data
+        #     qFilter = 'id_factor = ' + str(currFactorID)
+        #     currTFDataCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', qFilter)
 
         # Check count for tiles_factors Data
         if currTFDataCount > 0:
@@ -633,32 +675,36 @@ def computeFactors(inseeCode=None):
             # Skip factors with existing data in TILES_FACTORS
             if SkipExistingData == 'True':
                 # Log
-                debugLog(style.MAGENTA, "Current factor \'" + currFactorName + "\' was skipped", logging.INFO)
+                debugLog(style.MAGENTA, "Current factor \'" + currFactorName + "\' was skipped for {}.".format(inseeCode), logging.INFO)
                 continue
 
             # Ask user to clean table ?
             if EnableTruncate:
-                while True:
-                    removeDataResponse = input("Do you want to clean those datas ? (y/n) : ")
-                    if removeDataResponse.lower() not in ('y', 'n'):
-                        print(style.RED + "Sorry, wrong response... \n", style.RESET)
-                    else:
-                        # Good response
-                        break
+                # while True:
+                #     removeDataResponse = input("Do you want to clean those datas ? (y/n) : ")
+                #     if removeDataResponse.lower() not in ('y', 'n'):
+                #         print(style.RED + "Sorry, wrong response... \n", style.RESET)
+                #     else:
+                #         # Good response
+                #         break
 
-                if removeDataResponse.lower() == 'y':
-                    if inseeCode:
-                        # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
-                        deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
-                        deleteCustomDataInDB(DB_params, deleteTFQuery)
-                    else:
-                        # DELETE TILES_FACTORS datas with id_factor
-                        deleteQFilter = "id_factor = " + str(currFactorID)
-                        deleteDataInDB(DB_params, DB_schema, 'tiles_factors', deleteQFilter)
+                # if removeDataResponse.lower() == 'y':
+                    # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
+                deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
+                deleteCustomDataInDB(DB_params, deleteTFQuery)
+
+                    # if inseeCode:
+                    #     # DELETE TILES_FACTORS data for current tiles linked to inseeCode AND id_factor
+                    #     deleteTFQuery = "DELETE FROM base.tiles_factors WHERE id_tile IN ( SELECT id FROM base.tiles t WHERE t.insee = {} ) AND id_factor = {};".format(str(inseeCode), currFactorID)
+                    #     deleteCustomDataInDB(DB_params, deleteTFQuery)
+                    # else:
+                    #     # DELETE TILES_FACTORS datas with id_factor
+                    #     deleteQFilter = "id_factor = " + str(currFactorID)
+                    #     deleteDataInDB(DB_params, DB_schema, 'tiles_factors', deleteQFilter)
                     
 
                     # Log
-                    debugLog(style.GREEN, "Successfully remove all TILES_FACTORS datas for \'" + currFactorName + "\' ", logging.INFO)
+                debugLog(style.GREEN, "Successfully remove all TILES_FACTORS datas for \'" + currFactorName + "\' ", logging.INFO)
 
         # Log & timer per factor
         currFactorTimer = startTimerLog("Compute factor " + currFactorName)
@@ -669,15 +715,24 @@ def computeFactors(inseeCode=None):
 
         # Get commmune geom to filter data
         communesGDF = None
-        if inseeCode:
-            query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
-            communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
-            # Filter data with commune geom (if insee)
-            currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+        query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
+        communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
-            # Log
-            debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
+        # Filter data with commune geom (if insee)
+        currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+
+        #     # Log
+        #     debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
+        # if inseeCode:
+        #     query = "SELECT insee, geom_poly as geom FROM " + DB_schema + ".communes WHERE insee = '" + inseeCode + "'"
+        #     communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
+
+        #     # Filter data with commune geom (if insee)
+        #     currFDataGDF = gp.overlay(communesGDF, currFDataGDF, how='intersection', keep_geom_type=False)
+
+        #     # Log
+        #     debugLog(style.MAGENTA, 'Intersect overlap end successfully with \'{}\' entities keeped'.format(len(currFDataGDF)), logging.INFO)
 
         if len(currFDataGDF) > 1:
             # Union timer
@@ -697,6 +752,15 @@ def computeFactors(inseeCode=None):
         # Clip timer
         clipTimer = startTimerLog('Clip datas with tiles')
 
+        # Get all tiles (filtered by insee if input)
+        tilesQuery = 'SELECT id, geom_poly as geom, insee, indice FROM ' + DB_schema + '.tiles'
+        tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
+
+        # if inseeCode:
+        #     tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
+        # Get Tiles from DB
+        tilesGDF = getGDFfromDB(DB_params, tilesQuery, ENV_targetProj)
+        
         # Intersect & cut data with tiles geom (clip)
         interFData = tilesGDF.clip(unionFactorGDF)
         
@@ -711,9 +775,7 @@ def computeFactors(inseeCode=None):
 
         debugLog(style.YELLOW, 'Calculating area for current factor tiles and insert in database', logging.INFO)
 
-        # Connect to DB
-        conn, cur = connectDB(DB_params, jsonEnable=True)
-
+        insertedValues = ""
         # Loop in all RESULT cutFactor Geom (with tiles info)
         for index, row in interFGDF.iterrows():
             # Craft row item in dict format
@@ -736,13 +798,32 @@ def computeFactors(inseeCode=None):
             # debugLog(style.YELLOW, "Tiles n°{} as : {} m² of \'{}\' ".format(currTileID, roundCutFactorArea, currFactorName), logging.INFO)
 
             # Insert area into TILES_FACTOR (with id_tile & id_factor)
-            insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "); COMMIT;"
-            insertDataInDB(cur, insertTileFactorQuery)
+            # insertTileFactorQuery = "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES (" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + ");"
+            insertedValues += "(" + str(currTileID) + "," + str(currFactorID) + "," + str(roundCutFactorArea) + "), "
 
+            # Every 10000 lines we bulk insert
+            if len(insertedValues) > 0 and index % 10000 == 0:
+                try:
+                    insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
+                    insertDataInDB(cur, insertTileFactorQuery)
+                    conn.commit()
+                    insertedValues = ""
+                    debugLog(style.YELLOW, "A bunch of 10000 Tiles of \'{}\' was inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
+                except psycopg2.Error as e:
+                    print(e)
+                    return_error_and_exit_job(-5)
+                                
             ##End of current cutFactor (tile) loop
 
-        # Close cursor & DB connexion
-        closeDB(conn, cur)
+        # Insertining all available data in database (Possible an amont < 10000 lines )
+        if len(insertedValues) > 0:
+            insertTileFactorQuery =  "INSERT INTO " + DB_schema + ".tiles_factors (id_tile, id_factor, area) VALUES " + insertedValues[:-2] # shrink last space and comma
+            try:
+                insertDataInDB(cur, insertTileFactorQuery)
+                debugLog(style.YELLOW, "Last tiles of \'{}\' were inserted for township \'{}\'".format(currFactorName, inseeCode), logging.INFO)
+            except psycopg2.Error as e:
+                print(e)
+                return_error_and_exit_job(-5)
 
         # Log
         debugLog(style.GREEN, 'Successfully insert all informations and area in database', logging.INFO)
@@ -750,10 +831,22 @@ def computeFactors(inseeCode=None):
         # Ending log
         endTimerLog(currFactorTimer)
 
-        ##End of current factor loop
+        # updating process
+        setProgress(cur, DB_schema, inseeCode, currFactorID)
+
+        # commiting new data
+        conn.commit()
+
+        #
+        #  End of current factor loop
+        #
 
     # Log & timer end script
     endTimerLog(computeTimer)
+
+    # Close cursor & DB connexion
+    closeDB(conn, cur)
+    
     debugLog(style.YELLOW, "End of computing factors process", logging.INFO)
 
 def multiComputeFactors(communesSplitedArray):
@@ -818,23 +911,50 @@ def computeIndices():
     conn, cur = connectDB(DB_params)
 
     # Get TILES_FACTORS count
-    tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', None, conn, cur)
+    # tfCount = getCountfromDB(DB_params, DB_schema, 'tiles_factors', 'id < 100', conn, cur)
+    tfCount = getCountfromDB(DB_params, DB_schema, 'factors_progress', None , conn, cur)
 
     # Check empty data for TILES_FACTORS table
     if tfCount == 0:
         debugLog(style.RED, "There is no data in tiles_factors table. Make sure you have launch this script with computeFactors argument before", logging.ERROR)
-        return
+        return_error_and_exit_job(-3)
 
     # Get TILES count
-    tCount = getCountfromDB(DB_params, DB_schema, 'tiles', None, conn, cur)
+    # tCount = getCountfromDB(DB_params, DB_schema, 'tiles', 'id < 100', conn, cur)
+    tCount = getCountfromDB(DB_params, DB_schema, 'tiles_progress', None, conn, cur)
 
     # Check empty data for TILES table
     if tCount == 0:
         debugLog(style.RED, "There is no data in tiles table. Make sure you have launch this script with initGrid argument before", logging.ERROR)
-        return
+        return_error_and_exit_job(-3)
 
     # Launch SQL Query
-    updateIndiceQuery = "UPDATE base.tiles t SET indice = sub.sum_indice FROM (SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id GROUP BY id_tile) as sub WHERE t.id = sub.id_tile; COMMIT;"
+    # updateIndiceQuery = "UPDATE base.tiles t SET indice = sub.sum_indice FROM (SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id GROUP BY id_tile) as sub WHERE t.id = sub.id_tile; COMMIT;"
+
+
+    updateIndiceQuery = "DO \
+                            LANGUAGE plpgsql \
+                            $$DECLARE \
+                            /* declare and open a cursor */ \
+                            c CURSOR FOR SELECT id_tile, ROUND(SUM(area * f.ponderation)/100::numeric,1) AS sum_indice  \
+                                            FROM base.tiles_factors tf JOIN base.factors f ON tf.id_factor = f.id \
+                                            GROUP BY id_tile; \
+                            id_tile int4; \
+                            sum_indice float4; \
+                            begin \
+                            open c; \
+                            LOOP \
+                                /* get next result row */ \
+                                FETCH c INTO id_tile, sum_indice; \
+                                /* system variable FOUND is set by FETCH */ \
+                                EXIT WHEN NOT FOUND; \
+                                /* Maj de la tuile concernée */ \
+                                UPDATE base.tiles SET indice = sum_indice WHERE id = id_tile; \
+                            END LOOP; \
+                            CLOSE c; \
+                            END;$$;	 \
+                        "
+
     cur.execute(updateIndiceQuery)
     debugLog(style.GREEN, "Successfully update indice in all tiles", logging.INFO)
 
@@ -916,10 +1036,13 @@ def initEnv():
     global DB_params
     global DB_schema
     global PythonLaunch
+    global SourceDataPath
     global ENV_targetProj
     global RemoveTempFile
     global SkipExistingData
     global EnableTruncate
+    global HttpProxy
+    global Proxies
 
     # Assign values
     DB_params = {
@@ -928,12 +1051,30 @@ def initEnv():
         "password"  : os.getenv('DB_PWD'),
         "database"  : os.getenv('DB_NAME'),
     }
-    DB_schema = os.getenv('DB_SCHEMA')
-    PythonLaunch = os.getenv('PYTHON_LAUNCH')
-    ENV_targetProj = os.getenv('TARGET_PROJ')
-    RemoveTempFile = os.getenv('REMOVE_TEMP_FILE')
-    SkipExistingData = os.getenv('SKIP_EXISTING_DATA')
-    EnableTruncate = os.getenv('ENABLE_TRUNCATE')
+    DB_schema = os.getenv('DB_SCHEMA').strip()
+    PythonLaunch = os.getenv('PYTHON_LAUNCH').strip()
+    ENV_targetProj = os.getenv('TARGET_PROJ').strip()
+    SourceDataPath = os.getenv('SOURCE_DATA_PATH').strip()
+    RemoveTempFile = os.getenv('REMOVE_TEMP_FILE').strip()
+    SkipExistingData = os.getenv('SKIP_EXISTING_DATA').strip()
+    EnableTruncate = os.getenv('ENABLE_TRUNCATE').strip()
+    HttpProxy = os.getenv('HTTP_PROXY').strip()
+
+    Proxies = { 
+                "http"  : HttpProxy, 
+                "https" : HttpProxy
+                }
+    
+def displayEnv():
+    # display param value for debug
+    debugLog(style.WHITE, "DB_schema="+DB_schema, logging.INFO)
+    debugLog(style.WHITE, "PythonLaunch="+PythonLaunch, logging.INFO)
+    debugLog(style.WHITE, "ENV_targetProj="+ENV_targetProj, logging.INFO)
+    debugLog(style.WHITE, "SourceDataPath="+SourceDataPath, logging.INFO)
+    debugLog(style.WHITE, "RemoveTempFile="+RemoveTempFile, logging.INFO)
+    debugLog(style.WHITE, "SkipExistingData="+SkipExistingData, logging.INFO)
+    debugLog(style.WHITE, "EnableTruncate="+EnableTruncate, logging.INFO)
+    debugLog(style.WHITE, "HttpProxy="+HttpProxy, logging.INFO)
 
 # ------------------------
 #          MAIN
@@ -949,7 +1090,7 @@ def main():
     if argv:
         firstArgv = sys.argv[1:][0]
 
-        # Switch case...
+        # Sfs2itch case...
         if firstArgv == 'initCommunes':
             initCommunes()
         elif firstArgv == 'initGrid':
@@ -1026,6 +1167,14 @@ def main():
             testDBConnexion()
         elif firstArgv == 'help':
             showDoc()
+        elif firstArgv == 'displayEnv':
+            displayEnv()
+        elif firstArgv == 'cleanup':
+            ## See if we need to truncate progress tables
+            #if EnableTruncate == True:
+            debugLog(style.WHITE, "Reseting data and progress tables", logging.INFO)
+            resetProgress(DB_params, DB_schema)
+            resetDataInDb(DB_params, DB_schema)
         else:
             showDoc()
             debugLog(style.RED, "Unrecognized arguments for this script", logging.ERROR)
@@ -1044,7 +1193,10 @@ if __name__ == "__main__":
     initLogging(logsPath)
 
     # Load .env values
-    load_dotenv()
+    try:
+        load_dotenv()
+    except (e):
+        return_error_and_exit_job(-1)
 
     # Check .env file initialization
     checkEnvFile()
@@ -1058,6 +1210,6 @@ if __name__ == "__main__":
     # Check if ./tmp/ folder exist then create if not
     tmpPath = './tmp/'
     checkAndCreateDirectory(tmpPath)
-
+         
     # Launch main function
     main()

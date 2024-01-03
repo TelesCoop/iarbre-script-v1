@@ -1,0 +1,100 @@
+# 
+# Job qui lance un pod de calcul des indices 
+#
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+spec:
+  # maximum duration the job can run => 160h 
+  activeDeadlineSeconds: 576000
+  completions: 1
+  backoffLimit: 1
+  parallelism: 1
+  template:         
+    metadata:
+      name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+    spec:
+      volumes:
+      - name: arb-data
+        persistentVolumeClaim: 
+          claimName: pvc-03-__NAMESPACE__-claim
+      containers:
+      - name: calqul-stage-__CALQUL_ACTION__-__NAMESPACE_ENV__
+        # Image Python de calcul du calque
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-python-__NAMESPACE_ENV__
+        command: ["/bin/bash", "-c", "/app/launch.sh __CALQUL_ACTION__ __NAMESPACE_ENV__ __POSTGRES_SERVER__ __POSTGRES_PORT__ __POSTGRES_DB__ __POSTGRES_USER__" ]
+        volumeMounts:
+        - name: arb-data
+          mountPath: "/arb-data/source-files"
+        - name: arb-data
+          mountPath: "/arb-data/generated-files"
+        - name: arb-data
+          mountPath: "/arb-data/run" # storing a file telling export-job the state of python script
+        # Sondes
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: database-secret-__NAMESPACE_ENV__
+                key: password 
+          - name: HTTP_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+          - name: HTTPS_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+        resources:
+          requests:
+            cpu: __CPU_REQUEST__  # 1
+            memory: __MEM_REQUEST__ # 2000Mi
+          limits:
+            cpu: __CPU_LIMIT__ # 1
+            memory: __MEM_LIMIT__ # 8000Mi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - echo "OK"
+            initialDelaySeconds: 240
+            periodSeconds: 60
+            failureThreshold: 3
+            timeoutSeconds: 10
+        livenessProbe: 
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - echo "OK"
+            initialDelaySeconds: 240
+            periodSeconds: 60
+            failureThreshold: 3
+            timeoutSeconds: 10
+      restartPolicy: Never
+
+      # Clone or update sources data before calculation
+      initContainers:
+      - name: calqul-refresh-repository-__NAMESPACE_ENV__
+        image: registry.forge.grandlyon.com/erasme/script-recalcul-calque/calqul-git-lfs-__NAMESPACE_ENV__
+        env:
+          - name: GIT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: username
+          - name: GIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: arb-data-access-token
+                key: password
+          - name: HTTP_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+          - name: HTTPS_PROXY
+            value: "http://proxyhttppro.grandlyon.fr:8080"
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - if [ -d /arb-data/source-files/data-recalcul-calque/.git ]; then cd /arb-data/source-files/data-recalcul-calque; git pull origin main; else mkdir -p /arb-data/source-files/data-recalcul-calque; cd /arb-data/source-files; git lfs clone https://${GIT_USERNAME}:${GIT_PASSWORD}@forge.grandlyon.com/erasme/sources-recalcul-calque.git ./data-recalcul-calque/; fi; echo "Data ready !";
+        volumeMounts:
+        - name: arb-data
+          mountPath: "/arb-data/source-files"

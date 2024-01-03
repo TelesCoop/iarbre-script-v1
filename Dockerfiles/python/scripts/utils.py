@@ -24,6 +24,14 @@ from shapely.geometry import Polygon, MultiPolygon
 if not platform.system() != "Linux":
     import resource
 
+
+# -----------------------------------------------------
+# ----        Explicit Return code function        ----
+# ---- Usefull for exiting code from openShift Job ----
+# -----------------------------------------------------
+def return_error_and_exit_job(Code=-1):
+    sys.exit(Code)
+
 # -------------
 # ---- LOG ----
 # -------------
@@ -127,16 +135,17 @@ def checkEnvFile():
     boolTempFile = os.getenv('REMOVE_TEMP_FILE')
     skipExistingData = os.getenv('SKIP_EXISTING_DATA')
     enableTruncate = os.getenv('ENABLE_TRUNCATE')
+    sourceDataPath = os.getenv('SOURCE_DATA_PATH')
 
     # Check if file exists
     if file_exists == False:
         debugLog(style.RED, "The .env file is not found. Please create it based on .env.example", logging.ERROR)
-        sys.exit(0)
+        return_error_and_exit_job(-1)
     else:
         # Check all var in .env file
-        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None):
+        if (dbHost == None or dbUser == None or dbPwd == None or dbName == None or dbSchema == None or targetProj == None or boolTempFile == None or skipExistingData == None or enableTruncate == None or sourceDataPath == None):
             debugLog(style.RED, "Please make sure you have correctly initialized the .env file", logging.ERROR)
-            sys.exit(0)
+            return_error_and_exit_job(-1)
 
 # -------------------------
 # ---- DATE OPERATIONS ----
@@ -206,7 +215,7 @@ def connectDB(params_DB, jsonEnable = False):
             cur = conn.cursor()
 
         # Log
-        debugLog(style.GREEN, "Database connection successfully opened", logging.INFO)
+        # debugLog(style.GREEN, "Database connection successfully opened", logging.INFO)
         
         return conn, cur
 
@@ -222,7 +231,7 @@ def closeDB(conn, cur):
         cur.close()
         
         # Log
-        debugLog(style.GREEN, "Database connection successfully closed", logging.INFO)
+        # debugLog(style.GREEN, "Database connection successfully closed", logging.INFO)
 
     except (Exception, psycopg2.Error) as error :
         debugLog(style.RED, "Error while trying to connect in PostgreSQL database : {}".format(error), logging.ERROR)
@@ -238,7 +247,7 @@ def getCountfromDB(DB_params, DB_schema, tableName, queryFilter=None, connInput 
         cur = curInput
     
     # Build request
-    countQuery = "SELECT COUNT(*) FROM " + DB_schema + "." + tableName
+    countQuery = "SELECT COUNT(1) FROM " + DB_schema + "." + tableName
 
     if queryFilter:
         countQuery = countQuery + " WHERE " + queryFilter
@@ -248,7 +257,7 @@ def getCountfromDB(DB_params, DB_schema, tableName, queryFilter=None, connInput 
     countValue = cur.fetchone()[0]
 
     # Log
-    debugLog(style.BLUE, "Found {} entites in table {}".format(countValue, tableName), logging.INFO)
+    # debugLog(style.BLUE, "Found {} entites in table {}".format(countValue, tableName), logging.INFO)
 
     if connInput is None and curInput is None:
         # Final close cursor & DB
@@ -278,7 +287,11 @@ def getDatafromDB(DB_params, sqlQuery, connInput = None, curInput = None):
 
 def insertDataInDB(DBcursor, sqlQuery):
     # Insert Data
-    DBcursor.execute(sqlQuery)
+    try:
+        DBcursor.execute(sqlQuery)
+    except psycopg2.Error as e:
+        print(e)
+        raise
     
     #TODO: Get return data ?
     # dataValues = json.dumps(cur.fetchall(), indent=2, default=dateConverter)
@@ -310,6 +323,21 @@ def deleteDataInDB(DB_params, DB_schema, tableName, queryFilter=None):
     # Execute COMMIT
     commmitQuery = "COMMIT;"
     cur.execute(commmitQuery)
+
+    # Final close cursor & DB
+    closeDB(conn, cur)
+
+    return
+
+def truncateDataInDB(DB_params, DB_schema, tableName):
+    # Connect DB
+    conn, cur = connectDB(DB_params)
+    
+    # Build request
+    truncateQuery = "TRUNCATE TABLE " + DB_schema + "." + tableName + " CASCADE"
+
+    # Execute query
+    cur.execute(truncateQuery)
 
     # Final close cursor & DB
     closeDB(conn, cur)
@@ -390,11 +418,11 @@ def splitList(alist, wanted_parts=1):
 # ---- GEOM OPERATIONS ----
 # -------------------------
 
-def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='application/gml+xml; version=3.2', reprojMetro=False, targetProj=None):
+def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='application/gml+xml; version=3.2', reprojMetro=False, targetProj=None, req_timeout=600, proxies=None):
     # Concat params
     params = dict(service='WFS', version=wfs_version,request='GetFeature', typeName=layer_name, outputFormat=outputFormat, crs=targetProj)
     # Load data in Bytes
-    with BytesCollection(requests.get(url,params=params).content) as f:
+    with BytesCollection(requests.get(url,params=params, timeout=req_timeout, proxies=proxies).content) as f:
         # Make GDF
         df = gp.GeoDataFrame.from_features(f)
     
@@ -800,3 +828,56 @@ class style():
     WHITE = '\033[37m'
     UNDERLINE = '\033[4m'
     RESET = '\033[0m'
+
+
+# -----------------------------
+# ---- PROGRESS OPERATIONS ----
+# -----------------------------
+def setProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
+    stage = 'tiles'
+    qryFilter = ''
+    insertComplement = ''
+    if id_factor:
+        stage = 'factors'
+        qryFilter = ' and id_factor = {}'.format(id_factor)
+        insertComplement = ', {}'.format(id_factor)
+    # Ensure there is only one occurence for the township
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
+    insertDataInDB(DBcursor,'INSERT INTO ' + DBSchema + '.' + stage + '_progress VALUES (' + codeInsee + insertComplement + ')')
+
+def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
+    stage = 'tiles'
+    qryFilter = ''
+    if id_factor:
+        stage = 'factors'
+        qryFilter = ' and id_factor = {}'.format(id_factor)
+
+    qry = 'SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter
+    debugLog(style.YELLOW, qry, logging.INFO)
+    DBcursor.execute(qry)
+    results = DBcursor.fetchall()
+    debugLog(style.YELLOW, "{}".format(results), logging.INFO)
+    dataValues = results[0]['count'] 
+    # dataValues = DBcursor.fetchall()[0][0]  # Accéder à l'élément à l'indice 0 de la première liste
+    return dataValues
+
+def resetProgress(DB_params, DB_schema):
+    debugLog(style.WHITE, "Deleting process tables...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles_progress')
+    truncateDataInDB(DB_params, DB_schema, 'factors_progress')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+def resetDataInDb(DB_params, DB_schema):
+    debugLog(style.WHITE, "Deleting datas table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'datas')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles_factors table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles_factors')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    debugLog(style.WHITE, "Deleting tiles table...", logging.INFO)
+    truncateDataInDB(DB_params, DB_schema, 'tiles')
+    debugLog(style.GREEN, "Done.", logging.INFO)
+
+    

@@ -16,7 +16,7 @@ def computeData(df):
     unionGeom = unary_union(df)
 
     # Make GDF
-    dataUnion = {'geometry': unionGeom}
+    dataUnion = [{'geometry': unionGeom}]
     unionDF = gp.GeoDataFrame(dataUnion, crs=ENV_targetProj)
 
     return unionDF
