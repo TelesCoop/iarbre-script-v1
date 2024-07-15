@@ -60,17 +60,17 @@ def showDoc():
         initGrid <gridSize: int, inseeCode: int>            Generate with the size defined and insert Grid in database merged from a bounding box
                                                             Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
         initDatas                                           Make treatments on the datas from informations in metadatas table
-        computeFactors <inseeCode: int>                     Compute the factors area on each tile with database informations. 
+        computeFactors <inseeCode: int>                     Compute the factors area on each tile with database informations.
                                                             Can be launch on certain "communes" with one <inseeCode> or in all territory by default (no parameter)
-        computeIndices                                      Compute the plantability indices on each tile with database informations. 
-        computeAll <gridSize: int, listInseeCode: int>      Generate all the plantability layer (launch all previous steps). 
-                                                            List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256) 
+        computeIndices                                      Compute the plantability indices on each tile with database informations.
+        computeAll <gridSize: int, listInseeCode: int>      Generate all the plantability layer (launch all previous steps).
+                                                            List of inseeCode must be separated with comma (,) and without space (e.g. python main.py 5 69266,69388,69256)
                                                             but you can launch treatments for only one commune (e.g. python main.py 5 69266)
         testDB                                              Test the connexion with DB parameters in .env file
         displayEnv                                          Display all global vars read from .env file.
         help                                                Show this documentation
     """
-    
+
     print('# ' + '=' * 78)
     print('Author: ' + __author__)
     print('Copyright: ' + __copyright__)
@@ -83,7 +83,7 @@ def showDoc():
     print('Email: ' + __email__)
     print('Status: ' + __status__)
     print('# ' + '=' * 78)
-    
+
     print(script_doc)
 
 # ------------------------
@@ -187,10 +187,10 @@ def initCommunes():
     if communesGDF is not None:
         # Clean useless attribute
         communesGDF = communesGDF[columnsArrFromGeoJSON]
-            
+
         # Check input projection and reproj in 2154
         communesGDF = checkAndReproj(communesGDF, ENV_targetProj)
-        
+
         # Convert to WKT
         communesGDF = convertGeomToWKT(communesGDF)
 
@@ -294,7 +294,7 @@ def initGrid(gridSize=30, inseeCode=None):
     query = query + " WHERE " + communeFilter
     # if inseeCode:
     #     query = query + " WHERE " + communeFilter
-    
+
     communesGDF = getGDFfromDB(DB_params, query, ENV_targetProj)
 
     # Create Grid
@@ -302,7 +302,7 @@ def initGrid(gridSize=30, inseeCode=None):
 
     # Convert Grid into WKT
     wktGrid = convertGeomToWKT(gridGDF)
-    
+
     # Grid column list
     columnsListToDB = ('geom_poly', 'insee')
 
@@ -317,7 +317,7 @@ def initGrid(gridSize=30, inseeCode=None):
 
     # End timer
     endTimerLog(gridTimer)
-    
+
     # End Communes script
     debugLog(style.YELLOW, "End initialisation of \'Grid\'", logging.INFO)
 
@@ -335,7 +335,7 @@ def initDatas():
     if metaDataCount < 1:
         debugLog(style.RED, "Not metadatas was found in database. Please relaunch this script after inserting one", logging.ERROR)
         return_error_and_exit_job(-3)
-    
+
     # Get all MetaData
     metaQuery = "SELECT * FROM " + DB_schema + ".metadatas ORDER BY id"
     metaDatas = getDatafromDB(DB_params, metaQuery)
@@ -358,7 +358,7 @@ def initDatas():
         # Check existing data for this metadata
         qFilter = 'id_metadata = ' + str(currMDataID)
         currMDDataCount = getCountfromDB(DB_params, DB_schema, 'datas', qFilter)
-        
+
         # Check count for drop Data
         if currMDDataCount > 0:
             debugLog(style.YELLOW, "/!\ Some datas already exist for this metadata in database. Analyze each factor datas...", logging.INFO)
@@ -422,7 +422,7 @@ def initDatas():
             # Load source data from file
             debugLog(style.BLUE, 'Load method for \'' + currMDataName + '\' : local geoJSON or SHP file', logging.INFO)
             currentGDF = createGDFfromGeoJSON( SourceDataPath + "/" + currMData['temp_file_path'])
-            
+
             # Check input projection and reproj in 2154
             currentGDF = checkAndReproj(currentGDF, ENV_targetProj)
 
@@ -460,7 +460,7 @@ def initDatas():
 
         # End export timer
         endTimerLog(exportTimer)
-        
+
         # Init retcode
         retcode = None
 
@@ -478,7 +478,7 @@ def initDatas():
 
                         # Get currScript index
                         currScriptIndex = currMDataListScript.index(currScript)
-                        
+
                         # Define id_factor
                         currFactorId = currMDataListFactors[currScriptIndex]
 
@@ -499,7 +499,7 @@ def initDatas():
                             debugLog(style.RED, "Child process was terminated by signal {}".format(-retcode), logging.ERROR)
                             debugLog(style.RED, "Temporary files was keeped", logging.ERROR)
                             debugLog(style.RED, 'Try to fix the error above and relauch this script for this metadata', logging.ERROR)
-                            
+
                             # Skip current Metadata
                             debugLog(style.MAGENTA, "Current metadata \'" + currMDataName + "\' was skipped", logging.INFO)
                             continue
@@ -567,7 +567,7 @@ def initDatas():
 def insertMDDatas(df, id_metadata, id_factor):
     # Init var
     multiExist = False
-    
+
     # Check if one of geom is MULTI
     allGeomType = df.geom_type
     for geomT in allGeomType:
@@ -701,7 +701,7 @@ def computeFactors(inseeCode=None):
                     #     # DELETE TILES_FACTORS datas with id_factor
                     #     deleteQFilter = "id_factor = " + str(currFactorID)
                     #     deleteDataInDB(DB_params, DB_schema, 'tiles_factors', deleteQFilter)
-                    
+
 
                     # Log
                 debugLog(style.GREEN, "Successfully remove all TILES_FACTORS datas for \'" + currFactorName + "\' ", logging.INFO)
@@ -737,7 +737,7 @@ def computeFactors(inseeCode=None):
         if len(currFDataGDF) > 1:
             # Union timer
             unionTimer = startTimerLog('Union datas')
-            
+
             # Regroup
             unionGeom = unary_union(currFDataGDF.geometry)
             dataUnion = [{'geometry': unionGeom}]
@@ -760,10 +760,10 @@ def computeFactors(inseeCode=None):
         #     tilesQuery = tilesQuery + ' WHERE insee = ' + inseeCode
         # Get Tiles from DB
         tilesGDF = getGDFfromDB(DB_params, tilesQuery, ENV_targetProj)
-        
+
         # Intersect & cut data with tiles geom (clip)
         interFData = tilesGDF.clip(unionFactorGDF)
-        
+
         # End clip timer
         endTimerLog(clipTimer)
 
@@ -790,7 +790,7 @@ def computeFactors(inseeCode=None):
             # Calculate area
             currFactorCutGeom = rowGDF.iloc[0]['geom']
             cutFactorArea = currFactorCutGeom.area
-            
+
             # Round result
             roundCutFactorArea = round(cutFactorArea)
 
@@ -812,7 +812,7 @@ def computeFactors(inseeCode=None):
                 except psycopg2.Error as e:
                     print(e)
                     return_error_and_exit_job(-5)
-                                
+
             ##End of current cutFactor (tile) loop
 
         # Insertining all available data in database (Possible an amont < 10000 lines )
@@ -827,7 +827,7 @@ def computeFactors(inseeCode=None):
 
         # Log
         debugLog(style.GREEN, 'Successfully insert all informations and area in database', logging.INFO)
-        
+
         # Ending log
         endTimerLog(currFactorTimer)
 
@@ -846,7 +846,7 @@ def computeFactors(inseeCode=None):
 
     # Close cursor & DB connexion
     closeDB(conn, cur)
-    
+
     debugLog(style.YELLOW, "End of computing factors process", logging.INFO)
 
 def multiComputeFactors(communesSplitedArray):
@@ -960,7 +960,7 @@ def computeIndices():
 
     # Global close connexion to DB
     closeDB(conn, cur)
-    
+
     # Log
     endTimerLog(computeIndiceTimer)
     debugLog(style.YELLOW, "End computing indice", logging.INFO)
@@ -1020,7 +1020,7 @@ def computeAll(gridSize=30, communesArrayInput=None):
 
     # Check and launch computeIndices
     computeIndices()
-    
+
     # End timer
     endTimerLog(computeLayerTimer)
     debugLog(style.YELLOW, "End computing all plantability layer", logging.INFO)
@@ -1060,11 +1060,12 @@ def initEnv():
     EnableTruncate = os.getenv('ENABLE_TRUNCATE').strip()
     HttpProxy = os.getenv('HTTP_PROXY').strip()
 
-    Proxies = { 
-                "http"  : HttpProxy, 
-                "https" : HttpProxy
-                }
-    
+    Proxies = None
+    # Proxies = {
+    #             "http"  : HttpProxy,
+    #             "https" : HttpProxy
+    #             }
+
 def displayEnv():
     # display param value for debug
     debugLog(style.WHITE, "DB_schema="+DB_schema, logging.INFO)
@@ -1102,7 +1103,7 @@ def main():
                 secArgv = sys.argv[1:][1]
             except(Exception) as error:
                 debugLog(style.RED, "Please input the grid size wanted as last argument", logging.ERROR)
-            
+
             if secArgv:
                 # Test argv3 exist
                 try:
@@ -1144,7 +1145,7 @@ def main():
                 secArgv = sys.argv[1:][1]
             except(Exception) as error:
                 debugLog(style.RED, "Please input the grid size wanted as last argument")
-            
+
             if secArgv:
                 if secArgv.isdigit():
                     # Test argv3 exist
@@ -1210,6 +1211,6 @@ if __name__ == "__main__":
     # Check if ./tmp/ folder exist then create if not
     tmpPath = './tmp/'
     checkAndCreateDirectory(tmpPath)
-         
+
     # Launch main function
     main()

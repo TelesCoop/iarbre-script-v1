@@ -3,7 +3,7 @@
 -- ------------------------
 
 INSERT INTO base.factors
-("name", ponderation) 
+("name", ponderation)
 VALUES
 ('Souches ou emplacements libres', 3),
 ('Arbres', 1),
@@ -40,9 +40,9 @@ VALUES
 
 
 INSERT INTO base.metadatas
-("name", "version", "type", quality, source_url, source_name, temp_file_path, script_path, factors_list) 
+("name", "version", "type", quality, source_url, source_name, temp_file_path, script_path, factors_list)
 VALUES
-('Arbres alignements Métropole', 'v1', 'POINT', 'Bonne', 'https://download.data.grandlyon.com/wfs/grandlyon', 'ms:abr_arbres_alignement.abrarbre', NULL, '{arbre_souche.py, arbre.py}', '{1,2}'),
+('Arbres alignements Métropole', 'v1', 'POINT', 'Bonne', 'https://data.grandlyon.com/geoserver/metropole-de-lyon/ows', 'metropole-de-lyon:abr_arbres_alignement.abrarbre', NULL, '{arbre_souche.py, arbre.py}', '{1,2}'),
 ('Parkings surfacique', 'v1', 'POLYGON', 'Bonne', NULL, NULL, 'parkingsurfacique.geojson', NULL, '{3}'),
 ('SLT', 'v1', 'POINT', 'Bonne', NULL, NULL, 'sltmateriel.geojson', '{slt.py}', '{4}'),
 ('Stations velov', 'v1', 'POINT', 'Bonne', NULL, NULL, 'station_velov.geojson', '{velov.py}', '{5}'),
@@ -71,7 +71,7 @@ VALUES
 -- ------------------------
 
 INSERT INTO base.users
-(firstname, lastname, email, passwd, user_role) 
+(firstname, lastname, email, passwd, user_role)
 VALUES
 ('Romain', 'MATIAS', 'r.matias@exo-dev.fr', '!PlAnT4-Gl!', 'ADMIN'),
 ('Natacha', 'SALMERON', 'n.salmeron@exo-dev.fr', '!PlAnT4-Gl!', 'ADMIN'),

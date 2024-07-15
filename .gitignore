@@ -4,3 +4,4 @@ Dockerfiles/python/.env
 ! Dockerfiles/python/.env.example
 .env
 __pycache__
+file_data

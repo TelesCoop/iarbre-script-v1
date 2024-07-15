@@ -16,7 +16,7 @@ services:
   #     - POSTGRES_SERVER=localhost
   #     - POSTGRES_PORT=5432
   #   ports:
-  #     - 5432:5432 
+  #     - 5432:5432
   #   # env_file:
   #   #   - .env-docker-compose-dev
   #   volumes:
@@ -31,7 +31,7 @@ services:
     env_file:
       - .env-docker-compose-dev
     environment:
-      - DATABASE_URL=postgres://calqul:calqul@calqul_db:5432/calque_planta_temp
+      - DATABASE_URL=maxime:maxime@localhost:5432/iarbre
     # depends_on:
     #   - db
 

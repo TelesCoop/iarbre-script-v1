@@ -9,7 +9,7 @@ Ces scripts ont pour objectif de calculer les indices de plantabilité sur l'ens
 ```bash
 git clone https://forge.grandlyon.com/erasme/script-recalcul-calque.git
 ```
-* Téléchargez les fichiers source de données via l'adresse : [https://documents.exo-dev.fr/source_file_data_calque_lyon_2022.7z](https://documents.exo-dev.fr/source_file_data_calque_lyon_2022.7z)
+* Téléchargez les fichiers source de données via l'adresse : [https://documents.exo-dev.fr/metropole/source_file_data_calque_lyon_2022.7z](https://documents.exo-dev.fr/metropole/source_file_data_calque_lyon_2022.7z)
 * Copiez ces fichiers source dans le dossier `file_data/` à la racine du projet
 * Créez et configurez le fichier `.env` à partir du fichier `.env.example` (Cf. Configuration avancée)
 ```bash
@@ -98,7 +98,7 @@ Vous trouverez le détail de ce projet sur les documents suivants :
 * [Notice d'utilisation du calque](https://documents.exo-dev.fr/notice_utilisation_calque_plantabilite_lyon_V1.pdf)
 * [Documentation générale du projet (à venir)]()
 * [Documentation technique du projet (à venir)]()
-* [Modèle logique de données (MLD)](https://documents.exo-dev.fr/MLD_calque_plantabilite_lyon.png)
+* [Modèle logique de données (MLD)](https://documents.exo-dev.fr/metropole/MLD_calque_plantabilite_lyon.png)
 * [Liste des données utilisées et traitements associés](https://www.figma.com/file/jE0JR0PiNbDU9ShK2V2tnZ/Process-data-calque-de-plantabilit%C3%A9?node-id=0%3A1)
 
 ## Crédits

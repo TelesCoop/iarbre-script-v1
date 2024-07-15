@@ -418,7 +418,7 @@ def splitList(alist, wanted_parts=1):
 # ---- GEOM OPERATIONS ----
 # -------------------------
 
-def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='application/gml+xml; version=3.2', reprojMetro=False, targetProj=None, req_timeout=600, proxies=None):
+def wfs2gp_df(layer_name, url, bbox=None, wfs_version="2.0.0", outputFormat='GML3', reprojMetro=False, targetProj=None, req_timeout=600, proxies=None):
     # Concat params
     params = dict(service='WFS', version=wfs_version,request='GetFeature', typeName=layer_name, outputFormat=outputFormat, crs=targetProj)
     # Load data in Bytes
@@ -842,8 +842,8 @@ def setProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
         qryFilter = ' and id_factor = {}'.format(id_factor)
         insertComplement = ', {}'.format(id_factor)
     # Ensure there is only one occurence for the township
-    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE insee = ' + codeInsee + qryFilter)
-    insertDataInDB(DBcursor,'INSERT INTO ' + DBSchema + '.' + stage + '_progress VALUES (' + codeInsee + insertComplement + ')')
+    DBcursor.execute('DELETE FROM ' + DBSchema + '.' + stage + '_progress WHERE insee = ' + str(codeInsee) + qryFilter)
+    insertDataInDB(DBcursor,'INSERT INTO ' + DBSchema + '.' + stage + '_progress VALUES (' + str(codeInsee) + insertComplement + ')')
 
 def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
     stage = 'tiles'
@@ -852,12 +852,13 @@ def getProgress(DBcursor, DBSchema, codeInsee, id_factor=None):
         stage = 'factors'
         qryFilter = ' and id_factor = {}'.format(id_factor)
 
-    qry = 'SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + codeInsee + qryFilter
+    qry = 'SELECT count(1) FROM '+ DBSchema + '.'  + stage + '_progress WHERE insee = ' + str(codeInsee) + qryFilter
     debugLog(style.YELLOW, qry, logging.INFO)
     DBcursor.execute(qry)
     results = DBcursor.fetchall()
     debugLog(style.YELLOW, "{}".format(results), logging.INFO)
-    dataValues = results[0]['count'] 
+    # dataValues = results[0][0]
+    dataValues = results[0]['count']
     # dataValues = DBcursor.fetchall()[0][0]  # Accéder à l'élément à l'indice 0 de la première liste
     return dataValues
 
