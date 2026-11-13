@@ -1,7 +1,7 @@
 #
 # ARB::Base de données postgis pour le calcul du calque de plantabilité
 #
-FROM postgis/postgis:11-3.3-alpine
+FROM postgis/postgis:18-3.7-alpine
 
 # Arguments
 ARG NAMESPACE_ENV
