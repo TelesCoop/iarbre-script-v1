@@ -1,7 +1,7 @@
 ##################################################################################
 #  Taken from https://github.com/Toblerity/Fiona/issues/1063
 ##################################################################################
-FROM debian:10
+FROM debian:13
 
 # Set the working directory to /app
 WORKDIR /app
